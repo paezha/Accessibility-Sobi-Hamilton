@@ -38,9 +38,56 @@ Read Sobi service area:
 sobi_service <- st_read("SoBi_Service_Areas.shp")
 ```
 
+Bounding box of population in serviced areas:
+```{r}
+bounding_box <- st_bbox(sobi_service %>%
+                          st_buffer(500))
+```
+
+Plot:
+```{r}
+ggplot() + 
+  geom_sf(data = hamilton_da_2016,
+          fill = NA,
+          color = "lightgray") + 
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = st_as_sfc(bounding_box),
+          linetype = "dashed",
+          fill = NA)
+```
+
+Adjust bounding box to remove service are in park to the east:
+```{r}
+bounding_box[3] <- 597200
+```
+
+Plot:
+```{r}
+ggplot() + 
+  geom_sf(data = hamilton_da_2016,
+          fill = NA,
+          color = "lightgray") + 
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = st_as_sfc(bounding_box),
+          linetype = "dashed",
+          fill = NA)
+```
+
 Read parks:
 ```{r}
 parks <- st_read("Parks.shp")
+```
+
+Read cemeteries:
+```{r}
+cemeteries <- st_read("Cemeteries.shp")
+```
+
+Read environmentally sensitive areas:
+```{r}
+esa <- st_read("Environmentally_Sensitive_Areas_Boundaries.shp")
 ```
 
 Project the Hamilton DA zones to the same projection of the SoBi Service Areas:
@@ -48,31 +95,24 @@ Project the Hamilton DA zones to the same projection of the SoBi Service Areas:
 hamilton_da_2016 <- st_transform(hamilton_da_2016, crs = st_crs(sobi_service))
 ```
 
-Plot the DAs and the service areas:
-```{r}
-ggplot() +
-  geom_sf(data = hamilton_da_2016,
-          color = "lightgray") +
-  geom_sf(data = sobi_service,
-          fill = NA)
-```
-
-We want to work only with the DAs that are within a reasonable buffer of the service areas (e.g., 500 m):
-```{r}
-ggplot(hamilton_da_2016[sobi_service %>% st_buffer(500),]) +
-  geom_sf(color = "lightgray") + 
-  geom_sf(data = sobi_service,
-          fill = NA)
-```
-
 Extract DAs in service areas:
 ```{r}
-hamilton_da_sobi <- hamilton_da_2016[sobi_service %>% st_buffer(500),]
+hamilton_da_sobi <- hamilton_da_2016[st_as_sfc(bounding_box),]
 ```
 
 Extract parks in service areas:
 ```{r}
-parks_sobi <- parks[sobi_service %>% st_buffer(500),]
+parks_sobi <- st_crop(parks, st_as_sfc(bounding_box))
+```
+
+Extract cemeteries in service areas:
+```{r}
+cemeteries_sobi <- st_crop(cemeteries, st_as_sfc(bounding_box))
+```
+
+Extract environmentally sensitive areas in service areas:
+```{r}
+esa_sobi <- st_crop(esa, st_as_sfc(bounding_box))
 ```
 
 Read population table (2016 Census of Population, Population and Dwelling counts):
@@ -95,21 +135,63 @@ ggplot() +
           color = NA) +
   geom_sf(data = sobi_service,
           fill = NA) +
-  geom_sf(data = parks_sobi,
-          fill = "green") +
   scale_fill_distiller(palette = "YlOrRd", direction = 1)
+```
+
+Plot "Green" spaces:
+```{r}
+ggplot() +
+  geom_sf(data = parks_sobi,
+          fill = "blue") +
+  geom_sf(data = cemeteries_sobi,
+          fill = "gray") +
+  geom_sf(data = esa_sobi,
+          fill = "green") +
+  geom_sf(data = sobi_service,
+          fill = NA,
+          color = "black") +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA,
+          color = "gray") +
+  scale_fill_distiller(palette = "YlOrRd", direction = 1)
+```
+
+Union of the "green space" features:
+```{r}
+parks_sobi <- st_combine(parks_sobi)
+cemeteries_sobi <- st_combine(cemeteries_sobi)
+esa_sobi <- st_combine(esa_sobi)
+```
+
+Check that the topology is valid:
+```{r}
+st_is_valid(parks_sobi)
+st_is_valid(cemeteries_sobi)
+st_is_valid(esa_sobi)
+```
+
+Make valid:
+```{r}
+parks_sobi <- st_make_valid(parks_sobi)
+esa_sobi <- st_make_valid(esa_sobi)
 ```
 
 Remove the parks from the DAs (use `st_difference()`):
 ```{r}
-# First combine `parks_sobi` to generate a single geography object, and make valid
-parks_sobi <- st_combine(parks_sobi) %>% 
-  st_make_valid()
-# The new simple features object will be the difference of the two objects
 hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi, parks_sobi)
 ```
 
-Plot the new DAs (minus parks) and compare to original DAs:
+Remove the cemeteries from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, cemeteries_sobi)
+```
+
+Remove environmentally sensitive areas from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi, esa_sobi)
+```
+
+Plot the new DAs (minus green) and compare to original DAs:
 ```{r}
 ggplot() +
   geom_sf(data = hamilton_da_sobi_clean,
@@ -146,6 +228,12 @@ interpolated_pop <- data.frame(population = interpolated_pop.pix$dens,
            crs = st_crs(hamilton_da_sobi))
 ```
 
+Check the population totals:
+```{r}
+sum(hamilton_da_sobi_clean$population)
+sum(interpolated_pop$population)
+```
+
 Plot interpolated population:
 ```{r}
 ggplot() + 
@@ -162,74 +250,17 @@ ggplot() +
 
 Extract population cells in the service area (and buffer)
 ```{r}
-interpolated_pop <- interpolated_pop[sobi_service %>% st_buffer(500),]
+interpolated_pop_clean <- interpolated_pop[sobi_service %>% st_buffer(500),]
 ```
 
 Plot interpolated population again:
 ```{r}
 ggplot() + 
-  geom_sf(data = interpolated_pop,
+  geom_sf(data = interpolated_pop_clean,
           aes(color = population)) +
-  geom_sf(data = hamilton_da_sobi,
-          fill = NA,
-          color = "lightgray") + 
   geom_sf(data = sobi_service,
-          fill = NA) +
-  coord_sf(xlim = )
-  scale_color_distiller(palette = "YlOrRd", 
-                        direction = 1)
-```
-
-Bounding box of population in serviced areas:
-```{r}
-bounding_box <- st_bbox(interpolated_pop)
-```
-
-Plot:
-```{r}
-ggplot() + 
-  geom_sf(data = interpolated_pop,
-          aes(color = population)) +
-  geom_sf(data = hamilton_da_sobi,
-          fill = NA,
-          color = "lightgray") + 
-  geom_sf(data = sobi_service,
-          fill = NA) +
-  geom_sf(data = st_as_sfc(bounding_box),
-          linetype = "dashed",
           fill = NA) +
   scale_color_distiller(palette = "YlOrRd", 
                         direction = 1)
 ```
 
-Adjust bounding box to remove service are in park to the east:
-```{r}
-bounding_box[3] <- 597200
-```
-
-Select population within bounding box:
-```{r}
-interpolated_pop <- interpolated_pop[st_as_sfc(bounding_box),]
-```
-
-Plot:
-```{r}
-ggplot() + 
-  geom_sf(data = interpolated_pop,
-          aes(color = population)) +
-  geom_sf(data = hamilton_da_sobi,
-          fill = NA,
-          color = "lightgray") + 
-  geom_sf(data = parks,
-          color = NA,
-          fill = "lightgreen") +
-  geom_sf(data = sobi_service,
-          fill = NA) +
-  geom_sf(data = st_as_sfc(bounding_box),
-          linetype = "dashed",
-          fill = NA) +
-  coord_sf(xlim = c(bounding_box[1], bounding_box[3]), # min & max of x values
-           ylim = c(bounding_box[2], bounding_box[4])) + # min & max of y values
-  scale_color_distiller(palette = "YlOrRd", 
-                        direction = 1)
-```

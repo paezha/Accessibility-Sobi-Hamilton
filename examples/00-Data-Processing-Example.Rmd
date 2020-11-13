@@ -1,0 +1,235 @@
+---
+title: "00-Data-Processing-Example"
+output: html_notebook
+---
+
+In this notebook we create some examples of processing the data for the analysis of accessibility. Particularly, we're interested in spatial interpolationo of the population for small areas.
+
+## Preliminaries
+
+Load packages used in the notebook:
+```{r message = FALSE}
+library(pycno)
+library(readr)
+library(rgrass7)
+library(sf)
+library(tidyverse)
+```
+
+Load data files:
+```{r}
+load("hamilton_cma.RData")
+load("hamilton_da_2016.RData")
+```
+
+These two data files are simple features with the dissemination areas according to the 2016 Census, and the boundary of Hamilton CMA.
+```{r}
+ggplot() +
+  geom_sf(data = hamilton_cma)
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = hamilton_da_2016)
+```
+
+Read Sobi service area:
+```{r}
+sobi_service <- st_read("SoBi_Service_Areas.shp")
+```
+
+Read parks:
+```{r}
+parks <- st_read("Parks.shp")
+```
+
+Project the Hamilton DA zones to the same projection of the SoBi Service Areas:
+```{r}
+hamilton_da_2016 <- st_transform(hamilton_da_2016, crs = st_crs(sobi_service))
+```
+
+Plot the DAs and the service areas:
+```{r}
+ggplot() +
+  geom_sf(data = hamilton_da_2016,
+          color = "lightgray") +
+  geom_sf(data = sobi_service,
+          fill = NA)
+```
+
+We want to work only with the DAs that are within a reasonable buffer of the service areas (e.g., 500 m):
+```{r}
+ggplot(hamilton_da_2016[sobi_service %>% st_buffer(500),]) +
+  geom_sf(color = "lightgray") + 
+  geom_sf(data = sobi_service,
+          fill = NA)
+```
+
+Extract DAs in service areas:
+```{r}
+hamilton_da_sobi <- hamilton_da_2016[sobi_service %>% st_buffer(500),]
+```
+
+Extract parks in service areas:
+```{r}
+parks_sobi <- parks[sobi_service %>% st_buffer(500),]
+```
+
+Read population table (2016 Census of Population, Population and Dwelling counts):
+```{r}
+population_da_2016 <- read_csv("T1901EN.csv") %>%
+  transmute(DA = factor(`Geographic code`), population = `Population, 2016`)
+```
+
+Join population table to DAs in service areas:
+```{r}
+hamilton_da_sobi <- hamilton_da_sobi %>%
+  left_join(population_da_2016, by = "DA")
+```
+
+Plot population:
+```{r}
+ggplot() +
+  geom_sf(data = hamilton_da_sobi,
+          aes(fill = population),
+          color = NA) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = parks_sobi,
+          fill = "green") +
+  scale_fill_distiller(palette = "YlOrRd", direction = 1)
+```
+
+Remove the parks from the DAs (use `st_difference()`):
+```{r}
+# First combine `parks_sobi` to generate a single geography object, and make valid
+parks_sobi <- st_combine(parks_sobi) %>% 
+  st_make_valid()
+# The new simple features object will be the difference of the two objects
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi, parks_sobi)
+```
+
+Plot the new DAs (minus parks) and compare to original DAs:
+```{r}
+ggplot() +
+  geom_sf(data = hamilton_da_sobi_clean,
+          color = NA,
+          fill = "blue") +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA,
+          color = "black")
+```
+
+Pycnophylactic interpolation needs a `SpatialPolygonsDataFrame` object. Convert the simple features object:
+```{r}
+hamilton_da_sobi_clean.sp <- as(hamilton_da_sobi_clean, "Spatial")
+```
+
+Extract the population from the spatial object:
+```{r}
+pop <- hamilton_da_sobi_clean.sp@data$population
+```
+
+Pycnophylactic interpolation:
+```{r}
+filter <- stats::filter # Important! `filter()` should be from `stats`, not `dplyer`
+interpolated_pop <- pycno(x = hamilton_da_sobi_clean.sp, pops = pop, celldim = 50)
+```
+
+Convert to pixels and then simple features:
+```{r}
+interpolated_pop.pix <- as(interpolated_pop, "SpatialPixelsDataFrame")
+interpolated_pop <- data.frame(population = interpolated_pop.pix$dens, 
+                               x = interpolated_pop.pix@coords[,1],
+                               y = interpolated_pop.pix@coords[,2]) %>%
+  st_as_sf(coords = c("x", "y"),
+           crs = st_crs(hamilton_da_sobi))
+```
+
+Plot interpolated population:
+```{r}
+ggplot() + 
+  geom_sf(data = interpolated_pop,
+          aes(color = population)) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1) +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA,
+          color = "lightgray") + 
+  geom_sf(data = sobi_service,
+          fill = NA)
+```
+
+Extract population cells in the service area (and buffer)
+```{r}
+interpolated_pop <- interpolated_pop[sobi_service %>% st_buffer(500),]
+```
+
+Plot interpolated population again:
+```{r}
+ggplot() + 
+  geom_sf(data = interpolated_pop,
+          aes(color = population)) +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA,
+          color = "lightgray") + 
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  coord_sf(xlim = )
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+Bounding box of population in serviced areas:
+```{r}
+bounding_box <- st_bbox(interpolated_pop)
+```
+
+Plot:
+```{r}
+ggplot() + 
+  geom_sf(data = interpolated_pop,
+          aes(color = population)) +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA,
+          color = "lightgray") + 
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = st_as_sfc(bounding_box),
+          linetype = "dashed",
+          fill = NA) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+Adjust bounding box to remove service are in park to the east:
+```{r}
+bounding_box[3] <- 597200
+```
+
+Select population within bounding box:
+```{r}
+interpolated_pop <- interpolated_pop[st_as_sfc(bounding_box),]
+```
+
+Plot:
+```{r}
+ggplot() + 
+  geom_sf(data = interpolated_pop,
+          aes(color = population)) +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA,
+          color = "lightgray") + 
+  geom_sf(data = parks,
+          color = NA,
+          fill = "lightgreen") +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = st_as_sfc(bounding_box),
+          linetype = "dashed",
+          fill = NA) +
+  coord_sf(xlim = c(bounding_box[1], bounding_box[3]), # min & max of x values
+           ylim = c(bounding_box[2], bounding_box[4])) + # min & max of y values
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```

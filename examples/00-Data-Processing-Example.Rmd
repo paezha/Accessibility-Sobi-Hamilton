@@ -3,9 +3,94 @@ title: "00-Data-Processing-Example"
 output: html_notebook
 ---
 
-In this notebook we create some examples of processing the data for the analysis of accessibility. Particularly, we're interested in spatial interpolationo of the population for small areas.
+## Introduction
+
+In this notebook we create some examples of processing the data for the analysis of accessibility to Hamilton Bike share docking stations. Particularly, we're interested in spatial interpolation of the population for small areas.
+
+Data used in this notebook was retrieved from two sources: Open Hamilton and the 2016 Canadian Census. Open Hamilton is an online repository of data from the City of Hamilton. The following datasets were retrieved:
+
+### SoBi Hub
+
+The dataset was last updated on *November 9, 2020* and was downloaded for this project on *November 10, 2020*. This dataset contains the following attributes that are of interest to this research: location of hubs (address, longitude, and latitude) and the number of racks available at each hub. The dataset also includes the number of bicycles available at each hub, but since this changes daily, this information is not useful for our purposes. The maximum number of bicycles that a hub *could* have (i.e., the baseline) available is important for calculating accessibility in a given area.
+
+We can also retrieve the data weekly over a certain period, for example 4 weeks, to calculate the average number of bicycles that are at each hub. Variations in the number of bicycles could also be informative. For instance, some hubs may systematically have more or less bicycles than others (i.e., excess of supply around the University campus).
+
+### SoBi Service Area
+
+The dataset was last updated on *November 9, 2020* and was downloaded for this project on *November 10, 2020*. Hamilton's bike share program is available only in the lower city from Dundas to Ottawa Street North. There is one isolated hub beyond this service area at Van Wagner's Beach for tourism purposes.
+
+### Golf Courses
+
+The dataset was last updated on *November 1, 2020* and was downloaded for this project on *November 10, 2020*. This dataset contains the location of City and privately owned golf courses in Hamilton.
+
+### Parks
+
+The dataset was last updated on *November 8, 2020* and was downloaded for this project on *November 10, 2020*. This dataset contains the location of parks and other green spaces in Hamilton.
+
+### Large Employment Areas
+
+The dataset contains Employment Land boundaries in Hamilton and was last updated on *November 12, 2020*. It was downloaded for this project on *November 13, 2020*. This dataset contains the location of large business parks and industrial lands in Hamilton.
+
+### Municipal Parking Lots
+
+The dataset contains the location of municipal car parks in Hamilton and was last updated on *November 9, 2020*. It was downloaded for this project on *November 13, 2020*.
+
+### Cemeteries
+
+The dataset contains the location of cemeteries in Hamilton. It was downloaded for this project on *November 13, 2020*.
+
+### Environmentally Sensitive Areas
+
+The dataset contains the location of Environmentally Sensitive Areas (ESAs) in Hamilton. ESAs are either land or water areas containing natural features or significant ecological functions in Hamilton. The data were downloaded on *November 13, 2020*.
+
+### Street Centreline
+
+The dataset contains the street network in Hamilton. Data attributes include road classification so highways can be extracted. The dataset was last updated on *November 15, 2020* and downloaded on *November 16, 2020*.
+
+### Educational Institutions
+
+The dataset contains the location of all educational institutions and schools in Hamilton. The dataset was last updated on *November 15, 2020* and downloaded on *November 16, 2020*.
+
+### Places of Workshop
+
+The dataset contains the location of buildings used for religious congregations in Hamilton. The dataset was last updated on *November 15, 2020* and downloaded on *November 16, 2020*.
+
+### Municipal Service Centres
+
+The dataset contains the location of all municipal service centres in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *November 11, 2020* and downloaded on *November 16, 2020*.
+
+### Recreation and Community Centres
+
+The dataset contains the location of all recreation and community centres in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *November 15, 2020* and downloaded on *November 16, 2020*.
+
+### Arenas
+
+The dataset contains the location of all indoor arenas in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *November 12, 2020* and downloaded on *November 16, 2020*.
+
+### EMS Stations
+
+The dataset contains the location of all Emergency Management Services (EMS) Ambulance stations in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *November 11, 2020* and downloaded on *November 16, 2020*.
+
+### Fire Stations
+
+The dataset contains the location of all fire stations in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *November 15, 2020* and downloaded on *November 16, 2020*.
+
+### Police Stations
+
+The dataset contains the location of all police stations in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *November 13, 2020* and downloaded on *November 16, 2020*.
+
+### Hospitals
+
+The dataset contains the location of all hospitals in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *April 2, 2019* and downloaded on *November 16, 2020*.
+
+
 
 ## Preliminaries
+
+Clear environment:
+```{r}
+rm(list = ls())
+```
 
 Load packages used in the notebook:
 ```{r message = FALSE}
@@ -57,7 +142,7 @@ ggplot() +
           fill = NA)
 ```
 
-Adjust bounding box to remove service are in park to the east:
+Adjust bounding box to remove docking station in park, which is for tourism purposes, to the east:
 ```{r}
 bounding_box[3] <- 597200
 ```
@@ -90,29 +175,180 @@ Read environmentally sensitive areas:
 esa <- st_read("Environmentally_Sensitive_Areas_Boundaries.shp")
 ```
 
-Project the Hamilton DA zones to the same projection of the SoBi Service Areas:
+Read golf courses:
+```{r}
+golf_courses <- st_read("Golf_Courses.shp")
+```
+
+Read employment land areas, which include business parks and industrial lands:
+```{r}
+employment_lands <- st_read("Employment_Lands.shp")
+```
+
+Read railways:
+```{r}
+railways <- st_read("Railways.shp")
+```
+
+Read municipal parking lots:
+```{r}
+municipal_parking <- st_read("Municipal_Parking_Lots.shp")
+```
+
+Read street network:
+```{r}
+streets <- st_read("Street_Centreline.shp")
+```
+
+Filter for provincial highways:
+```{r}
+streets <- streets %>% dplyr::filter(ROAD_CLASS == "Provincial Highway")
+```
+
+
+Read educational institutions:
+```{r}
+schools <- st_read("Educational_Institutions.shp")
+```
+
+Read places of worship:
+```{r}
+religious_places <- st_read("Places_of_Worship.shp")
+```
+
+Read municipal service centres:
+```{r}
+service_centres <- st_read("Municipal_Service_Centres.shp")
+```
+
+Read recreation and centres:
+```{r}
+recreation_centres <- st_read("Recreation_and_Community_Centres.shp")
+```
+
+Read arenas:
+```{r}
+arenas <- st_read("Arenas.shp")
+```
+
+Read EMS stations:
+```{r}
+ems <- st_read("EMS_Stations.shp")
+```
+
+Read fire stations:
+```{r}
+fire <- st_read("Fire_Stations.shp")
+```
+
+Read police stations:
+```{r}
+police <- st_read("Police_Stations.shp")
+```
+
+Read hospitals:
+```{r}
+hospitals <- st_read("Hospitals.shp")
+```
+
+Project the Hamilton DA zones to the same projection of the SoBi Service Area:
 ```{r}
 hamilton_da_2016 <- st_transform(hamilton_da_2016, crs = st_crs(sobi_service))
 ```
 
-Extract DAs in service areas:
+Extract DAs in service area:
 ```{r}
 hamilton_da_sobi <- hamilton_da_2016[st_as_sfc(bounding_box),]
 ```
 
-Extract parks in service areas:
+Extract parks in service area:
 ```{r}
 parks_sobi <- st_crop(parks, st_as_sfc(bounding_box))
 ```
 
-Extract cemeteries in service areas:
+Extract cemeteries in service area:
 ```{r}
 cemeteries_sobi <- st_crop(cemeteries, st_as_sfc(bounding_box))
 ```
 
-Extract environmentally sensitive areas in service areas:
+Extract environmentally sensitive areas in service area:
 ```{r}
 esa_sobi <- st_crop(esa, st_as_sfc(bounding_box))
+```
+
+Extract golf courses in service area:
+```{r}
+golf_sobi <- st_crop(golf_courses, st_as_sfc(bounding_box))
+```
+
+Extract employment lands in service area:
+```{r}
+employment_sobi <- st_crop(employment_lands, st_as_sfc(bounding_box))
+```
+
+Extract railways in service area:
+```{r}
+railways_sobi <- st_crop(railways, st_as_sfc(bounding_box))
+```
+Extract municipal parking lots in service area:
+```{r}
+parking_sobi <- st_crop(municipal_parking, st_as_sfc(bounding_box))
+```
+
+Extract provincial highways in service area:
+```{r}
+highways_sobi <- st_crop(streets, st_as_sfc(bounding_box))
+```
+
+Extract educational institutions in service area:
+```{r}
+schools_sobi <- st_crop(schools, st_as_sfc(bounding_box))
+```
+
+Extract places of worship in service area:
+```{r}
+religious_sobi <- st_crop(religious_places, st_as_sfc(bounding_box))
+```
+
+Extract municipal service centres in service area:
+```{r}
+service_sobi <- st_crop(service_centres, st_as_sfc(bounding_box))
+```
+
+Extract recreation and community centres in service area:
+```{r}
+recreation_sobi <- st_crop(recreation_centres, st_as_sfc(bounding_box))
+```
+
+Extract indoor arenas in service area:
+```{r}
+arenas_sobi <- st_crop(arenas, st_as_sfc(bounding_box))
+```
+
+Extract educational institutions in service area:
+```{r}
+schools_sobi <- st_crop(schools, st_as_sfc(bounding_box))
+```
+
+
+Extract EMS stations in service area:
+```{r}
+ems_sobi <- st_crop(ems, st_as_sfc(bounding_box))
+```
+
+Extract fire stations in service area:
+```{r}
+fire_sobi <- st_crop(fire, st_as_sfc(bounding_box))
+```
+
+Extract police stations in service area:
+```{r}
+police_sobi <- st_crop(police, st_as_sfc(bounding_box))
+```
+
+Extract hospitals in service area:
+```{r}
+hospitals_sobi <- st_crop(hospitals, st_as_sfc(bounding_box))
 ```
 
 Read population table (2016 Census of Population, Population and Dwelling counts):
@@ -147,6 +383,36 @@ ggplot() +
           fill = "gray") +
   geom_sf(data = esa_sobi,
           fill = "green") +
+  geom_sf(data = golf_sobi,
+          fill = "lightskyblue") +
+  geom_sf(data = employment_sobi,
+          fill = "purple") +
+  geom_sf(data = railways_sobi,
+          fill = "wheat") +
+  geom_sf(data = parking_sobi,
+          fill = "lightpink") +
+  geom_sf(data = highways_sobi,
+          fill = "orange") +
+  geom_sf(data = schools_sobi,
+          fill = "red") +
+  geom_sf(data = religious_sobi,
+          fill = "pink") +
+  geom_sf(data = service_sobi,
+          fill = "yellow") +
+  geom_sf(data = recreation_sobi,
+          fill = "yellow") +
+  geom_sf(data = arenas_sobi,
+          fill = "yellow") +
+  geom_sf(data = ems_sobi,
+          fill = "yellow") +
+  geom_sf(data = ems_sobi,
+          fill = "yellow") +
+  geom_sf(data = fire_sobi,
+          fill = "yellow") +
+  geom_sf(data = police_sobi,
+          fill = "yellow") +
+  geom_sf(data = hospitals_sobi,
+          fill = "yellow") +
   geom_sf(data = sobi_service,
           fill = NA,
           color = "black") +
@@ -161,6 +427,20 @@ Union of the "green space" features:
 parks_sobi <- st_combine(parks_sobi)
 cemeteries_sobi <- st_combine(cemeteries_sobi)
 esa_sobi <- st_combine(esa_sobi)
+golf_sobi <- st_combine(golf_sobi)
+employment_sobi <- st_combine(employment_sobi)
+railways_sobi <- st_combine(railways_sobi)
+parking_sobi <- st_combine(parking_sobi)
+highways_sobi <- st_combine(highways_sobi)
+schools_sobi <- st_combine(schools_sobi)
+religious_sobi <- st_combine(religious_sobi)
+service_sobi <- st_combine(service_sobi)
+recreation_sobi <- st_combine(recreation_sobi)
+arenas_sobi <- st_combine(arenas_sobi)
+ems_sobi <- st_combine(ems_sobi)
+fire_sobi <- st_combine(fire_sobi)
+police_sobi <- st_combine(police_sobi)
+hospitals_sobi <- st_combine(hospitals_sobi)
 ```
 
 Check that the topology is valid:
@@ -168,12 +448,27 @@ Check that the topology is valid:
 st_is_valid(parks_sobi)
 st_is_valid(cemeteries_sobi)
 st_is_valid(esa_sobi)
+st_is_valid(golf_sobi)
+st_is_valid(employment_sobi)
+st_is_valid(railways_sobi)
+st_is_valid(parking_sobi)
+st_is_valid(highways_sobi)
+st_is_valid(schools_sobi)
+st_is_valid(religious_sobi)
+st_is_valid(service_sobi)
+st_is_valid(recreation_sobi)
+st_is_valid(arenas_sobi)
+st_is_valid(ems_sobi)
+st_is_valid(fire_sobi)
+st_is_valid(police_sobi)
+st_is_valid(hospitals_sobi)
 ```
 
 Make valid:
 ```{r}
 parks_sobi <- st_make_valid(parks_sobi)
 esa_sobi <- st_make_valid(esa_sobi)
+parking_sobi <- st_make_valid(parking_sobi)
 ```
 
 Remove the parks from the DAs (use `st_difference()`):
@@ -188,7 +483,74 @@ hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, cemeteries_sobi)
 
 Remove environmentally sensitive areas from the DAs (use `st_difference()`):
 ```{r}
-hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi, esa_sobi)
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, esa_sobi)
+```
+
+Remove golf courses from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, golf_sobi)
+```
+
+Remove employment lands from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, employment_sobi)
+```
+
+Remove railways from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, railways_sobi)
+```
+
+Remove municipal parking lots from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, parking_sobi)
+```
+
+Remove provincial highways from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, highways_sobi)
+```
+
+Remove educational institutions from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, schools_sobi)
+```
+
+Remove places of worship from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, religious_sobi)
+```
+
+Remove municipal service centres from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, service_sobi)
+```
+
+Remove recreation and community centres from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, recreation_sobi)
+```
+
+Remove arenas from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, arenas_sobi)
+```
+
+Remove EMS stations from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, ems_sobi)
+```
+Remove fire stations from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, fire_sobi)
+```
+Remove police stations from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, police_sobi)
+```
+Remove hospitals from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, hospitals_sobi)
 ```
 
 Plot the new DAs (minus green) and compare to original DAs:

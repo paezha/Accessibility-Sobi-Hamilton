@@ -9,6 +9,8 @@ In this notebook we create some examples of processing the data for the analysis
 
 Data used in this notebook was retrieved from two sources: Open Hamilton and the 2016 Canadian Census. Open Hamilton is an online repository of data from the City of Hamilton. The following datasets were retrieved:
 
+## Provenance of data
+
 ### SoBi Hub
 
 The dataset was last updated on *November 9, 2020* and was downloaded for this project on *November 10, 2020*. This dataset contains the following attributes that are of interest to this research: location of hubs (address, longitude, and latitude) and the number of racks available at each hub. The dataset also includes the number of bicycles available at each hub, but since this changes daily, this information is not useful for our purposes. The maximum number of bicycles that a hub *could* have (i.e., the baseline) available is important for calculating accessibility in a given area.
@@ -83,8 +85,6 @@ The dataset contains the location of all police stations in Hamilton. This inclu
 
 The dataset contains the location of all hospitals in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *April 2, 2019* and downloaded on *November 16, 2020*.
 
-
-
 ## Preliminaries
 
 Clear environment:
@@ -94,12 +94,23 @@ rm(list = ls())
 
 Load packages used in the notebook:
 ```{r message = FALSE}
+library(disk.frame)
 library(pycno)
 library(readr)
-library(rgrass7)
+library(r5r) # the r5r package requires Java Development Kit version 11, which can be downloaded from https://www.oracle.com/java/technologies/javase-jdk11-downloads.html
 library(sf)
 library(tidyverse)
 ```
+
+Define some parameters for `disk.frame` and `r5r`:
+```{r}
+setup_disk.frame()
+options(scipen = 999)
+options(java.parameters = "-Xmx6G")
+options(future.globals.maxSize = Inf)
+```
+
+### Read data
 
 Load data files:
 ```{r}
@@ -123,28 +134,23 @@ Read Sobi service area:
 sobi_service <- st_read("SoBi_Service_Areas.shp")
 ```
 
+Plot service areas:
+```{r}
+ggplot() +
+  geom_sf(data = sobi_service,
+          aes(fill = AREA_NAME))
+```
+
+There is a Core Service Area and a much smaller service area at Van Wagner's. This is a location at the beach with service for beach goers. We will remove this area from further analysis:
+```{r}
+sobi_service <- sobi_service %>%
+  dplyr::filter(AREA_NAME == "Core Service Area")
+```
+
 Bounding box of population in serviced areas:
 ```{r}
 bounding_box <- st_bbox(sobi_service %>%
                           st_buffer(500))
-```
-
-Plot:
-```{r}
-ggplot() + 
-  geom_sf(data = hamilton_da_2016,
-          fill = NA,
-          color = "lightgray") + 
-  geom_sf(data = sobi_service,
-          fill = NA) +
-  geom_sf(data = st_as_sfc(bounding_box),
-          linetype = "dashed",
-          fill = NA)
-```
-
-Adjust bounding box to remove docking station in park, which is for tourism purposes, to the east:
-```{r}
-bounding_box[3] <- 597200
 ```
 
 Plot:
@@ -205,7 +211,6 @@ Filter for provincial highways:
 streets <- streets %>% dplyr::filter(ROAD_CLASS == "Provincial Highway")
 ```
 
-
 Read educational institutions:
 ```{r}
 schools <- st_read("Educational_Institutions.shp")
@@ -250,6 +255,8 @@ Read hospitals:
 ```{r}
 hospitals <- st_read("Hospitals.shp")
 ```
+
+### Extract features in service area
 
 Project the Hamilton DA zones to the same projection of the SoBi Service Area:
 ```{r}
@@ -351,6 +358,8 @@ Extract hospitals in service area:
 hospitals_sobi <- st_crop(hospitals, st_as_sfc(bounding_box))
 ```
 
+### Read population
+
 Read population table (2016 Census of Population, Population and Dwelling counts):
 ```{r}
 population_da_2016 <- read_csv("T1901EN.csv") %>%
@@ -362,6 +371,8 @@ Join population table to DAs in service areas:
 hamilton_da_sobi <- hamilton_da_sobi %>%
   left_join(population_da_2016, by = "DA")
 ```
+
+### Visualize geographical data
 
 Plot population:
 ```{r}
@@ -422,6 +433,8 @@ ggplot() +
   scale_fill_distiller(palette = "YlOrRd", direction = 1)
 ```
 
+### Prepare geographical data for interpolation
+
 Union of the "green space" features:
 ```{r}
 parks_sobi <- st_combine(parks_sobi)
@@ -470,6 +483,8 @@ parks_sobi <- st_make_valid(parks_sobi)
 esa_sobi <- st_make_valid(esa_sobi)
 parking_sobi <- st_make_valid(parking_sobi)
 ```
+
+### Remove all features that are not population from the DAs
 
 Remove the parks from the DAs (use `st_difference()`):
 ```{r}
@@ -564,6 +579,8 @@ ggplot() +
           color = "black")
 ```
 
+## Interpolate population
+
 Pycnophylactic interpolation needs a `SpatialPolygonsDataFrame` object. Convert the simple features object:
 ```{r}
 hamilton_da_sobi_clean.sp <- as(hamilton_da_sobi_clean, "Spatial")
@@ -610,9 +627,28 @@ ggplot() +
           fill = NA)
 ```
 
+## Extract population in service area
+
 Extract population cells in the service area (and buffer)
 ```{r}
 interpolated_pop_clean <- interpolated_pop[sobi_service %>% st_buffer(500),]
+```
+
+Note that some cells have population values of zero:
+```{r}
+interpolated_pop_clean %>% select(population) %>% summary()
+```
+
+Filter all cells with non-zero population values:
+```{r}
+interpolated_pop_clean <- interpolated_pop_clean %>%
+            dplyr::filter(population > 0)
+```
+
+Add identifier for the population cells:
+```{r}
+interpolated_pop_clean <- interpolated_pop_clean %>%
+            mutate(UID = 1:n())
 ```
 
 Plot interpolated population again:
@@ -624,5 +660,145 @@ ggplot() +
           fill = NA) +
   scale_color_distiller(palette = "YlOrRd", 
                         direction = 1)
+```
+
+## Bikeshare system
+
+Read Sobi hubs:
+```{r}
+sobi_hubs <- st_read("SoBi_Hubs.shp")
+```
+
+Plot interpolated population and SoBi hubs:
+```{r}
+ggplot() + 
+  geom_sf(data = interpolated_pop_clean,
+          aes(color = population)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = sobi_hubs) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+Remove SoBi hub on beach:
+```{r}
+sobi_hubs <- sobi_hubs %>%
+  dplyr::filter(NAME != "Van Wagners")
+```
+
+Plot again:
+```{r}
+ggplot() + 
+  geom_sf(data = interpolated_pop_clean,
+          aes(color = population)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = sobi_hubs,
+          aes(size = RACKS_AMOU)) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1) +
+  scale_size(range = c(1, 4))
+```
+
+## Routing
+
+I used [BBBike](https://download.bbbike.org/osm/bbbike/) to extract OSM data for Hamilton - not the whole city, but enough to cover SoBI's service area. The name of the file is `planet_-80.042,43.183_-79.748,43.309.osm.pbf`. Copy to folder `r5_graph`.
+
+Set Up R5 Routing. First define the path to where the graph is located:
+```{r set up r5 path, include=FALSE}
+r5_path <- file.path("./r5_graph")
+```
+
+Build the graph:
+```{r build-graph, include = FALSE}
+r5_sobi <- setup_r5(data_path = r5_path, verbose = FALSE)
+```
+
+Prepare Input Data for `r5r`. The origins are the coordinates of the population cells and the destinations the coordinates of the SoBi hubs:
+```{r prepare-inputs}
+# save origin centroids in format expected by R5R (id, lon, lat)
+origins_i <- data.frame(UID = interpolated_pop_clean$UID, 
+              interpolated_pop_clean %>%
+                st_transform(crs = 4326) %>%
+                st_coordinates()) %>%
+    rename(lon = X, lat = Y, id = UID) %>%
+    select(id, lon, lat)
+
+# now SoBi hubs
+destinations_j <- data.frame(OBJECTID = sobi_hubs$OBJECTID, 
+              sobi_hubs %>%
+                st_transform(crs = 4326) %>%
+                st_coordinates()) %>%
+    rename(lon = X, lat = Y, id = OBJECTID) %>%
+    select(id, lon, lat)
+```
+
+Calculate OD Matrix for Walking:
+```{r calculate walking od matrix, include=FALSE}
+# set up batching according to how many origin rows to process at one time
+chunksize = 2000 # larger chunks for walking will give enough origins in each chunk to allow multiprocessing to spin up with R5R
+num_chunks = ceiling(nrow(origins_i)/chunksize)
+
+# create origin-destination pairs
+origins_chunks <- as.disk.frame(origins_i,
+                          outdir = "./df/origins_i",
+                          nchunks = num_chunks,
+                          overwrite = TRUE)
+
+start.time <- Sys.time()
+pb <- txtProgressBar(0, num_chunks, style = 3)
+
+for (i in 1:num_chunks){
+  origins_i_chunk <- get_chunk(origins_chunks, i)
+  ttm_chunk <- travel_time_matrix(r5_sobi,
+                          origins = origins_i_chunk,
+                          destinations = destinations_j,
+                          mode = c("WALK"),
+                          departure_datetime = as.POSIXct(strptime("2020-03-02 08:00:00", "%Y-%m-%d %H:%M:%S", tz = "EST5EDT")),
+                          max_walk_dist = 10000, # metres
+                          max_trip_duration = 30)
+  
+  # export output as disk.frame
+  ifelse(i == 1, output_df <- as.disk.frame(ttm_chunk,
+                                            nchunks = 1,
+                                            outdir = "./df/output_ttm_walk",
+                                            compress = 50,
+                                            overwrite = TRUE),
+         add_chunk(output_df, ttm_chunk, chunk_id = i))
+  setTxtProgressBar(pb, i)
+}
+end.time <- Sys.time()
+ttm_walk_time <- end.time - start.time
+ttm_walk_time
+```
+
+## Extract travel time matrix
+
+```{r load od matrix for walk and subway, include=FALSE}
+# connect to the walking travel time matrix disk frame
+ttm_walk.disk.frame <- disk.frame("./df/output_ttm_walk")
+#opportunities_j <- as.data.frame(nyc_cb_point) %>% select(GEOID10, total_emp) %>% rename(toId = GEOID10, o_j = total_emp)
+```
+
+Convert disk.frame to data frame:
+```{r}
+ttm_walk <- as.data.frame(ttm_walk.disk.frame) %>%
+  transmute(UID = as.numeric(fromId), OBJECTID = as.numeric(toId), travel_time)
+```
+
+## Save data to disk
+
+Rename data frame:
+```{r}
+population_sobi <- interpolated_pop_clean
+```
+
+Save data files:
+```{r}
+save(population_sobi, file = "population_sobi.RData")
+save(sobi_hubs, file = "sobi_hubs.RData")
+save(sobi_service, file = "sobi_service.RData")
+save(ttm_walk, file = "ttm_walk.RData")
 ```
 

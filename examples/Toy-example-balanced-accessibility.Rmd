@@ -1,0 +1,290 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Load libraries:
+```{r message=FALSE}
+library(data.table)
+library(dplyr)
+library(gdistance)
+library(kableExtra)
+library(raster)
+library(rgdal)
+library(sf)
+library(tidyverse)
+library(units)
+```
+
+# Load data
+
+Load geography:
+```{r}
+load("Simulated Example.RData")
+```
+
+Create simple features objects for population centers and clinics:
+```{r}
+  # Clinics
+  sim_clinics <- st_sf(Clinics_data, geometry_clinics, stringsAsFactors = TRUE)
+  
+  # Population centers
+  sim_population <- st_sf(Population_data, geometry_population, stringsAsFactors = TRUE)
+```
+
+Calculate the distance between these points as a measure of cost:
+```{r}
+distance_matrix <- st_distance(sim_population, sim_clinics)
+```
+
+What is in these objects?
+```{r}
+head(Clinics_data)
+head(Population_data)
+head(distance_matrix)
+```
+
+# Threshold
+
+Calculate quantiles according to distance. This is done to select a threshold:
+```{r}
+quantiles_d <- quantile(as.vector(distance_matrix), probs = c(0, 1/10, 3/10, 5/10, 7/10, 8/10, 9/10))
+
+dist_threshold <- quantile(as.vector(distance_matrix), probs = c(0, 1/10, 3/10, 5/10, 7/10, 8/10, 9/10))[[5]]
+```
+
+The distance threshold is equivalent to the _kernel bandwidth_ or _catchment distance_.
+
+# Prepare travel matrix in long format
+
+Convert matrix to data.frame:
+```{r}
+distance_matrix_long <- as.data.table(distance_matrix)
+```
+
+Rename columns:
+```{r}
+names(distance_matrix_long) <- c('clinic_1', 'clinic_2', 'clinic_3')
+distance_matrix_long$id <- Population_data$id
+```
+
+Melt distance matrix:
+```{r}
+distance_matrix_long <- distance_matrix_long %>%
+  pivot_longer(cols = starts_with("clinic_"),
+                     names_to = "to",
+                     values_to = "distance")
+```
+
+
+```{r}
+#distance_matrix_long <- data.table::melt(distance_matrix_long, id.vars='from', variable.name = "to", value.name = "dist")
+```
+
+Add population information:
+```{r}
+distance_matrix_long <- left_join(distance_matrix_long, 
+                                  Population_data,
+                                  by = "id")
+```
+
+Add  doctors information:
+```{r}
+Clinics_data$id <- c('clinic_1', 'clinic_2', 'clinic_3')
+#distance_matrix_long$dest <- as.character(distance_matrix_long$dest)
+long_matrix <- left_join(distance_matrix_long, Clinics_data, by=c("to" = "id"))
+#setDT(long_matrix)
+head(long_matrix)
+```
+
+Calculate impedance (binary)
+```{r eval=TRUE}
+# Run only if binary function desired
+# Change chunk option eval=TRUE to FALSE if impedance is Gaussian function
+long_matrix <- long_matrix %>%
+  mutate(distance = drop_units(distance),
+         impedance = ifelse(distance <= dist_threshold, 1, 0))
+```
+
+Calculate impedance (Gaussian):
+```{r eval=FALSE}
+# Run only if Gaussian function desired
+# Change chunk option eval=FALSE to TRUE if impedance is Gaussian function
+long_matrix <- long_matrix %>%
+  mutate(distance = drop_units(distance),
+         impedance = case_when(distance <= quantiles_d[1] ~ 0.945,
+                               (distance > quantiles_d[1]) & (distance <= quantiles_d[3]) ~ 0.600,
+                               (distance > quantiles_d[3]) & (distance <= quantiles_d[5]) ~ 0.242,
+                               distance > quantiles_d[5] ~ 0))
+```
+
+Calculate the sum of the impedance by population for the balancing factors. In the binary case, this should be the same as the number of clinics that each population center can reach; when the impedance is not binary, this is the sum of all impedance values:
+```{r}
+sum_b1 <- long_matrix %>%
+  group_by(id) %>%
+  summarize(sum_b1 = sum(impedance),
+            .groups = "drop")
+sum_b1
+```
+
+The population at 1 can only reach one clinic, the population at 2 can reach two clinics, the population at 3 can reach all three clinics, etc.
+
+Calculate the sum of the impedance by clinic for the balancing factors. In the binary case, this should be the same as the number of population centers that each clinic serves; when the impedance is not binary, this is the sum of all impedance values:
+```{r}
+sum_b2 <- long_matrix %>%
+  group_by(to) %>%
+  summarize(sum_b2 = sum(impedance))
+sum_b2
+```
+
+Clinic 1 serves four population centers, clinic 2 serves eight population centers, and clinic 3 serves seven population centers.
+
+Next, join the sum of the impedance to the table to calculate the balanced impedance values:
+```{r}
+long_matrix <- long_matrix %>%
+  left_join(sum_b1, by = "id") %>%
+  left_join(sum_b2, by = "to")
+```
+
+Calculate balanced impedance values:
+```{r}
+long_matrix <- long_matrix %>%
+  mutate(balanced_impedance_1 = impedance/sum_b1,
+         balanced_impedance_2 = impedance/sum_b2)
+```
+
+# Calculate level of service
+
+Check the balanced_impedance factors for the population centers:
+```{r}
+long_matrix %>%
+  filter(id == "Population 3") 
+```
+
+Notice that the population of each center is sorted among the three clinics proportionally. Thanks to this property, the sum of the population serviced equals the total population in the system:
+```{r}
+long_matrix %>%
+  group_by(id) %>%
+  summarize(pop_served = sum(sum(Population * balanced_impedance_1)),
+            .groups = "drop") %>%
+  pull(pop_served) %>%
+  sum()
+
+Population_data %>% 
+  pull(Population) %>% 
+  sum()
+```
+
+The level of service of each clinic is the number of doctors at the clinic, divided by the population that they serve:
+```{r}
+los <- long_matrix %>%
+  filter(impedance > 0) %>% # filter impedance == 0 to avoid divisions by zero
+  group_by(to) %>%
+  summarize(los = first(Doctors) / sum((Population * balanced_impedance_1)),
+            .groups = "drop")
+los
+```
+
+Join the level of service to the table:
+```{r}
+long_matrix <- long_matrix %>%
+  left_join(los, by = "to")
+```
+
+# Calculate accessibility
+
+To calculate accessibility, the level of service of each clinic needs to be distributed proportionally to the population centers. Check the 
+```{r}
+accessibility <- long_matrix %>%
+  group_by(id) %>%
+  summarize(accessibility = sum(los * balanced_impedance_2),
+            .groups = "drop")
+accessibility
+```
+
+Check that the sum of the accessibility is equal to the available level of service:
+```{r}
+accessibility %>% 
+  pull(accessibility) %>% 
+  sum()
+
+los %>% 
+  pull(los) %>%
+  sum()
+```
+
+# Complete  (or tl;dr version)
+
+The full algorithm can be written in this way. 
+
+Obtain the matrix in long form (this is line 85 in this file):
+```{r}
+long_matrix <- left_join(distance_matrix_long, Clinics_data, by=c("to" = "id"))
+```
+
+Calculate the accessibility and level of service:
+```{r}
+# Calculate impedance (binary)
+# long_matrix <- long_matrix %>%
+#   mutate(distance = drop_units(distance),
+#          impedance = ifelse(distance <= dist_threshold, 1, 0))
+
+# Calculate impedance (Gaussian)
+long_matrix <- long_matrix %>%
+  mutate(distance = drop_units(distance),
+         impedance = case_when(distance <= quantiles_d[1] ~ 0.945,
+                               (distance > quantiles_d[1]) & (distance <= quantiles_d[3]) ~ 0.600,
+                               (distance > quantiles_d[3]) & (distance <= quantiles_d[5]) ~ 0.242,
+                               distance > quantiles_d[5] ~ 0))
+
+# Calculate first set of balancing factors
+sum_b1 <- long_matrix %>%
+  group_by(id) %>%
+  summarize(sum_b1 = sum(impedance),
+            .groups = "drop")
+
+# Calculate second set of balancing factors
+sum_b2 <- long_matrix %>%
+  group_by(to) %>%
+  summarize(sum_b2 = sum(impedance),
+            .groups = "drop")
+
+# Join the sum of the impedance to the table to calculate the balanced impedance values:
+long_matrix <- long_matrix %>%
+  left_join(sum_b1, by = "id") %>%
+  left_join(sum_b2, by = "to")
+
+# Calculate the balanced impedance
+long_matrix <- long_matrix %>%
+  mutate(balanced_impedance_1 = impedance/sum_b1,
+         balanced_impedance_2 = impedance/sum_b2)
+
+# Calculate the level of service
+los <- long_matrix %>%
+  filter(impedance > 0) %>% # filter impedance == 0 to avoid divisions by zero
+  group_by(to) %>%
+  summarize(los = first(Doctors) / sum((Population * balanced_impedance_1)),
+            .groups = "drop")
+
+# Join the level of service to the table:
+long_matrix <- long_matrix %>%
+  left_join(los, by = "to")
+
+# Calculate accessibility
+accessibility <- long_matrix %>%
+  group_by(id) %>%
+  summarize(accessibility = sum(los * balanced_impedance_2),
+            .groups = "drop")
+```
+
+This is the accessibility:
+```{r}
+accessibility
+```
+
+This is the level of service:
+```{r}
+los
+```
+
+

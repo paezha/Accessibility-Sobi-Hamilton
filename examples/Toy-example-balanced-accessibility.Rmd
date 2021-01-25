@@ -281,8 +281,6 @@ ggplot(data = population_sobi) +
                         direction = 1)
 ```
 
-
-
 [**END FOR SOBI ACCESSIBILITY**]
 
 <!--

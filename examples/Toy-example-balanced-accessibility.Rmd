@@ -20,198 +20,169 @@ library(units)
 
 Load geography:
 ```{r}
-load("Simulated Example.RData")
+load("population_sobi.RData") #interpolated population in SoBi area
+load("sobi_hubs.RData") #location of SoBi hubs, minus Van Wagner's beach
+load("sobi_service.RData") #core service area for SoBi
+load("ttm_walk.RData") #travel time matrix for interpolated population in SoBi area
 ```
 
-Create simple features objects for population centers and clinics:
 ```{r}
-  # Clinics
-  sim_clinics <- st_sf(Clinics_data, geometry_clinics, stringsAsFactors = TRUE)
-  
-  # Population centers
-  sim_population <- st_sf(Population_data, geometry_population, stringsAsFactors = TRUE)
+summary(ttm_walk) #time is in minutes
 ```
-
-Calculate the distance between these points as a measure of cost:
-```{r}
-distance_matrix <- st_distance(sim_population, sim_clinics)
-```
-
-What is in these objects?
-```{r}
-head(Clinics_data)
-head(Population_data)
-head(distance_matrix)
-```
-
 # Threshold
 
 Calculate quantiles according to distance. This is done to select a threshold:
 ```{r}
-quantiles_d <- quantile(as.vector(distance_matrix), probs = c(0, 1/10, 3/10, 5/10, 7/10, 8/10, 9/10))
+quantiles_d <- quantile(as.vector(ttm_walk$travel_time), probs = c(0, 1/10, 3/10, 5/10, 7/10, 8/10, 9/10))
 
-dist_threshold <- quantile(as.vector(distance_matrix), probs = c(0, 1/10, 3/10, 5/10, 7/10, 8/10, 9/10))[[5]]
+dist_threshold <- quantile(as.vector(ttm_walk$travel_time), probs = c(0, 1/10, 3/10, 5/10, 7/10, 8/10, 9/10))[[5]]
 ```
 
 The distance threshold is equivalent to the _kernel bandwidth_ or _catchment distance_.
 
-# Prepare travel matrix in long format
+# Set up matrix
 
-Convert matrix to data.frame:
+Add population information:
 ```{r}
-distance_matrix_long <- as.data.table(distance_matrix)
+ttm_walk <- left_join(ttm_walk, 
+                      population_sobi,
+                      by = "UID")
+```
+
+Drop the geometry:
+```{r}
+ttm_walk <- ttm_walk %>% dplyr::select(-geometry)
+```
+
+Add number of bicycle racks per SoBi hub as a measure of the level of supply:
+```{r}
+ttm_walk <- left_join(ttm_walk, sobi_hubs %>% dplyr::select(OBJECTID, RACKS_AMOU), by=c("OBJECTID" = "OBJECTID"))
+ttm_walk <- ttm_walk %>% dplyr::select(-geometry)
+head(ttm_walk)
 ```
 
 Rename columns:
 ```{r}
-names(distance_matrix_long) <- c('clinic_1', 'clinic_2', 'clinic_3')
-distance_matrix_long$id <- Population_data$id
+names(ttm_walk) <- c('UID', 'hub', 'travel_time', 'population', 'racks')
 ```
 
-Melt distance matrix:
-```{r}
-distance_matrix_long <- distance_matrix_long %>%
-  pivot_longer(cols = starts_with("clinic_"),
-                     names_to = "to",
-                     values_to = "distance")
-```
+[**Note for Dr. Paez: do we want the binary and Gaussian functions? Or only one of them?**]
 
-
-```{r}
-#distance_matrix_long <- data.table::melt(distance_matrix_long, id.vars='from', variable.name = "to", value.name = "dist")
-```
-
-Add population information:
-```{r}
-distance_matrix_long <- left_join(distance_matrix_long, 
-                                  Population_data,
-                                  by = "id")
-```
-
-Add  doctors information:
-```{r}
-Clinics_data$id <- c('clinic_1', 'clinic_2', 'clinic_3')
-#distance_matrix_long$dest <- as.character(distance_matrix_long$dest)
-long_matrix <- left_join(distance_matrix_long, Clinics_data, by=c("to" = "id"))
-#setDT(long_matrix)
-head(long_matrix)
-```
-
-Calculate impedance (binary)
+Calculate impedance (binary):
 ```{r eval=TRUE}
 # Run only if binary function desired
 # Change chunk option eval=TRUE to FALSE if impedance is Gaussian function
-long_matrix <- long_matrix %>%
-  mutate(distance = drop_units(distance),
-         impedance = ifelse(distance <= dist_threshold, 1, 0))
+ttm_walk <- ttm_walk %>%
+  mutate(impedance_binary = ifelse(travel_time <= dist_threshold, 1, 0))
 ```
 
 Calculate impedance (Gaussian):
 ```{r eval=FALSE}
 # Run only if Gaussian function desired
 # Change chunk option eval=FALSE to TRUE if impedance is Gaussian function
-long_matrix <- long_matrix %>%
-  mutate(distance = drop_units(distance),
-         impedance = case_when(distance <= quantiles_d[1] ~ 0.945,
-                               (distance > quantiles_d[1]) & (distance <= quantiles_d[3]) ~ 0.600,
-                               (distance > quantiles_d[3]) & (distance <= quantiles_d[5]) ~ 0.242,
-                               distance > quantiles_d[5] ~ 0))
+ttm_walk <- ttm_walk %>%
+  mutate(impedance_gaussian = case_when(travel_time <= quantiles_d[1] ~ 0.945,
+                               (travel_time > quantiles_d[1]) & (travel_time <= quantiles_d[3]) ~ 0.600,
+                               (travel_time > quantiles_d[3]) & (travel_time <= quantiles_d[5]) ~ 0.242,
+                               travel_time > quantiles_d[5] ~ 0))
 ```
 
-Calculate the sum of the impedance by population for the balancing factors. In the binary case, this should be the same as the number of clinics that each population center can reach; when the impedance is not binary, this is the sum of all impedance values:
+
+Calculate the sum of the impedance by population for the balancing factors. In the binary case, this should be the same as the number of SoBi hubs that each interpolated population unit can reach; when the impedance is not binary, this is the sum of all impedance values:
 ```{r}
-sum_b1 <- long_matrix %>%
-  group_by(id) %>%
-  summarize(sum_b1 = sum(impedance),
+sum_b1 <- ttm_walk %>%
+  group_by(UID) %>%
+  summarize(sum_b1 = sum(impedance_binary),
             .groups = "drop")
 sum_b1
 ```
 
-The population at 1 can only reach one clinic, the population at 2 can reach two clinics, the population at 3 can reach all three clinics, etc.
+The interpolated population at unit 15 can reach eight SoBi hubs, the population at unit 16 can reach six SoBi hubs, the population at unit 30 can reach zero hubs clinics, etc. [**Note for Dr. Paez: why do the unit IDs start at 15 and not 1?**
 
-Calculate the sum of the impedance by clinic for the balancing factors. In the binary case, this should be the same as the number of population centers that each clinic serves; when the impedance is not binary, this is the sum of all impedance values:
+Calculate the sum of the impedance by SoBi hubs for the balancing factors. In the binary case, this should be the same as the number of interpolated population unit that each SoBi hub serves; when the impedance is not binary, this is the sum of all impedance values:
 ```{r}
-sum_b2 <- long_matrix %>%
-  group_by(to) %>%
-  summarize(sum_b2 = sum(impedance))
+sum_b2 <- ttm_walk %>%
+  group_by(hub) %>%
+  summarize(sum_b2 = sum(impedance_binary))
 sum_b2
 ```
 
-Clinic 1 serves four population centers, clinic 2 serves eight population centers, and clinic 3 serves seven population centers.
+Hub 1 serves 1502 interpolated population units, hub 2 serves 1393 population units, etc.
 
 Next, join the sum of the impedance to the table to calculate the balanced impedance values:
 ```{r}
-long_matrix <- long_matrix %>%
-  left_join(sum_b1, by = "id") %>%
-  left_join(sum_b2, by = "to")
+ttm_walk <- ttm_walk %>%
+  left_join(sum_b1, by = "UID") %>%
+  left_join(sum_b2, by = "hub")
 ```
 
 Calculate balanced impedance values:
 ```{r}
-long_matrix <- long_matrix %>%
-  mutate(balanced_impedance_1 = impedance/sum_b1,
-         balanced_impedance_2 = impedance/sum_b2)
+ttm_walk <- ttm_walk %>%
+  mutate(balanced_impedance_1 = impedance_binary/sum_b1,
+         balanced_impedance_2 = impedance_binary/sum_b2)
 ```
 
 # Calculate level of service
 
-Check the balanced_impedance factors for the population centers:
+Check the balanced_impedance factors for the population units:
 ```{r}
-long_matrix %>%
-  filter(id == "Population 3") 
+ttm_walk %>% 
+   dplyr::filter(hub == "46") 
 ```
 
-Notice that the population of each center is sorted among the three clinics proportionally. Thanks to this property, the sum of the population serviced equals the total population in the system:
+[**Note: not sure if this step is needed for SoBi?**] *Notice that the population of each center is sorted among the three clinics proportionally. Thanks to this property, the sum of the population serviced equals the total population in the system:*
 ```{r}
-long_matrix %>%
-  group_by(id) %>%
-  summarize(pop_served = sum(sum(Population * balanced_impedance_1)),
+ttm_walk %>%
+  group_by(UID) %>%
+  summarize(pop_served = sum(sum(population * balanced_impedance_1)),
             .groups = "drop") %>%
   pull(pop_served) %>%
   sum()
 
-Population_data %>% 
-  pull(Population) %>% 
+population_sobi %>% 
+  pull(population) %>% 
   sum()
 ```
 
-The level of service of each clinic is the number of doctors at the clinic, divided by the population that they serve:
+The level of service of each hub is the number of bicycle racks at the hub, divided by the population that they serve:
 ```{r}
-los <- long_matrix %>%
-  filter(impedance > 0) %>% # filter impedance == 0 to avoid divisions by zero
-  group_by(to) %>%
-  summarize(los = first(Doctors) / sum((Population * balanced_impedance_1)),
+sobi_los <- ttm_walk %>%
+  dplyr::filter(impedance_binary > 0) %>% # filter impedance == 0 to avoid divisions by zero
+  group_by(hub) %>%
+  summarize(sobi_los = first(racks) / sum((population * balanced_impedance_1)),
             .groups = "drop")
-los
+sobi_los
 ```
 
 Join the level of service to the table:
 ```{r}
-long_matrix <- long_matrix %>%
-  left_join(los, by = "to")
+ttm_walk <- ttm_walk %>%
+  left_join(sobi_los, by = "hub")
 ```
 
 # Calculate accessibility
 
-To calculate accessibility, the level of service of each clinic needs to be distributed proportionally to the population centers. Check the 
+To calculate accessibility, the level of service of each hub needs to be distributed proportionally to the population units. 
 ```{r}
-accessibility <- long_matrix %>%
-  group_by(id) %>%
-  summarize(accessibility = sum(los * balanced_impedance_2),
+sobi_accessibility <- ttm_walk %>%
+  group_by(UID) %>%
+  summarize(accessibility = sum(sobi_los * balanced_impedance_2),
             .groups = "drop")
-accessibility
+sobi_accessibility
 ```
 
 Check that the sum of the accessibility is equal to the available level of service:
 ```{r}
-accessibility %>% 
+sobi_accessibility %>% 
   pull(accessibility) %>% 
   sum()
 
-los %>% 
-  pull(los) %>%
+sobi_los %>% 
+  pull(sobi_los) %>%
   sum()
 ```
+[**END FOR SOBI ACCESSIBILITY**]
 
 # Complete  (or tl;dr version)
 

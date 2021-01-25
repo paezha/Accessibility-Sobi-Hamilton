@@ -29,6 +29,42 @@ load("ttm_walk.RData") #travel time matrix for interpolated population in SoBi a
 ```{r}
 summary(ttm_walk) #time is in minutes
 ```
+
+# Check the data
+
+Plot the interpolated population:
+```{r}
+ggplot(data = population_sobi) +
+  geom_sf(aes(color = population)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+Notice that the population units begin with UID 1 and ends with UID 11388:
+```{r}
+summary(population_sobi)
+```
+
+The travel time table, on the other hand, begins with population UID 15 and ends with UID 11305:
+```{r}
+summary(ttm_walk)
+```
+
+What explains this discrepancy? We can compare the population units that are in the population dataset but not in the travel time table:
+```{r}
+ggplot() +
+  geom_sf(data = sobi_service) +
+  geom_sf(data = population_sobi %>%
+            filter(!(UID %in% (distinct(ttm_walk, # filter observations with UIDs that are present in the travel time table
+                                        UID) %>% 
+                                 pull(UID)))))
+
+```
+
+The reason that some population units do not appear in the travel time table is that they are outside of the service area of SoBi and/or cannot reach SoBi hubs by walking.
+
 # Threshold
 
 Calculate quantiles according to distance. This is done to select a threshold:
@@ -76,15 +112,22 @@ ttm_walk <- ttm_walk %>%
   mutate(impedance_binary = ifelse(travel_time <= dist_threshold, 1, 0))
 ```
 
+Check the value of the dist_threshold:
+```{r}
+dist_threshold
+```
+
+Our calculations assume that people do not go further than 24 min to reach a SoBi hub.
+
 Calculate impedance (Gaussian):
 ```{r eval=FALSE}
 # Run only if Gaussian function desired
 # Change chunk option eval=FALSE to TRUE if impedance is Gaussian function
 ttm_walk <- ttm_walk %>%
   mutate(impedance_gaussian = case_when(travel_time <= quantiles_d[1] ~ 0.945,
-                               (travel_time > quantiles_d[1]) & (travel_time <= quantiles_d[3]) ~ 0.600,
-                               (travel_time > quantiles_d[3]) & (travel_time <= quantiles_d[5]) ~ 0.242,
-                               travel_time > quantiles_d[5] ~ 0))
+                                        (travel_time > quantiles_d[1]) & (travel_time <= quantiles_d[3]) ~ 0.600,
+                                        (travel_time > quantiles_d[3]) & (travel_time <= quantiles_d[5]) ~ 0.242,
+                                        travel_time > quantiles_d[5] ~ 0))
 ```
 
 
@@ -97,7 +140,20 @@ sum_b1 <- ttm_walk %>%
 sum_b1
 ```
 
-The interpolated population at unit 15 can reach eight SoBi hubs, the population at unit 16 can reach six SoBi hubs, the population at unit 30 can reach zero hubs clinics, etc. [**Note for Dr. Paez: why do the unit IDs start at 15 and not 1?**
+The interpolated population at unit 15 can reach eight SoBi hubs, the population at unit 16 can reach six SoBi hubs, the population at unit 30 can reach zero hubs clinics, etc. [**Note for Dr. Paez: why do the unit IDs start at 15 and not 1?** ***Note for Elise: Some population units are outside of the service area and/or cannot reach a single sobi hub by walking in 30 min or less, so they disappeared from the travel time table when it was create; see above***].
+
+Sanity check: how many stations are within 24 or less from population UID 15?
+```{r}
+ttm_walk %>%
+  filter(UID == 15, travel_time <= 24) %>%
+  nrow()
+```
+
+**Important:** notice that some values of `sum_b1` are zeros! This means that some population units cannot reach a SoBi hub in at most 24 min. Since the balancing impedance is calculated by diving the impedance by `sum_b1`, this will lead to NaNs (divisions by zero). To avoid issues we will remove any population units that reach zero hubs:
+```{r}
+ttm_walk <- ttm_walk %>%
+  filter(sum_b1 > 0)
+```
 
 Calculate the sum of the impedance by SoBi hubs for the balancing factors. In the binary case, this should be the same as the number of interpolated population unit that each SoBi hub serves; when the impedance is not binary, this is the sum of all impedance values:
 ```{r}
@@ -108,6 +164,21 @@ sum_b2
 ```
 
 Hub 1 serves 1502 interpolated population units, hub 2 serves 1393 population units, etc.
+
+Sanity check: how many population units are served by hub 1?
+```{r}
+ttm_walk %>%
+  filter(hub == 1, travel_time <= 24) %>%
+  nrow()
+```
+
+The values check. Next, are there any hubs that serve zero population units? (same issue with division by zero):
+```{r}
+ttm_walk$sum_b2 %>% 
+  summary()
+```
+
+No zeros or other strange values, we're good.
 
 Next, join the sum of the impedance to the table to calculate the balanced impedance values:
 ```{r}
@@ -128,10 +199,10 @@ ttm_walk <- ttm_walk %>%
 Check the balanced_impedance factors for the population units:
 ```{r}
 ttm_walk %>% 
-   dplyr::filter(hub == "46") 
+  dplyr::filter(hub == "46") 
 ```
 
-[**Note: not sure if this step is needed for SoBi?**] *Notice that the population of each center is sorted among the three clinics proportionally. Thanks to this property, the sum of the population serviced equals the total population in the system:*
+[**Note: not sure if this step is needed for SoBi?** **Note for Elise: this is only an intermediate check in the analysis, it is not strictly necessary**] *Notice that the population of each center is sorted among the SoBi hubs proportionally. Thanks to this property, the sum of the population serviced equals the total population in the system:*
 ```{r}
 ttm_walk %>%
   group_by(UID) %>%
@@ -141,6 +212,9 @@ ttm_walk %>%
   sum()
 
 population_sobi %>% 
+  filter(UID %in% (distinct(ttm_walk,
+                             UID) %>%
+             pull(UID))) %>%
   pull(population) %>% 
   sum()
 ```
@@ -154,6 +228,8 @@ sobi_los <- ttm_walk %>%
             .groups = "drop")
 sobi_los
 ```
+
+Hub 1 has 0.01538 bicycles per person, hub 2 has 0.02446 bicycles per person, etc.
 
 Join the level of service to the table:
 ```{r}
@@ -182,8 +258,34 @@ sobi_los %>%
   pull(sobi_los) %>%
   sum()
 ```
+
+```{r}
+ggplot(data = population_sobi) +
+  geom_sf(aes(color = population))
+```
+
+Join the accessibility to the population units:
+```{r}
+population_sobi <- population_sobi %>%
+  left_join(sobi_accessibility,
+            by = "UID")
+```
+
+Plot accessibility:
+```{r}
+ggplot(data = population_sobi) +
+  geom_sf(aes(color = accessibility)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+
+
 [**END FOR SOBI ACCESSIBILITY**]
 
+<!--
 # Complete  (or tl;dr version)
 
 The full algorithm can be written in this way. 
@@ -258,4 +360,4 @@ This is the level of service:
 los
 ```
 
-
+-->

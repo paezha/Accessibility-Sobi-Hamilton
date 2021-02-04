@@ -149,12 +149,6 @@ ttm_walk %>%
   nrow()
 ```
 
-**Important:** notice that some values of `sum_b1` are zeros! This means that some population units cannot reach a SoBi hub in at most 24 min. Since the balancing impedance is calculated by diving the impedance by `sum_b1`, this will lead to NaNs (divisions by zero). To avoid issues we will remove any population units that reach zero hubs:
-```{r}
-ttm_walk <- ttm_walk %>%
-  filter(sum_b1 > 0)
-```
-
 Calculate the sum of the impedance by SoBi hubs for the balancing factors. In the binary case, this should be the same as the number of interpolated population unit that each SoBi hub serves; when the impedance is not binary, this is the sum of all impedance values:
 ```{r}
 sum_b2 <- ttm_walk %>%
@@ -172,13 +166,7 @@ ttm_walk %>%
   nrow()
 ```
 
-The values check. Next, are there any hubs that serve zero population units? (same issue with division by zero):
-```{r}
-ttm_walk$sum_b2 %>% 
-  summary()
-```
-
-No zeros or other strange values, we're good.
+The values check.
 
 Next, join the sum of the impedance to the table to calculate the balanced impedance values:
 ```{r}
@@ -186,6 +174,26 @@ ttm_walk <- ttm_walk %>%
   left_join(sum_b1, by = "UID") %>%
   left_join(sum_b2, by = "hub")
 ```
+
+Check `sum_b1`:
+```{r}
+ttm_walk$sum_b1 %>% 
+  summary()
+```
+
+**Important:** notice that some values of `sum_b1` are zeros! This means that some population units cannot reach a SoBi hub in at most 24 min. Since the balancing impedance is calculated by diving the impedance by `sum_b1`, this will lead to NaNs (divisions by zero). To avoid issues we will remove any population units that reach zero hubs:
+```{r}
+ttm_walk <- ttm_walk %>%
+  filter(sum_b1 > 0)
+```
+
+Are there any hubs that serve zero population units? (same issue with division by zero):
+```{r}
+ttm_walk$sum_b2 %>% 
+  summary()
+```
+
+No zeros or other strange values, we're good.
 
 Calculate balanced impedance values:
 ```{r}
@@ -199,8 +207,12 @@ ttm_walk <- ttm_walk %>%
 Check the balanced_impedance factors for the population units:
 ```{r}
 ttm_walk %>% 
-  dplyr::filter(hub == "46") 
+  dplyr::filter(hub == "46") %>%
+  pull(balanced_impedance_2) %>%
+  sum()
 ```
+
+The sum should be 1.
 
 [**Note: not sure if this step is needed for SoBi?** **Note for Elise: this is only an intermediate check in the analysis, it is not strictly necessary**] *Notice that the population of each center is sorted among the SoBi hubs proportionally. Thanks to this property, the sum of the population serviced equals the total population in the system:*
 ```{r}
@@ -282,6 +294,47 @@ ggplot(data = population_sobi) +
 ```
 
 [**END FOR SOBI ACCESSIBILITY**]
+
+<!--The text that follows was mostly copied from PLoS ONE paper-->
+
+## Disparity Analysis
+
+An advantage of the use of adjusted weights for proportional allocation of demand and level of service it that, after rectifying the inflation artifact, they make it is possible to conduct accessibility disparity analysis in a very intuitive way. 
+
+For instance, an analyst interested in equity analysis could allocate the total level of service uniformly to every population unit. In other words, the total level of service (which equals the sum of accessibility over the system) can be divided by the number of population units in the system to return the Average Local Population Unit PPR. The resulting mean value, call it $L_i^e$ then would be assigned to the population units as their "equitable" share of the total level of service in the system. Next, the equitative distribution of the level of service in each population unit is substracted from the estimated accessibility to arrive at a disparity index. When the difference between these two quantities is positive, this would indicate that accessibility at that location exceeds its equitable share of level of service. On the other hand, when the difference is negative, accessibility at the location is below its equitable share of the level of service.
+
+This approach is reminiscent of the Spatial Access Ratio (SPAR) proposed by Wan et al. [-@Wan2012SPAR], which is calculated as the ratio between a population center's accessibility and the mean accessibility across all population centers. Wan et al. [-@Wan2012] calculate SPAR based on the results of their 3SFCA method, by rescaling the accessibility measures to reflect the percentage difference in each population center's accessibility relative to the mean. This measure is designed to overcome the sensitivity of existing FCA metrics to the impedance function. In contrast, the approach proposed here, enables more intuitive and interpretable results by preserving the system-wide population and level of service. In this way, a disparity index is useful to highlight the absolute difference in accessible provider-to-population ratios across population units.
+
+The disparity for SoBi is shown in the following map. The figure reveals the spatial distribution in disparity, with levels of access that are lower than the mean in the periphery of the service area, compared to levels of access that are greater than the mean in the higher-density and more connected urban center.
+
+```{r}
+population_sobi %>%
+  mutate(Lei = accessibility - sum(sobi_los$sobi_los)/nrow(population_sobi %>% drop_na(accessibility))) %>%
+  ggplot() +
+  geom_sf(aes(color = Lei)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
+```
+
+
+
+```{r accessibility_disparities, echo=FALSE, include=FALSE}
+#Disparities in this case is defined as the difference between the calculated accessibility (which is interpreted as the local provider-to-population ratio) and the local provider-to-population ratio if the level of service was distributed uniformly
+accessibility_disparities <- transmute(accessibility, DA, 
+                                      Binary = Binary_Adjusted - sum(los_binary_adjusted)/nrow(accessibility_binary_adjusted),
+                                      Stepwise = Stepwise_Adjusted- sum(los_stepwise_adjusted)/nrow(accessibility_stepwise_adjusted))
+```
+
+```{r join-geography, echo=FALSE, include=FALSE}
+#Join accessibility measures to geography.
+hamilton_da.sf_accessibility <- left_join(hamilton_da.sf, accessibility, by = "DA")
+hamilton_da.sf_comparison <- left_join(hamilton_da.sf, accessibility_comparison, by = "DA")
+hamilton_da.sf_disparities <- left_join(hamilton_da.sf, accessibility_disparities, by = "DA")
+```
+
+
+
 
 <!--
 # Complete  (or tl;dr version)

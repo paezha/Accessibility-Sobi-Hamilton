@@ -102,8 +102,6 @@ Rename columns:
 names(ttm_walk) <- c('UID', 'hub', 'travel_time', 'population', 'racks')
 ```
 
-[**Note for Dr. Paez: do we want the binary and Gaussian functions? Or only one of them?**]
-
 Calculate impedance (binary):
 ```{r eval=TRUE}
 # Run only if binary function desired
@@ -140,9 +138,9 @@ sum_b1 <- ttm_walk %>%
 sum_b1
 ```
 
-The interpolated population at unit 15 can reach eight SoBi hubs, the population at unit 16 can reach six SoBi hubs, the population at unit 30 can reach zero hubs clinics, etc. [**Note for Dr. Paez: why do the unit IDs start at 15 and not 1?** ***Note for Elise: Some population units are outside of the service area and/or cannot reach a single sobi hub by walking in 30 min or less, so they disappeared from the travel time table when it was create; see above***].
+The interpolated population at unit 15 can reach eight SoBi hubs, the population at unit 16 can reach six SoBi hubs, the population at unit 30 can reach zero hubs clinics, etc..
 
-Sanity check: how many stations are within 24 or less from population UID 15?
+Sanity check: how many stations are within 24 minutes or less from population UID 15?
 ```{r}
 ttm_walk %>%
   filter(UID == 15, travel_time <= 24) %>%

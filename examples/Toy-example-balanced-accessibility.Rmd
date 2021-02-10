@@ -3,6 +3,12 @@ title: "R Notebook"
 output: html_notebook
 ---
 
+Clear workspace:
+```{r}
+rm(list = ls())
+```
+
+
 Load libraries:
 ```{r message=FALSE}
 library(data.table)
@@ -22,12 +28,19 @@ Load geography:
 ```{r}
 load("population_sobi.RData") #interpolated population in SoBi area
 load("sobi_hubs.RData") #location of SoBi hubs, minus Van Wagner's beach
+load("sobi_hubs_original.RData") #SoBi hubs, minus ERI hubs
 load("sobi_service.RData") #core service area for SoBi
 load("ttm_walk.RData") #travel time matrix for interpolated population in SoBi area
+load("ttm_walk_original.RData") #travel time matrix for system without ERI hubs
 ```
 
 ```{r}
 summary(ttm_walk) #time is in minutes
+```
+
+Make a copy of the object for original system:
+```{r}
+population_sobi_original <- population_sobi
 ```
 
 # Check the data
@@ -63,7 +76,7 @@ ggplot() +
 
 ```
 
-The reason that some population units do not appear in the travel time table is that they are outside of the service area of SoBi and/or cannot reach SoBi hubs by walking.
+The reason that some population units do not appear in the travel time table is because they are outside of the service area of SoBi and/or cannot reach SoBi hubs by walking.
 
 # Threshold
 
@@ -138,7 +151,7 @@ sum_b1 <- ttm_walk %>%
 sum_b1
 ```
 
-The interpolated population at unit 15 can reach eight SoBi hubs, the population at unit 16 can reach six SoBi hubs, the population at unit 30 can reach zero hubs clinics, etc..
+The interpolated population at unit 15 can reach eight SoBi hubs in 24 minutes, the population at unit 16 can reach six SoBi hubs, the population at unit 30 can reach zero hubs clinics, etc..
 
 Sanity check: how many stations are within 24 minutes or less from population UID 15?
 ```{r}
@@ -191,7 +204,7 @@ ttm_walk$sum_b2 %>%
   summary()
 ```
 
-No zeros or other strange values, we're good.
+No zeros or other strange values.
 
 Calculate balanced impedance values:
 ```{r}
@@ -212,7 +225,7 @@ ttm_walk %>%
 
 The sum should be 1.
 
-[**Note: not sure if this step is needed for SoBi?** **Note for Elise: this is only an intermediate check in the analysis, it is not strictly necessary**] *Notice that the population of each center is sorted among the SoBi hubs proportionally. Thanks to this property, the sum of the population serviced equals the total population in the system:*
+[**Note: not sure if this step is needed for SoBi?** **Note for Elise: this is only an intermediate check in the analysis, it is not strictly necessary**] Notice that the population of each center is sorted among the SoBi hubs proportionally. Thanks to this property, the sum of the population serviced equals the total population in the system:
 ```{r}
 ttm_walk %>%
   group_by(UID) %>%
@@ -291,19 +304,229 @@ ggplot(data = population_sobi) +
                         direction = 1)
 ```
 
-[**END FOR SOBI ACCESSIBILITY**]
+# Repeat above for the original SoBi system (no ERI hubs)
 
-<!--The text that follows was mostly copied from PLoS ONE paper-->
+
+Calculate quantiles according to distance. This is done to select a threshold:
+```{r}
+quantiles_d_o <- quantile(as.vector(ttm_walk_o$travel_time), probs = c(0, 1/10, 3/10, 5/10, 7/10, 8/10, 9/10))
+
+dist_threshold_o <- quantile(as.vector(ttm_walk_o$travel_time), probs = c(0, 1/10, 3/10, 5/10, 7/10, 8/10, 9/10))[[5]]
+```
+
+The distance threshold is equivalent to the _kernel bandwidth_ or _catchment distance_.
+
+# Set up matrix
+
+Add population information:
+```{r}
+ttm_walk_o <- left_join(ttm_walk_o, 
+                      population_sobi_original,
+                      by = "UID")
+```
+
+Drop the geometry:
+```{r}
+ttm_walk_o <- ttm_walk_o %>% dplyr::select(-geometry)
+```
+
+Add number of bicycle racks per SoBi hub as a measure of the level of supply:
+```{r}
+ttm_walk_o <- left_join(ttm_walk_o, sobi_hubs_original %>% dplyr::select(OBJECTID, RACKS_AMOU), by=c("OBJECTID" = "OBJECTID"))
+ttm_walk_o <- ttm_walk_o %>% dplyr::select(-geometry)
+head(ttm_walk_o)
+```
+
+Rename columns:
+```{r}
+names(ttm_walk_o) <- c('UID', 'hub', 'travel_time', 'population', 'racks')
+```
+
+Calculate impedance (binary):
+```{r eval=TRUE}
+# Run only if binary function desired
+# Change chunk option eval=TRUE to FALSE if impedance is Gaussian function
+ttm_walk_o <- ttm_walk_o %>%
+  mutate(impedance_binary = ifelse(travel_time <= dist_threshold_o, 1, 0))
+```
+
+Check the value of the dist_threshold:
+```{r}
+dist_threshold_o
+```
+
+Our calculations assume that people do not go further than 24 min to reach a SoBi hub.
+
+Calculate impedance (Gaussian):
+```{r eval=FALSE}
+# Run only if Gaussian function desired
+# Change chunk option eval=FALSE to TRUE if impedance is Gaussian function
+ttm_walk_o <- ttm_walk_o %>%
+  mutate(impedance_gaussian = case_when(travel_time <= quantiles_d_o[1] ~ 0.945,
+                                        (travel_time > quantiles_d_o[1]) & (travel_time <= quantiles_d_o[3]) ~ 0.600,
+                                        (travel_time > quantiles_d_o[3]) & (travel_time <= quantiles_d_o[5]) ~ 0.242,
+                                        travel_time > quantiles_d_o[5] ~ 0))
+```
+
+
+Calculate the sum of the impedance by population for the balancing factors. In the binary case, this should be the same as the number of SoBi hubs that each interpolated population unit can reach; when the impedance is not binary, this is the sum of all impedance values:
+```{r}
+sum_b1 <- ttm_walk_o %>%
+  group_by(UID) %>%
+  summarize(sum_b1 = sum(impedance_binary),
+            .groups = "drop")
+sum_b1
+```
+
+The interpolated population at unit 15 can reach eight SoBi hubs in 24 minutes, the population at unit 16 can reach six SoBi hubs, the population at unit 30 can reach zero hubs clinics, etc..
+
+Sanity check: how many stations are within 24 minutes or less from population UID 15?
+```{r}
+ttm_walk_o %>%
+  filter(UID == 15, travel_time <= 24) %>%
+  nrow()
+```
+
+Calculate the sum of the impedance by SoBi hubs for the balancing factors. In the binary case, this should be the same as the number of interpolated population unit that each SoBi hub serves; when the impedance is not binary, this is the sum of all impedance values:
+```{r}
+sum_b2 <- ttm_walk_o %>%
+  group_by(hub) %>%
+  summarize(sum_b2 = sum(impedance_binary))
+sum_b2
+```
+
+Hub 1 serves 1502 interpolated population units, hub 2 serves 1393 population units, etc.
+
+Sanity check: how many population units are served by hub 1?
+```{r}
+ttm_walk_o %>%
+  filter(hub == 1, travel_time <= 24) %>%
+  nrow()
+```
+
+The values check.
+
+Next, join the sum of the impedance to the table to calculate the balanced impedance values:
+```{r}
+ttm_walk_o <- ttm_walk_o %>%
+  left_join(sum_b1, by = "UID") %>%
+  left_join(sum_b2, by = "hub")
+```
+
+Check `sum_b1`:
+```{r}
+ttm_walk_o$sum_b1 %>% 
+  summary()
+```
+
+**Important:** notice that some values of `sum_b1` are zeros! This means that some population units cannot reach a SoBi hub in at most 24 min. Since the balancing impedance is calculated by diving the impedance by `sum_b1`, this will lead to NaNs (divisions by zero). To avoid issues we will remove any population units that reach zero hubs:
+```{r}
+ttm_walk_o <- ttm_walk_o %>%
+  filter(sum_b1 > 0)
+```
+
+Are there any hubs that serve zero population units? (same issue with division by zero):
+```{r}
+ttm_walk_o$sum_b2 %>% 
+  summary()
+```
+
+No zeros or other strange values.
+
+Calculate balanced impedance values:
+```{r}
+ttm_walk_o <- ttm_walk_o %>%
+  mutate(balanced_impedance_1 = impedance_binary/sum_b1,
+         balanced_impedance_2 = impedance_binary/sum_b2)
+```
+
+# Calculate level of service
+
+Check the balanced_impedance factors for the population units:
+```{r}
+ttm_walk_o %>% 
+  dplyr::filter(hub == "46") %>%
+  pull(balanced_impedance_2) %>%
+  sum()
+```
+
+The sum should be 1.
+
+The level of service of each hub is the number of bicycle racks at the hub, divided by the population that they serve:
+```{r}
+sobi_los_original <- ttm_walk_o %>%
+  dplyr::filter(impedance_binary > 0) %>% # filter impedance == 0 to avoid divisions by zero
+  group_by(hub) %>%
+  summarize(sobi_los_original = first(racks) / sum((population * balanced_impedance_1)),
+            .groups = "drop")
+sobi_los_original
+```
+
+Hub 1 has 0.01535 bicycles per person, hub 2 has 0.02435 bicycles per person, etc.
+
+Join the level of service to the table:
+```{r}
+ttm_walk_o <- ttm_walk_o %>%
+  left_join(sobi_los_original, by = "hub")
+```
+
+# Calculate accessibility
+
+To calculate accessibility, the level of service of each hub needs to be distributed proportionally to the population units. 
+```{r}
+sobi_accessibility_original <- ttm_walk_o %>%
+  group_by(UID) %>%
+  summarize(accessibility_o = sum(sobi_los_original * balanced_impedance_2),
+            .groups = "drop")
+sobi_accessibility_original
+```
+
+Check that the sum of the accessibility is equal to the available level of service:
+```{r}
+sobi_accessibility_original %>% 
+  pull(accessibility_o) %>% 
+  sum()
+
+sobi_los_original %>% 
+  pull(sobi_los_original) %>%
+  sum()
+```
+
+Compared to the analysis that includes the ERI hubs, the available level of service is lower. 
+
+```{r}
+ggplot(data = population_sobi_original) +
+  geom_sf(aes(color = population))
+```
+
+Join the accessibility to the population units:
+```{r}
+population_sobi_original <- population_sobi_original %>% left_join(sobi_accessibility_original, by = "UID")
+```
+
+Plot accessibility:
+```{r}
+ggplot(data = population_sobi_original) +
+  geom_sf(aes(color = accessibility_o)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
 
 ## Disparity Analysis
 
+<!--The text that follows was mostly copied from PLoS ONE paper-->
+
 An advantage of the use of adjusted weights for proportional allocation of demand and level of service it that, after rectifying the inflation artifact, they make it is possible to conduct accessibility disparity analysis in a very intuitive way. 
 
-For instance, an analyst interested in equity analysis could allocate the total level of service uniformly to every population unit. In other words, the total level of service (which equals the sum of accessibility over the system) can be divided by the number of population units in the system to return the Average Local Population Unit PPR. The resulting mean value, call it $L_i^e$ then would be assigned to the population units as their "equitable" share of the total level of service in the system. Next, the equitative distribution of the level of service in each population unit is substracted from the estimated accessibility to arrive at a disparity index. When the difference between these two quantities is positive, this would indicate that accessibility at that location exceeds its equitable share of level of service. On the other hand, when the difference is negative, accessibility at the location is below its equitable share of the level of service.
+For instance, an analyst interested in equity analysis could allocate the total level of service uniformly to every population unit. In other words, the total level of service (which equals the sum of accessibility over the system) can be divided by the number of population units in the system to return the Average Local Population Unit PPR. The resulting mean value, call it $L_i^e$ then would be assigned to the population units as their "equitable" share of the total level of service in the system. Next, the equitable distribution of the level of service in each population unit is subtracted from the estimated accessibility to arrive at a disparity index. When the difference between these two quantities is positive, this would indicate that accessibility at that location exceeds its equitable share of level of service. On the other hand, when the difference is negative, accessibility at the location is below its equitable share of the level of service.
 
-This approach is reminiscent of the Spatial Access Ratio (SPAR) proposed by Wan et al. [-@Wan2012SPAR], which is calculated as the ratio between a population center's accessibility and the mean accessibility across all population centers. Wan et al. [-@Wan2012] calculate SPAR based on the results of their 3SFCA method, by rescaling the accessibility measures to reflect the percentage difference in each population center's accessibility relative to the mean. This measure is designed to overcome the sensitivity of existing FCA metrics to the impedance function. In contrast, the approach proposed here, enables more intuitive and interpretable results by preserving the system-wide population and level of service. In this way, a disparity index is useful to highlight the absolute difference in accessible provider-to-population ratios across population units.
+This approach is reminiscent of the Spatial Access Ratio (SPAR) proposed by Wan et al. [-@Wan2012SPAR], which is calculated as the ratio between a population center's accessibility and the mean accessibility across all population centers. Wan et al. [-@Wan2012] calculate SPAR based on the results of their 3SFCA method, by re-scaling the accessibility measures to reflect the percentage difference in each population center's accessibility relative to the mean. This measure is designed to overcome the sensitivity of existing FCA metrics to the impedance function. In contrast, the approach proposed here, enables more intuitive and interpretable results by preserving the system-wide population and level of service. In this way, a disparity index is useful to highlight the absolute difference in accessible provider-to-population ratios across population units.
 
-The disparity for SoBi is shown in the following map. The figure reveals the spatial distribution in disparity, with levels of access that are lower than the mean in the periphery of the service area, compared to levels of access that are greater than the mean in the higher-density and more connected urban center.
+The disparity for SoBi is shown in the following map. The figure reveals the spatial distribution in disparity, with levels of access that are lower than the mean in the periphery of the service area, compared to levels of access that are greater than the mean in the higher-density and more connected urban center. It is worth noting that levels of access that are greater than the mean are predominantly concentrated around the University in west Hamilton. Areas that have less than their equitable share of the level of service are some of the most socioeconomically disadvantaged areas in the city. Our analysis builds upon a previous and recent study [@hosfordWhoArePublic2018] which found that disadvantaged areas in Hamilton are better served by the SoBi system, compared to other Canadian cities [i.e., Toronto, Vancouver, Montreal, and Ottawa-Gatineau] where advantaged areas have greater access. The authors [@hosfordWhoArePublic2018] note "Hamilton stands out in that the lower income neighborhoods are located near the city center and wealthier neighborhoods are in the surrounding suburban areas. Thus, relative to other Canadian programs, Hamilton’s bicycle share program could more easily be established in lower income areas while still being near high population density areas". This is an artifact of the 2001 amalgamation of Hamilton with four surrounding communities.	The urban core, which is Hamilton proper, remains predominantly disadvantaged compared to the 4 amalgamated and less densely populated areas (e.g., Dundas, Ancaster, Stoney Creek, Waterdown) that surround the city. Interestingly, Dundas is an advantaged area but also has lower accessibility that is less than their equitable share. However, by calculating the disparity index, we have shown that more advantaged areas within the SoBi service area have higher levels of service and exceed its equitable share of service. 
+# Disparity of system with ERI hubs
 
 ```{r}
 population_sobi %>%
@@ -315,98 +538,123 @@ population_sobi %>%
   scale_color_gradient2()
 ```
 
+Drop population units that have `NA` for accessibility because they are outside of the service area of SoBi and/or cannot reach SoBi hubs by walking.
+```{r}
+population_sobi <- population_sobi %>% drop_na()
+```
 
+This data frame now has the same number of rows as the data frame on `sobi_accessibility`.
 
+Calculate the sum of accessibility over the system:
+```{r}
+sum(population_sobi$accessibility)
+```
+Divide by the number of population units in the system to return the average local population unit provider-to-population ratio:
+```{r}
+population_sobi <- population_sobi %>% mutate(PPR = sum(accessibility/nrow(population_sobi)))
+```
+
+The "equitable" share of the total level of service in the system is 0.0002025645 per population unit.
+
+Calculate disparities per population unit:
 ```{r accessibility_disparities, echo=FALSE, include=FALSE}
-#Disparities in this case is defined as the difference between the calculated accessibility (which is interpreted as the local provider-to-population ratio) and the local provider-to-population ratio if the level of service was distributed uniformly
-accessibility_disparities <- transmute(accessibility, DA, 
-                                      Binary = Binary_Adjusted - sum(los_binary_adjusted)/nrow(accessibility_binary_adjusted),
-                                      Stepwise = Stepwise_Adjusted- sum(los_stepwise_adjusted)/nrow(accessibility_stepwise_adjusted))
+# Disparity in this case is defined as the difference between the calculated accessibility (which is interpreted as the local provider-to-population ratio) and the local provider-to-population ratio if the level of service was distributed uniformly
+
+population_sobi <- population_sobi %>% mutate(disparity = accessibility - PPR)
 ```
 
-```{r join-geography, echo=FALSE, include=FALSE}
-#Join accessibility measures to geography.
-hamilton_da.sf_accessibility <- left_join(hamilton_da.sf, accessibility, by = "DA")
-hamilton_da.sf_comparison <- left_join(hamilton_da.sf, accessibility_comparison, by = "DA")
-hamilton_da.sf_disparities <- left_join(hamilton_da.sf, accessibility_disparities, by = "DA")
-```
-
-
-
-
-<!--
-# Complete  (or tl;dr version)
-
-The full algorithm can be written in this way. 
-
-Obtain the matrix in long form (this is line 85 in this file):
+Check plot:
 ```{r}
-long_matrix <- left_join(distance_matrix_long, Clinics_data, by=c("to" = "id"))
+population_sobi %>%
+  ggplot() +
+  geom_sf(aes(color = disparity)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
 ```
 
-Calculate the accessibility and level of service:
+
+# Disparity of original system without ERI hubs
+
 ```{r}
-# Calculate impedance (binary)
-# long_matrix <- long_matrix %>%
-#   mutate(distance = drop_units(distance),
-#          impedance = ifelse(distance <= dist_threshold, 1, 0))
-
-# Calculate impedance (Gaussian)
-long_matrix <- long_matrix %>%
-  mutate(distance = drop_units(distance),
-         impedance = case_when(distance <= quantiles_d[1] ~ 0.945,
-                               (distance > quantiles_d[1]) & (distance <= quantiles_d[3]) ~ 0.600,
-                               (distance > quantiles_d[3]) & (distance <= quantiles_d[5]) ~ 0.242,
-                               distance > quantiles_d[5] ~ 0))
-
-# Calculate first set of balancing factors
-sum_b1 <- long_matrix %>%
-  group_by(id) %>%
-  summarize(sum_b1 = sum(impedance),
-            .groups = "drop")
-
-# Calculate second set of balancing factors
-sum_b2 <- long_matrix %>%
-  group_by(to) %>%
-  summarize(sum_b2 = sum(impedance),
-            .groups = "drop")
-
-# Join the sum of the impedance to the table to calculate the balanced impedance values:
-long_matrix <- long_matrix %>%
-  left_join(sum_b1, by = "id") %>%
-  left_join(sum_b2, by = "to")
-
-# Calculate the balanced impedance
-long_matrix <- long_matrix %>%
-  mutate(balanced_impedance_1 = impedance/sum_b1,
-         balanced_impedance_2 = impedance/sum_b2)
-
-# Calculate the level of service
-los <- long_matrix %>%
-  filter(impedance > 0) %>% # filter impedance == 0 to avoid divisions by zero
-  group_by(to) %>%
-  summarize(los = first(Doctors) / sum((Population * balanced_impedance_1)),
-            .groups = "drop")
-
-# Join the level of service to the table:
-long_matrix <- long_matrix %>%
-  left_join(los, by = "to")
-
-# Calculate accessibility
-accessibility <- long_matrix %>%
-  group_by(id) %>%
-  summarize(accessibility = sum(los * balanced_impedance_2),
-            .groups = "drop")
+population_sobi_original %>%
+  mutate(Lei = accessibility_o - sum(sobi_los_original$sobi_los_original)/nrow(population_sobi_original %>% drop_na(accessibility_o))) %>%
+  ggplot() +
+  geom_sf(aes(color = Lei)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
 ```
 
-This is the accessibility:
+Drop population units that have `NA` for accessibility because they are outside of the service area of SoBi and/or cannot reach SoBi hubs by walking.
 ```{r}
-accessibility
+population_sobi_original <- population_sobi_original %>% drop_na()
 ```
 
-This is the level of service:
+This data frame now has the same number of rows as the data frame on `sobi_accessibility_original`.
+
+Calculate the sum of accessibility over the system:
 ```{r}
-los
+sum(population_sobi_original$accessibility_o)
 ```
 
--->
+Divide by the number of population units in the system to return the average local population unit provider-to-population ratio:
+```{r}
+population_sobi_original <- population_sobi_original %>% mutate(PPR_o = sum(accessibility_o/nrow(population_sobi_original)))
+```
+
+The "equitable" share of the total level of service in the system is 0.0001927507 per population unit.
+
+Calculate disparities per population unit:
+```{r accessibility_disparities_original, echo=FALSE, include=FALSE}
+# Disparity in this case is defined as the difference between the calculated accessibility (which is interpreted as the local provider-to-population ratio) and the local provider-to-population ratio if the level of service was distributed uniformly
+
+population_sobi_original <- population_sobi_original %>% mutate(disparity_original = accessibility_o - PPR_o)
+```
+
+Check plot:
+```{r}
+population_sobi_original %>%
+  ggplot() +
+  geom_sf(aes(color = disparity_original)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
+```
+
+Join in one data frame:
+```{r}
+sobi_equity <- population_sobi_original %>% st_join(population_sobi, by = "UID")
+```
+
+Drop duplicate population and UID columns:
+```{r}
+sobi_equity <- sobi_equity[ -c(6, 7) ]
+```
+
+Rename columns:
+```{r}
+names(sobi_equity) <- c('population', 'UID', 'accessibility_o', 'PPR_o', 'disparity_o', 'accessibility', 'PPR', 'disparity', 'geometry')
+```
+
+Calculate difference in disparity between system with and without ERI hubs:
+```{r}
+sobi_equity <- sobi_equity %>% mutate(disparity_change = disparity - disparity_o)
+```
+
+Check plot:
+```{r}
+sobi_equity %>%
+  ggplot() +
+  geom_sf(aes(color = disparity_change)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
+```
+
+If you remove the ERI hubs from the east end of the service area, it is evident that those communities are impacted, whereas the rest of the city is not.
+
+Save data file:
+```{r}
+save(sobi_equity, file = "sobi_equity.RData")
+```

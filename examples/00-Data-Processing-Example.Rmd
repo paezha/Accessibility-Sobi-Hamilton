@@ -337,7 +337,6 @@ Extract educational institutions in service area:
 schools_sobi <- st_crop(schools, st_as_sfc(bounding_box))
 ```
 
-
 Extract EMS stations in service area:
 ```{r}
 ems_sobi <- st_crop(ems, st_as_sfc(bounding_box))
@@ -636,7 +635,7 @@ interpolated_pop_clean <- interpolated_pop[sobi_service %>% st_buffer(500),]
 
 Note that some cells have population values of zero:
 ```{r}
-interpolated_pop_clean %>% select(population) %>% summary()
+interpolated_pop_clean %>% dplyr::select(population) %>% summary()
 ```
 
 Filter all cells with non-zero population values:
@@ -701,7 +700,39 @@ ggplot() +
   scale_size(range = c(1, 4))
 ```
 
-## Routing
+Remove ERI hubs that were implemented in 2018 to increase accessibility for under-serviced and disadvantaged areas of the city. This reflects the original state of the system without the equity stations:
+```{r}
+sobi_hubs_original <- sobi_hubs %>%
+  dplyr::filter(NAME != "Mars at Wentworth - ERI01") %>%
+  dplyr::filter(NAME != "Sherman at Barton - ERI02") %>%
+  dplyr::filter(NAME != "Barton at Lottridge - ERI03") %>%
+  dplyr::filter(NAME != "Barton and Belview - ERI05") %>%
+  dplyr::filter(NAME != "Barton at Ottawa - ERI06") %>%
+  dplyr::filter(NAME != "Ottawa at Dunsmure - ERI07") %>%
+  dplyr::filter(NAME != "Maple at Rothsay - ERI08") %>%
+  dplyr::filter(NAME != "King at Dunsmure - ERI09") %>%
+  dplyr::filter(NAME != "Dunsmure at Sherman - ERI10") %>%
+  dplyr::filter(NAME != "Gage at Cannon - ERI11") %>%
+  dplyr::filter(NAME != "Belview at Cannon - ERI12") %>%
+  dplyr::filter(NAME != "Westinghouse at Barton - ERI13")
+```
+
+Plot again:
+```{r}
+ggplot() + 
+  geom_sf(data = interpolated_pop_clean,
+          aes(color = population)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = sobi_hubs_original,
+          aes(size = RACKS_AMOU)) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1) +
+  scale_size(range = c(1, 4))
+```
+After removing the twelve ERI hubs, there is much less coverage in the east end of the service area. Again, the service area is the area where a cyclist can use a SoBi bike. It makes sense then that ERI would want to fill this gap in coverage because individuals who live in the east end of the service area could theoretically use the bike share system but may not live near a hub. For this reason, twelve hubs were added in 2018 to expand the system.
+
+## Routing for entire system
 
 I used [BBBike](https://download.bbbike.org/osm/bbbike/) to extract OSM data for Hamilton - not the whole city, but enough to cover SoBI's service area. The name of the file is `planet_-80.042,43.183_-79.748,43.309.osm.pbf`. Copy to folder `r5_graph`.
 
@@ -723,7 +754,7 @@ origins_i <- data.frame(UID = interpolated_pop_clean$UID,
                 st_transform(crs = 4326) %>%
                 st_coordinates()) %>%
     rename(lon = X, lat = Y, id = UID) %>%
-    select(id, lon, lat)
+    dplyr::select(id, lon, lat)
 
 # now SoBi hubs
 destinations_j <- data.frame(OBJECTID = sobi_hubs$OBJECTID, 
@@ -731,7 +762,7 @@ destinations_j <- data.frame(OBJECTID = sobi_hubs$OBJECTID,
                 st_transform(crs = 4326) %>%
                 st_coordinates()) %>%
     rename(lon = X, lat = Y, id = OBJECTID) %>%
-    select(id, lon, lat)
+    dplyr::select(id, lon, lat)
 ```
 
 Calculate OD Matrix for Walking:
@@ -787,6 +818,85 @@ ttm_walk <- as.data.frame(ttm_walk.disk.frame) %>%
   transmute(UID = as.numeric(fromId), OBJECTID = as.numeric(toId), travel_time)
 ```
 
+## Routing for original system without ERI hubs
+
+Build the graph:
+```{r build-graph-original, include = FALSE}
+r5_sobi_original <- setup_r5(data_path = r5_path, verbose = FALSE)
+```
+
+Prepare Input Data for `r5r`. The origins are the coordinates of the population cells and the destinations the coordinates of the SoBi hubs (minus the ERI hubs in the east end of the service area):
+```{r prepare-inputs-original}
+# save origin centroids in format expected by R5R (id, lon, lat)
+origins_io <- data.frame(UID = interpolated_pop_clean$UID, 
+              interpolated_pop_clean %>%
+                st_transform(crs = 4326) %>%
+                st_coordinates()) %>%
+    rename(lon = X, lat = Y, id = UID) %>%
+    dplyr::select(id, lon, lat)
+
+# now SoBi hubs
+destinations_jo <- data.frame(OBJECTID = sobi_hubs_original$OBJECTID, 
+              sobi_hubs_original %>%
+                st_transform(crs = 4326) %>%
+                st_coordinates()) %>%
+    rename(lon = X, lat = Y, id = OBJECTID) %>%
+    dplyr::select(id, lon, lat)
+```
+
+Calculate OD Matrix for Walking:
+```{r calculate walking od matrix original system, include=FALSE}
+# set up batching according to how many origin rows to process at one time
+chunksize_o = 2000 # larger chunks for walking will give enough origins in each chunk to allow multiprocessing to spin up with R5R
+num_chunks_o = ceiling(nrow(origins_io)/chunksize_o)
+
+# create origin-destination pairs
+origins_chunks_o <- as.disk.frame(origins_io,
+                          outdir = "./df/origins_io",
+                          nchunks = num_chunks_o,
+                          overwrite = TRUE)
+
+start.time_o <- Sys.time()
+pb_o <- txtProgressBar(0, num_chunks_o, style = 3)
+
+for (io in 1:num_chunks_o){
+  origins_io_chunk <- get_chunk(origins_chunks_o, io)
+  ttm_chunk_o <- travel_time_matrix(r5_sobi_original,
+                          origins = origins_io_chunk,
+                          destinations = destinations_jo,
+                          mode = c("WALK"),
+                          departure_datetime = as.POSIXct(strptime("2020-03-02 08:00:00", "%Y-%m-%d %H:%M:%S", tz = "EST5EDT")),
+                          max_walk_dist = 10000, # metres
+                          max_trip_duration = 30)
+  
+  # export output as disk.frame
+  ifelse(io == 1, output_o_df <- as.disk.frame(ttm_chunk_o,
+                                            nchunks = 1,
+                                            outdir = "./df/output_ttm_walk_o",
+                                            compress = 50,
+                                            overwrite = TRUE),
+         add_chunk(output_o_df, ttm_chunk_o, chunk_id = io))
+  setTxtProgressBar(pb_o, io)
+}
+end.time_o <- Sys.time()
+ttm_walk_time_o <- end.time - start.time
+ttm_walk_time_o
+```
+
+## Extract travel time matrix for original system
+
+```{r load od matrix for walk and sobi, include=FALSE}
+# connect to the walking travel time matrix disk frame
+ttm_walk_o.disk.frame <- disk.frame("./df/output_ttm_walk_o")
+#opportunities_j <- as.data.frame(nyc_cb_point) %>% select(GEOID10, total_emp) %>% rename(toId = GEOID10, o_j = total_emp)
+```
+
+Convert disk.frame to data frame:
+```{r}
+ttm_walk_o <- as.data.frame(ttm_walk_o.disk.frame) %>%
+  transmute(UID = as.numeric(fromId), OBJECTID = as.numeric(toId), travel_time)
+```
+
 ## Save data to disk
 
 Rename data frame:
@@ -798,7 +908,9 @@ Save data files:
 ```{r}
 save(population_sobi, file = "population_sobi.RData")
 save(sobi_hubs, file = "sobi_hubs.RData")
+save(sobi_hubs_original, file = "sobi_hubs_original.RData")
 save(sobi_service, file = "sobi_service.RData")
 save(ttm_walk, file = "ttm_walk.RData")
+save(ttm_walk_o, file = "ttm_walk_original.RData")
 ```
 

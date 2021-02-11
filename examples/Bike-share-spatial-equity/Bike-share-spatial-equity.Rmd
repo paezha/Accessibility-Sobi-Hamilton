@@ -1,0 +1,114 @@
+---
+title: Examining spatial equity of a public bicycle share program using Floating Catchment Area methods 
+author:
+  - name: Antonio Paez
+    email: paez@mcmaster.ca
+    affiliation: Some School
+    footnote: 1
+  - name: Elise Desjardins
+    email: desjae@mcmaster.ca
+    affiliation: Some School
+    footnote: 2
+  - name: Christopher D. Higgins
+    email: cd.higgins@utoronto.ca
+    affiliation: Another University
+    footnote: 2
+address:
+  - code: McMaster University
+    address: School of Earth, Environment & Society, 1280 Main Street West, Hamilton, ON
+  - code: University of Toronto Scarborough
+    address: Department, Street, City, State, Zip
+footnote:
+  - code: 1
+    text: "Corresponding Author"
+  - code: 2
+    text: "Equal contribution"
+abstract: |
+  This is the abstract.
+
+  It consists of two paragraphs.
+
+journal: "Transportation Research Part D: Transport and Environment"
+date: "`r Sys.Date()`"
+bibliography: mybibfile.bib
+#linenumbers: true
+#numbersections: true
+csl: elsevier-harvard.csl
+output: rticles::elsevier_article
+---
+
+```{r echo=FALSE}
+library(dplyr)
+library(disk.frame)
+library(pycno)
+library(readr)
+library(r5r) # the r5r package requires Java Development Kit version 11, which can be downloaded from https://www.oracle.com/java/technologies/javase-jdk11-downloads.html
+library(sf)
+library(tidyverse)
+library(data.table)
+library(gdistance)
+library(kableExtra)
+library(raster)
+library(rgdal)
+library(sf)
+library(units)
+```
+
+```{r echo=FALSE}
+load("hamilton_cma.RData")
+load("hamilton_da_2016.RData")
+load("population_sobi.RData") #interpolated population in SoBi area
+load("sobi_hubs.RData") #location of SoBi hubs, minus Van Wagner's beach
+load("sobi_hubs_original.RData") #SoBi hubs, minus ERI hubs
+load("sobi_service.RData") #core service area for SoBi
+load("ttm_walk.RData") #travel time matrix for interpolated population in SoBi area
+load("ttm_walk_original.RData") #travel time matrix for system without ERI hubs
+```
+
+Introduction
+===================
+
+Public bicycle share programs (PBSP) 
+
+This paper uses the city of Hamilton, located in Ontario, Canada, as a case study. The city launched the program, called SoBi Hamilton, in March 2015 with 115 stations and 750 bicycles [@Hamilton2020]. The core service area spans 35 km^2 of the city and approximately 180,000 people live there [see Figure 1]. The program was enthusiastically welcomed in the city - within three weeks of launching, 10,000 trips had been made. In 2017, Hamilton Bike Share Inc., the non-profit organization that operates the program, initiated an equity program, Everyone Rides Initiative (ERI), to remove barriers that may prevent individuals from accessing bike share in Hamilton. To increase spatial equity, an additional 75 bicycles and 15 stations were added to the system, which expanded it to more disadvantaged areas in the city [see Figure 2]. The program also offers subsidized memberships to individuals who identify as low income. As of June 2020, the bike share program has 900 bikes and over 130 stations, and over 26,000 active memberships [@Hamilton2020]. 
+
+```{r echo=FALSE}
+sobi_service <- sobi_service %>%
+  dplyr::filter(AREA_NAME == "Core Service Area")
+```
+
+```{r echo=FALSE}
+bounding_box <- st_bbox(sobi_service %>%
+                          st_buffer(500))
+```
+
+```{r echo=FALSE}
+ggplot() + 
+  geom_sf(data = hamilton_da_2016,
+          fill = NA,
+          color = "gray") + 
+  geom_sf(data = sobi_service,
+          fill = NA,
+          colour = "blue")
+```
+
+
+Methods
+===================
+
+
+
+
+Results
+===================
+
+
+Discussion
+===================
+
+Conclusion
+===================
+
+
+References {#references .unnumbered}
+===================

@@ -659,3 +659,283 @@ Save data file:
 ```{r}
 save(sobi_equity, file = "sobi_equity.RData")
 ```
+
+## Reaggregating accessibility
+
+One advantage of the Balanced FCA approach is that accessibility can be reaggregated while preserving the population and level of service. Here, we reaggregate the population to DAs. This allows us to then join the DA-level accessibility to DA-level census data for further analysis.
+
+Read the DA-level data:
+```{r}
+load("hamilton_da_2016.RData")
+```
+
+Plot DAs:
+```{r}
+ggplot(data = hamilton_da_2016) +
+  geom_sf()
+```
+
+Project the Hamilton DA zones to the same projection of the SoBi Service Area:
+```{r}
+hamilton_da_2016 <- st_transform(hamilton_da_2016, crs = st_crs(sobi_service))
+```
+
+Bounding box of DAs in serviced areas:
+```{r}
+bounding_box <- st_bbox(sobi_service %>%
+                          st_buffer(500))
+```
+
+Extract DAs in service area:
+```{r}
+hamilton_da_sobi <- hamilton_da_2016[st_as_sfc(bounding_box),]
+```
+
+Plot accessibility and extracted DAs:
+```{r}
+ggplot() +
+  geom_sf(data = population_sobi_original,
+          aes(color = accessibility_o)) +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA) + 
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+Spatial join:
+```{r}
+accessibility_da_original <- population_sobi_original %>%
+  st_join(hamilton_da_sobi %>% dplyr::select(DA))
+```
+
+Aggregate population and accessibility by DA:
+```{r}
+accessibility_da_original <- accessibility_da_original %>%
+  group_by(DA) %>%
+  summarize(population = sum(population),
+            accessibility_o = sum(accessibility_o),
+            .groups = "drop")
+  
+```
+
+Check that accessibility (LOS) is preserved:
+```{r}
+sum(accessibility_da_original$accessibility_o)
+sum(population_sobi_original$accessibility_o)
+```
+
+Check that the population is preserved:
+```{r}
+sum(accessibility_da_original$population)
+sum(population_sobi_original$population)
+```
+
+Ok!
+
+Add the geometry of DAs to the table `accessibility_da` and convert into simple features:
+```{r}
+accessibility_da_original <- accessibility_da_original %>%
+  st_drop_geometry() %>%
+  left_join(hamilton_da_sobi %>% 
+              dplyr::select(DA, geometry),
+            by = "DA") %>%
+  st_as_sf()
+```
+
+Plot DA-level accessibility:
+```{r}
+ggplot() +
+  geom_sf(data = accessibility_da_original,
+          aes(fill = accessibility_o),
+          color = "black") +
+  scale_fill_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+Same thing for the other accessibility estimates. Spatial join:
+```{r}
+accessibility_da <- population_sobi %>%
+  st_join(hamilton_da_sobi %>% dplyr::select(DA))
+```
+
+Aggregate population and accessibility by DA:
+```{r}
+accessibility_da <- accessibility_da %>%
+  group_by(DA) %>%
+  summarize(population = sum(population),
+            accessibility = sum(accessibility),
+            .groups = "drop")
+  
+```
+
+Check that accessibility (LOS) is preserved:
+```{r}
+sum(accessibility_da$accessibility)
+sum(population_sobi$accessibility)
+```
+
+Check that the population is preserved:
+```{r}
+sum(accessibility_da$population)
+sum(population_sobi$population)
+```
+
+Ok!
+
+Add the geometry of DAs to the table `accessibility_da` and convert into simple features:
+```{r}
+accessibility_da <- accessibility_da %>%
+  st_drop_geometry() %>%
+  left_join(hamilton_da_sobi %>% 
+              dplyr::select(DA, geometry),
+            by = "DA") %>%
+  st_as_sf()
+```
+
+Plot DA-level accessibility:
+```{r}
+ggplot() +
+  geom_sf(data = accessibility_da,
+          aes(fill = accessibility),
+          color = "black") +
+  scale_fill_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+Join two accessibility estimates:
+```{r}
+accessibility_da <- accessibility_da %>%
+  left_join(accessibility_da_original %>% 
+              st_drop_geometry() %>%
+              rename(population_o = population),
+              dplyr::select(DA, accessibility_o, population_o),
+            by = "DA") %>%
+  mutate(accessibility_o = replace_na(accessibility_o, 0), # The population serviced grows with the new stations, and as a result some original population is zero
+         population_o = replace_na(population_o, 0)) # Same for accessibility
+
+```
+
+Calculate the difference in accessibility with and without ERI hubs:
+```{r}
+accessibility_da <- accessibility_da %>%
+  mutate(R_a = accessibility - accessibility_o)
+```
+
+Plot accessibility differences between with and without ERI hubs:
+```{r}
+ggplot() +
+  geom_sf(data = accessibility_da,
+          aes(fill = R_a),
+          color = "black") +
+  scale_fill_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+Retrieve census data using cancensus package (requires API key!)
+```{r}
+library(cancensus)
+```
+
+**NOTE TO ELISE**
+
+You can get an API to use `cancensus` from [CensusMapper](https://censusmapper.ca/). Once you have an API key, you can store it in your system this way:
+```{r eval=FALSE}
+set_api_key("your-key", install = TRUE)
+```
+
+Once you have your API you can use `cancensus` like in this example.
+
+Use `cancensus` to check and download census data. Check the regions:
+```{r}
+list_census_regions('CA16') %>% 
+  filter(level == "CMA", name %in% c("Hamilton"))
+```
+
+We need PR_UID 35.
+
+List census data sets:
+```{r}
+list_census_datasets()
+```
+
+We need CA16.
+
+```{r}
+find_census_vectors("median household income", 
+                    dataset = "CA16", 
+                    type = "total", 
+                    query_type = "keyword", 
+                    interactive = FALSE)
+```
+
+We need v_CA16_2397.
+
+Retrieve data:
+```{r eval=FALSE}
+mhi <- get_census(dataset='CA16', 
+                          regions=list(CMA=c("35537")),
+                          vectors=c("v_CA16_2397"),
+                          level='DA', 
+                          use_cache = FALSE)
+```
+
+Join median household income to accessibility by DA:
+```{r}
+accessibility_da <- accessibility_da %>%
+  left_join(mhi %>%
+              transmute(DA = GeoUID,
+                        median_household_income = `v_CA16_2397: Median total income of households in 2015 ($)`),
+            by = "DA")
+```
+
+Summary of median household income:
+```{r}
+summary(accessibility_da$median_household_income)
+```
+
+There is a missing value (likely a censored unit).
+
+Bivariate choropleth maps of accessibility and income:
+```{r}
+library(biscale)
+library(cowplot)
+```
+
+Create a class for bivariate plotting (drop DA with missing income data):
+```{r}
+data <- bi_class(accessibility_da %>%
+                   drop_na(),
+                 x = accessibility_o, 
+                 y = median_household_income, 
+                 style = "quantile", 
+                 dim = 3) %>%
+  st_as_sf()
+```
+
+Plot:
+```{r}
+ map <- ggplot() +
+  geom_sf(data = data, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
+  bi_scale_fill(pal = "DkBlue", dim = 3) +
+  bi_theme()
+
+map
+```
+
+Create legend:
+```{r}
+legend <- bi_legend(pal = "DkBlue",
+                    dim = 3,
+                    xlab = "Higher accessibility ",
+                    ylab = "Higher income",
+                    size = 6)
+```
+
+Finalize plot:
+```{r}
+ cowplot::ggdraw() +
+  cowplot::draw_plot(map, 0, 0, 1, 1) +
+  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+```
+
+

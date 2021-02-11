@@ -526,7 +526,8 @@ For instance, an analyst interested in equity analysis could allocate the total 
 This approach is reminiscent of the Spatial Access Ratio (SPAR) proposed by Wan et al. [-@Wan2012SPAR], which is calculated as the ratio between a population center's accessibility and the mean accessibility across all population centers. Wan et al. [-@Wan2012] calculate SPAR based on the results of their 3SFCA method, by re-scaling the accessibility measures to reflect the percentage difference in each population center's accessibility relative to the mean. This measure is designed to overcome the sensitivity of existing FCA metrics to the impedance function. In contrast, the approach proposed here, enables more intuitive and interpretable results by preserving the system-wide population and level of service. In this way, a disparity index is useful to highlight the absolute difference in accessible provider-to-population ratios across population units.
 
 The disparity for SoBi is shown in the following map. The figure reveals the spatial distribution in disparity, with levels of access that are lower than the mean in the periphery of the service area, compared to levels of access that are greater than the mean in the higher-density and more connected urban center. It is worth noting that levels of access that are greater than the mean are predominantly concentrated around the University in west Hamilton. Areas that have less than their equitable share of the level of service are some of the most socioeconomically disadvantaged areas in the city. Our analysis builds upon a previous and recent study [@hosfordWhoArePublic2018] which found that disadvantaged areas in Hamilton are better served by the SoBi system, compared to other Canadian cities [i.e., Toronto, Vancouver, Montreal, and Ottawa-Gatineau] where advantaged areas have greater access. The authors [@hosfordWhoArePublic2018] note "Hamilton stands out in that the lower income neighborhoods are located near the city center and wealthier neighborhoods are in the surrounding suburban areas. Thus, relative to other Canadian programs, Hamilton’s bicycle share program could more easily be established in lower income areas while still being near high population density areas". This is an artifact of the 2001 amalgamation of Hamilton with four surrounding communities.	The urban core, which is Hamilton proper, remains predominantly disadvantaged compared to the 4 amalgamated and less densely populated areas (e.g., Dundas, Ancaster, Stoney Creek, Waterdown) that surround the city. Interestingly, Dundas is an advantaged area but also has lower accessibility that is less than their equitable share. However, by calculating the disparity index, we have shown that more advantaged areas within the SoBi service area have higher levels of service and exceed its equitable share of service. 
-# Disparity of system with ERI hubs
+
+## Disparity of system with ERI hubs
 
 ```{r}
 population_sobi %>%
@@ -574,7 +575,7 @@ population_sobi %>%
 ```
 
 
-# Disparity of original system without ERI hubs
+## Disparity of original system without ERI hubs
 
 ```{r}
 population_sobi_original %>%

@@ -84,7 +84,11 @@ Calculate quantiles according to distance. This is done to select a threshold:
 ```{r}
 quantiles_d <- quantile(as.vector(ttm_walk$travel_time), probs = c(0, 1/10, 3/10, 5/10, 7/10, 8/10, 9/10))
 
-dist_threshold <- quantile(as.vector(ttm_walk$travel_time), probs = c(0, 1/10, 3/10, 5/10, 7/10, 8/10, 9/10))[[5]]
+# dist_threshold <- quantile(as.vector(ttm_walk$travel_time), probs = c(0, 1/10, 3/10, 5/10, 7/10, 8/10, 9/10))[[5]]
+
+# distance threshold has to be less than 30, maximum distance people are willing to go is distance threshold
+
+dist_threshold <- 10
 ```
 
 The distance threshold is equivalent to the _kernel bandwidth_ or _catchment distance_.
@@ -128,7 +132,7 @@ Check the value of the dist_threshold:
 dist_threshold
 ```
 
-Our calculations assume that people do not go further than 24 min to reach a SoBi hub.
+Our calculations assume that 70% of population cells have at least one station within 24 min to reach a SoBi station. We set the threshold (what people are willing to travel). Gaussian says people are more willing to go 5 than 10, less willing to go 15 than 20. Progressively discount, but we don't know the willingness. If we had more information about how many people go 5, 10, etc. then using the Gaussian function would be possible. Otherwise, there are a lot of assumptions. Binary requires us to make fewer assumptions.
 
 Calculate impedance (Gaussian):
 ```{r eval=FALSE}
@@ -160,7 +164,7 @@ ttm_walk %>%
   nrow()
 ```
 
-Calculate the sum of the impedance by SoBi hubs for the balancing factors. In the binary case, this should be the same as the number of interpolated population unit that each SoBi hub serves; when the impedance is not binary, this is the sum of all impedance values:
+Calculate the sum of the impedance by SoBi hubs for the balancing factors. In the binary case, this should be the same as the number of interpolated population cells that each SoBi hub serves; when the impedance is not binary, this is the sum of all impedance values:
 ```{r}
 sum_b2 <- ttm_walk %>%
   group_by(hub) %>%
@@ -168,7 +172,7 @@ sum_b2 <- ttm_walk %>%
 sum_b2
 ```
 
-Hub 1 serves 1502 interpolated population units, hub 2 serves 1393 population units, etc.
+Hub 1 serves 1502 population cells, hub 2 serves 1393 population cells, etc.
 
 Sanity check: how many population units are served by hub 1?
 ```{r}
@@ -752,7 +756,7 @@ ggplot() +
                         direction = 1)
 ```
 
-Same thing for the other accessibility estimates. Spatial join:
+Same thing for the other accessibility estimates for the system with ERI hubs. Spatial join:
 ```{r}
 accessibility_da <- population_sobi %>%
   st_join(hamilton_da_sobi %>% dplyr::select(DA))
@@ -779,8 +783,6 @@ Check that the population is preserved:
 sum(accessibility_da$population)
 sum(population_sobi$population)
 ```
-
-Ok!
 
 Add the geometry of DAs to the table `accessibility_da` and convert into simple features:
 ```{r}
@@ -871,7 +873,7 @@ find_census_vectors("median household income",
 We need v_CA16_2397.
 
 Retrieve data:
-```{r eval=FALSE}
+```{r eval}
 mhi <- get_census(dataset='CA16', 
                           regions=list(CMA=c("35537")),
                           vectors=c("v_CA16_2397"),
@@ -912,7 +914,7 @@ data <- bi_class(accessibility_da %>%
   st_as_sf()
 ```
 
-Plot:
+Plot accessibility of original system without ERI hubs:
 ```{r}
  map <- ggplot() +
   geom_sf(data = data, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
@@ -931,11 +933,58 @@ legend <- bi_legend(pal = "DkBlue",
                     size = 6)
 ```
 
-Finalize plot:
+Finalize plot of accessibility with ERI hubs:
 ```{r}
  cowplot::ggdraw() +
   cowplot::draw_plot(map, 0, 0, 1, 1) +
   cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+```
+
+Create a class for bivariate plotting (drop DA with missing income data):
+```{r}
+data_equity <- bi_class(accessibility_da %>%
+                   drop_na(),
+                 x = accessibility, 
+                 y = median_household_income, 
+                 style = "quantile", 
+                 dim = 3) %>%
+  st_as_sf()
+```
+
+Plot accessibility of original system with ERI hubs:
+```{r}
+ map_equity <- ggplot() +
+  geom_sf(data = data_equity, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
+  bi_scale_fill(pal = "DkBlue", dim = 3) +
+  bi_theme()
+
+map_equity
+```
+
+
+Create legend:
+```{r}
+legend_equity <- bi_legend(pal = "DkBlue",
+                    dim = 3,
+                    xlab = "Higher accessibility ",
+                    ylab = "Higher income",
+                    size = 6)
+```
+
+Finalize plot of accessibility with ERI hubs:
+```{r}
+ cowplot::ggdraw() +
+  cowplot::draw_plot(map_equity, 0, 0, 1, 1) +
+  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+```
+
+Save data files:
+```{r}
+save(accessibility_da, file = "accessibility.RData")
+save(map, file = "accessibility_map_original.RData")
+save(map_equity, file = "accessibility_map_equity.RData")
+save(mhi, file = "mhi.RData")
+save(population_sobi_original, file = "population_sobi_original.RData")
 ```
 
 

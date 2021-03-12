@@ -1,6 +1,8 @@
 ---
 title: "00-Data-Processing-Example"
-output: html_notebook
+output:
+  pdf_document: default
+  html_notebook: default
 ---
 
 ## Introduction
@@ -912,5 +914,7 @@ save(sobi_hubs_original, file = "sobi_hubs_original.RData")
 save(sobi_service, file = "sobi_service.RData")
 save(ttm_walk, file = "ttm_walk.RData")
 save(ttm_walk_o, file = "ttm_walk_original.RData")
+save(hamilton_da_sobi, file = "hamilton_da_sobi.RData")
+save(interpolated_pop_clean, file = "interpolated_pop_clean.RData")
 ```
 

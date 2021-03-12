@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Schema name="Municipal_Parking_Lots" id="Municipal_Parking_Lots">
+	<SimpleField name="OBJECTID" type="int"></SimpleField>
+	<SimpleField name="LOT_NUMBER" type="string"></SimpleField>
+	<SimpleField name="LOCATION" type="string"></SimpleField>
+	<SimpleField name="ADDRESS" type="string"></SimpleField>
+</Schema>
+<Folder><name>Municipal_Parking_Lots</name>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">1</SimpleData>
+		<SimpleData name="LOT_NUMBER">5DU</SimpleData>
+		<SimpleData name="LOCATION">Golden Valley</SimpleData>
+		<SimpleData name="ADDRESS">93-111 King St. W.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.9582486919778,43.2673069151618 -79.9583161694269,43.2670384729852 -79.9579456608787,43.266990470505 -79.9579333882542,43.2670469443517 -79.9578653858202,43.2670536311042 -79.9577005780383,43.2670353799843 -79.9576609167388,43.2670395865814 -79.9576440694451,43.2670500908678 -79.9576261037544,43.267126059032 -79.9575877785529,43.2671238854314 -79.9575443032864,43.2671137372519 -79.9575230870577,43.2672288267683 -79.9578141954224,43.2672601555755 -79.9579020947305,43.2672660269223 -79.9582486919778,43.2673069151618</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">2</SimpleData>
+		<SimpleData name="LOT_NUMBER">35</SimpleData>
+		<SimpleData name="LOCATION">East 21st Street and Concession Street</SimpleData>
+		<SimpleData name="ADDRESS">8 East 21st St.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8533379137562,43.2408159787383 -79.8537525770424,43.2409127750578 -79.8537713902868,43.2409056464507 -79.8538513730146,43.2407199069038 -79.8536537393371,43.2406737750604 -79.8534224022827,43.2406197762953 -79.8533379137562,43.2408159787383</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">3</SimpleData>
+		<SimpleData name="LOT_NUMBER">10A</SimpleData>
+		<SimpleData name="LOCATION">Wilson Street East</SimpleData>
+		<SimpleData name="ADDRESS">334-336 Wilson St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.9764973908344,43.2263049922994 -79.9755788439069,43.2260281236421 -79.9754319826167,43.2262925434094 -79.9760174245673,43.2264719515731 -79.9760851310372,43.2263420479694 -79.976298872866,43.2264016204136 -79.9762311667943,43.2265315232461 -79.9763478357638,43.2265700932947 -79.9764973908344,43.2263049922994</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">4</SimpleData>
+		<SimpleData name="LOT_NUMBER">11</SimpleData>
+		<SimpleData name="LOCATION">Main Street East and Garside Avenue North</SimpleData>
+		<SimpleData name="ADDRESS">1457 Main St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8079283105255,43.2400405257694 -79.8078280781803,43.2400169723533 -79.8077151847581,43.2402786188606 -79.8078216821784,43.2403051173418 -79.8079396783488,43.2400449664445 -79.8079283105255,43.2400405257694</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">5</SimpleData>
+		<SimpleData name="LOT_NUMBER">11W</SimpleData>
+		<SimpleData name="LOCATION">Dundas Street East</SimpleData>
+		<SimpleData name="ADDRESS">319 Dundas St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8922868694255,43.3340536885073 -79.8921506598396,43.3341742670168 -79.8923085076172,43.334281140994 -79.892304706927,43.3342841314815 -79.8924263017991,43.3343673992298 -79.8925805002225,43.3342355580221 -79.8922868694255,43.3340536885073</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">6</SimpleData>
+		<SimpleData name="LOT_NUMBER">13</SimpleData>
+		<SimpleData name="LOCATION">Wilson Street and James Street North</SimpleData>
+		<SimpleData name="ADDRESS">96 James St. N.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8678335334747,43.2591039761653 -79.8678367250627,43.2590966303113 -79.86730091907,43.2589212813612 -79.8672079936367,43.2591330661699 -79.8672815200755,43.2591296468316 -79.8678335334747,43.2591039761653</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">7</SimpleData>
+		<SimpleData name="LOT_NUMBER">16</SimpleData>
+		<SimpleData name="LOCATION">Main Street East and Balmoral Avenue North</SimpleData>
+		<SimpleData name="ADDRESS">53 Balmoral Ave. N.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8217803495888,43.2436253417643 -79.8221469754808,43.2437147531093 -79.822205220894,43.2435699891496 -79.8221927148477,43.2435524887267 -79.8218438884121,43.2434674173832 -79.8217803495888,43.2436253417643</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">8</SimpleData>
+		<SimpleData name="LOT_NUMBER">17</SimpleData>
+		<SimpleData name="LOCATION">Main Street East and Huxley Avenue South</SimpleData>
+		<SimpleData name="ADDRESS">1358 Main St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.812228737318,43.240811749752 -79.8123549943934,43.2405104201536 -79.812136098337,43.2404675364281 -79.8120195527571,43.2407669892425 -79.812228737318,43.240811749752</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">9</SimpleData>
+		<SimpleData name="LOT_NUMBER">19</SimpleData>
+		<SimpleData name="LOCATION">Main Street East and Ottawa Street North</SimpleData>
+		<SimpleData name="ADDRESS">1203 Main ST. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8191366929641,43.2425305624744 -79.8187454558305,43.2426223585493 -79.8186625015611,43.242828420021 -79.8195025810158,43.2426369771435 -79.8194604146147,43.2426098730665 -79.8194113194264,43.2425978449749 -79.8191366929641,43.2425305624744</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">10</SimpleData>
+		<SimpleData name="LOT_NUMBER">20</SimpleData>
+		<SimpleData name="LOCATION">Upper James Street and Brantdale Avenue</SimpleData>
+		<SimpleData name="ADDRESS">552 Upper James St.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8770088242113,43.2405913732991 -79.8768956512494,43.2405666196615 -79.8767854003338,43.2408288424285 -79.8765832677334,43.2407836001706 -79.8765278043696,43.2409157661341 -79.8770634538832,43.2410329324693 -79.8771162863954,43.2409012455788 -79.8768985735336,43.2408536069825 -79.8769986031374,43.2406156835246 -79.8770088242113,43.2405913732991</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">11</SimpleData>
+		<SimpleData name="LOT_NUMBER">21</SimpleData>
+		<SimpleData name="LOCATION">Main Street East and Tuxedo Avenue North</SimpleData>
+		<SimpleData name="ADDRESS">1375 Main St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8112483772592,43.2408048744602 -79.8109677217511,43.2407471454944 -79.8108543662863,43.2410107478801 -79.8111354932305,43.2410665217244 -79.8112369161505,43.2408304220238 -79.8112483772592,43.2408048744602</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">12</SimpleData>
+		<SimpleData name="LOT_NUMBER">22</SimpleData>
+		<SimpleData name="LOCATION">King Street West and Locke Street South</SimpleData>
+		<SimpleData name="ADDRESS">451 King St. W.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8828203357242,43.2605415396774 -79.8829570045012,43.2602283321606 -79.8829707423037,43.260196847668 -79.8828255453396,43.260150992921 -79.8826678539809,43.260492657378 -79.8828203357242,43.2605415396774</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">13</SimpleData>
+		<SimpleData name="LOT_NUMBER">2A</SimpleData>
+		<SimpleData name="LOCATION">Ottawa Street North</SimpleData>
+		<SimpleData name="ADDRESS">115 Campbell Ave.</SimpleData>
+	</SchemaData></ExtendedData>
+      <MultiGeometry><Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8163388864201,43.2495105443433 -79.8160390192196,43.2494447779444 -79.8156420695679,43.2504309969498 -79.8159474836839,43.2504983345747 -79.8163388864201,43.2495105443433</coordinates></LinearRing></outerBoundaryIs></Polygon><Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8163445645211,43.2495117899059 -79.8163389563265,43.2495103694775 -79.8163388864201,43.2495105443433 -79.8163445645211,43.2495117899059</coordinates></LinearRing></outerBoundaryIs></Polygon></MultiGeometry>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">14</SimpleData>
+		<SimpleData name="LOT_NUMBER">2B</SimpleData>
+		<SimpleData name="LOCATION">Ottawa Street North</SimpleData>
+		<SimpleData name="ADDRESS">116 Campbell Ave.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8164260792238,43.2493578087474 -79.8164301517386,43.2493476928264 -79.8165277617984,43.2491051929673 -79.8165432932152,43.2491087357855 -79.8166576167853,43.2488474243833 -79.816277055296,43.2487612306827 -79.8161659158667,43.2490232382993 -79.8162230209367,43.2490361736941 -79.8161205309169,43.2492907960714 -79.8164260792238,43.2493578087474</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">15</SimpleData>
+		<SimpleData name="LOT_NUMBER">2C</SimpleData>
+		<SimpleData name="LOCATION">Ottawa Street North</SimpleData>
+		<SimpleData name="ADDRESS">11 Britannia Ave.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.816624234139,43.2486962559521 -79.8166596795712,43.2486138264775 -79.8168491360988,43.2481732302944 -79.8165563953938,43.2481056516023 -79.8164928739891,43.2482554104272 -79.8163337784769,43.2486304697331 -79.816624234139,43.2486962559521</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">16</SimpleData>
+		<SimpleData name="LOT_NUMBER">2D</SimpleData>
+		<SimpleData name="LOCATION">Ottawa Street North</SimpleData>
+		<SimpleData name="ADDRESS">18 Britannia Ave.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8167808137764,43.2480129120033 -79.8168323134953,43.2478916956334 -79.8170030509499,43.2474898277959 -79.8167802058223,43.2474392474304 -79.8165699992306,43.2479642448903 -79.8167808137764,43.2480129120033</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">17</SimpleData>
+		<SimpleData name="LOT_NUMBER">3</SimpleData>
+		<SimpleData name="LOCATION">Mountain Avenue South</SimpleData>
+		<SimpleData name="ADDRESS">14 Mountain Ave.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.7580680323911,43.2165914723219 -79.7581360567604,43.2164289482221 -79.7577464552274,43.2163406957098 -79.7578288416183,43.2161075280834 -79.7582410224702,43.2162002242869 -79.7583556344223,43.2159042954631 -79.7578078804862,43.215774240493 -79.7577413987111,43.2159400372364 -79.7569569724855,43.215756885457 -79.7568796417773,43.2159496514797 -79.7569150405621,43.2159573389199 -79.7568338024243,43.2161598864741 -79.7567983799141,43.2161522707879 -79.756745349367,43.2162844944552 -79.7571848673249,43.2163843801125 -79.7570843722938,43.216651004334 -79.7571790082918,43.216674472099 -79.7572993575678,43.2163880552434 -79.757623872867,43.2164283209575 -79.7575988062793,43.2164830020547 -79.7576830952837,43.2165018655182 -79.7576851810467,43.2164967042153 -79.7580680323911,43.2165914723219</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">18</SimpleData>
+		<SimpleData name="LOT_NUMBER">32</SimpleData>
+		<SimpleData name="LOCATION">East Avenue North and Barton Street East</SimpleData>
+		<SimpleData name="ADDRESS">255 East Ave. N</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8522346852123,43.2604350296914 -79.8526884326029,43.2605472334314 -79.8527577573064,43.2603919444901 -79.8523043097441,43.2602797062129 -79.8522346852123,43.2604350296914</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">19</SimpleData>
+		<SimpleData name="LOT_NUMBER">36</SimpleData>
+		<SimpleData name="LOCATION">Mulberry Street</SimpleData>
+		<SimpleData name="ADDRESS">22 Mulberry St.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8679677303791,43.2620960234796 -79.8677076002814,43.2620149819249 -79.8675562412015,43.2623335777845 -79.8673880571827,43.2622828078999 -79.8673575030983,43.2623441623084 -79.86719976277,43.2622951749175 -79.8671242142279,43.262460716692 -79.8672615948803,43.262503757645 -79.8672196670989,43.2625985918091 -79.8672091401682,43.2626222334933 -79.8673999069949,43.262667430121 -79.8674466953982,43.2625617538983 -79.8675890205556,43.2626063462791 -79.8676790733452,43.2624013358016 -79.8680934440659,43.2625302729195 -79.8681049686309,43.2625040387061 -79.8677918099785,43.2624065948104 -79.8678185831505,43.2623483202416 -79.867854342616,43.2622727278867 -79.8678740120084,43.2622348287576 -79.8678997162837,43.2622428027915 -79.8679314913888,43.2621742350571 -79.8679366392251,43.2621631257478 -79.8679440753557,43.262164966943 -79.8679677303791,43.2620960234796</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">20</SimpleData>
+		<SimpleData name="LOT_NUMBER">37</SimpleData>
+		<SimpleData name="LOCATION">Convention Centre</SimpleData>
+		<SimpleData name="ADDRESS">80 Main St. W.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8731583329544,43.2563207265266 -79.8713044313144,43.2558721673153 -79.8712330787616,43.2558761077534 -79.8711971208618,43.2558997915147 -79.8711672188673,43.255962446509 -79.870931170459,43.2564975620219 -79.8709699183625,43.2565069986042 -79.8707403379064,43.2570296386422 -79.8726275882235,43.2575564198226 -79.8729214006717,43.2568723662283 -79.8731583329544,43.2563207265266</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">21</SimpleData>
+		<SimpleData name="LOT_NUMBER">33</SimpleData>
+		<SimpleData name="LOCATION">Upper James Street and Genesse Street</SimpleData>
+		<SimpleData name="ADDRESS">15 Brucedale Ave. W.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8781775370435,43.238842038158 -79.8779972290296,43.2388025970889 -79.8778317059262,43.2391962439407 -79.8777782750763,43.2391845558376 -79.877612637383,43.2395781363863 -79.8778465295631,43.2396292973746 -79.8778572819738,43.239603724433 -79.8781775370435,43.238842038158</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">22</SimpleData>
+		<SimpleData name="LOT_NUMBER">39B</SimpleData>
+		<SimpleData name="LOCATION">Barton Street East and Grosvenor Avenue North</SimpleData>
+		<SimpleData name="ADDRESS">309 Grosvenor Ave. N</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8178643249015,43.2513594560966 -79.8174853128691,43.25126238691 -79.8174499837638,43.2513462909541 -79.8178112832155,43.2514388252777 -79.8178345087514,43.2514302516496 -79.8178510347187,43.2513910112355 -79.8178643249015,43.2513594560966</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">23</SimpleData>
+		<SimpleData name="LOT_NUMBER">39C</SimpleData>
+		<SimpleData name="LOCATION">Barton Street East and Grosvenor Avenue North</SimpleData>
+		<SimpleData name="ADDRESS">203 Balmoral Ave. N</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8182858433471,43.2514674102946 -79.8179068348578,43.2513703434421 -79.817877017537,43.2514411380936 -79.817889208244,43.251458781581 -79.8182505152108,43.2515513145945 -79.8182858433471,43.2514674102946</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">24</SimpleData>
+		<SimpleData name="LOT_NUMBER">39D</SimpleData>
+		<SimpleData name="LOCATION">Bartion Street East and Grosvenor Avenue North</SimpleData>
+		<SimpleData name="ADDRESS">299 Balmoral Ave. N</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.818892856843,43.2515826020458 -79.8185139928943,43.2514851722118 -79.8184655795605,43.2516001260515 -79.8188267178325,43.2516929985761 -79.8188477315327,43.251689743414 -79.8188675518284,43.2516426839849 -79.818892856843,43.2515826020458</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">25</SimpleData>
+		<SimpleData name="LOT_NUMBER">34</SimpleData>
+		<SimpleData name="LOCATION">Main Street East and Cope Street</SimpleData>
+		<SimpleData name="ADDRESS">1503 Main St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8056391644664,43.239471905134 -79.8054828837613,43.2394329950756 -79.8053701114345,43.2396946702605 -79.8055263535008,43.239733571064 -79.8055237968107,43.2397247342758 -79.8056391644664,43.239471905134</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">26</SimpleData>
+		<SimpleData name="LOT_NUMBER">4</SimpleData>
+		<SimpleData name="LOCATION">Kenilworth Avenue North and Hope Avenue</SimpleData>
+		<SimpleData name="ADDRESS">70 Hope Ave.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8064964521855,43.2469828662625 -79.8065238116494,43.2469194011328 -79.8066002057878,43.2467432222508 -79.8068070693391,43.2462654174559 -79.8069496177503,43.2459361581079 -79.8068586574103,43.2459143808182 -79.8067031170308,43.246275310486 -79.8065597972017,43.2462422892591 -79.8062627715433,43.2469315364335 -79.8064964521855,43.2469828662625</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">27</SimpleData>
+		<SimpleData name="LOT_NUMBER">40</SimpleData>
+		<SimpleData name="LOCATION">City Hall</SimpleData>
+		<SimpleData name="ADDRESS">71 Main St. W.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8733852666606,43.2551539679128 -79.8745644038751,43.255678084157 -79.8745359249526,43.2556543055916 -79.8745797132415,43.2556195753683 -79.8745896858741,43.255607344423 -79.8746237493577,43.2555513181193 -79.8746256317925,43.2555028884081 -79.874649312577,43.2554746669304 -79.8745967103038,43.2554658840806 -79.8745731002239,43.2554477902946 -79.8745983885019,43.2554174406537 -79.8745495443626,43.2553922388919 -79.8747535165586,43.2551573397389 -79.8747166487952,43.2551399475785 -79.87474062389,43.2551243002678 -79.8744243984829,43.2549751706042 -79.8744354008526,43.2549539830444 -79.8746685675201,43.2546993127078 -79.8737224655488,43.2544807134672 -79.8735187891522,43.25446925293 -79.8732719348662,43.2544479371113 -79.8732476096467,43.2544306536208 -79.8731477221263,43.2544026558579 -79.8729722096589,43.2543608697446 -79.8725175372457,43.254250639938 -79.8725006530032,43.2544412877482 -79.8723749292283,43.2550907183358 -79.8727716701002,43.2551498963304 -79.8727872304551,43.2551786446166 -79.8730999510166,43.2551817773533 -79.8731087067173,43.2551154341394 -79.8733852666606,43.2551539679128</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">28</SimpleData>
+		<SimpleData name="LOT_NUMBER">43</SimpleData>
+		<SimpleData name="LOCATION">Kenilworth Avenue North and Newlands Avenue</SimpleData>
+		<SimpleData name="ADDRESS">268 Kenwilworth Ave. N.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8063817743277,43.2483899223218 -79.8064329156313,43.2482553315357 -79.8059890505723,43.2481604370488 -79.8059326517436,43.248291267369 -79.8063817743277,43.2483899223218</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">29</SimpleData>
+		<SimpleData name="LOT_NUMBER">44</SimpleData>
+		<SimpleData name="LOCATION">Barton Street East and Emerald Street North</SimpleData>
+		<SimpleData name="ADDRESS">346 Barton St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8509513436499,43.2600208757659 -79.8507821976246,43.259977520377 -79.8506673154059,43.2602391652194 -79.8508364568682,43.2602825351386 -79.85083473234,43.26027760312 -79.8509513436499,43.2600208757659</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">30</SimpleData>
+		<SimpleData name="LOT_NUMBER">45</SimpleData>
+		<SimpleData name="LOCATION">Barton Street East</SimpleData>
+		<SimpleData name="ADDRESS">540 Barton St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8428207674853,43.2581765009189 -79.8429458933513,43.2579375897106 -79.8427219735636,43.2578780300633 -79.8425969848816,43.258116683985 -79.8428207674853,43.2581765009189</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">31</SimpleData>
+		<SimpleData name="LOT_NUMBER">46</SimpleData>
+		<SimpleData name="LOCATION">Barton Street East and William Street</SimpleData>
+		<SimpleData name="ADDRESS">14 Cheever St./11 William St.</SimpleData>
+	</SchemaData></ExtendedData>
+      <MultiGeometry><Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8469492412887,43.25990053659 -79.8470061606273,43.2597676437975 -79.8467194515502,43.2597024344712 -79.8466656272184,43.2598281141567 -79.8469492412887,43.25990053659</coordinates></LinearRing></outerBoundaryIs></Polygon><Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8473254017918,43.2600329285482 -79.8473534842215,43.2599673593585 -79.8469959493509,43.2598833278783 -79.846967865348,43.2599488969648 -79.8473254017918,43.2600329285482</coordinates></LinearRing></outerBoundaryIs></Polygon></MultiGeometry>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">32</SimpleData>
+		<SimpleData name="LOT_NUMBER">47</SimpleData>
+		<SimpleData name="LOCATION">Barton Street East and Barnesdale Avenue North</SimpleData>
+		<SimpleData name="ADDRESS">735 Barton St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.833448342862,43.2561706163587 -79.8335511907722,43.2559296620531 -79.833408852116,43.2558947331972 -79.8332724706446,43.2562142604635 -79.8337308978643,43.2563267645488 -79.833764398605,43.2562481792864 -79.833448342862,43.2561706163587</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">33</SimpleData>
+		<SimpleData name="LOT_NUMBER">49</SimpleData>
+		<SimpleData name="LOCATION">Barton Street West and Caroline Street North</SimpleData>
+		<SimpleData name="ADDRESS">167 Barton St. W.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8733503292897,43.2658768352132 -79.8734585921561,43.2656301086239 -79.872746191435,43.2654697582913 -79.8726391227763,43.2657103908868 -79.8733503292897,43.2658768352132</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">34</SimpleData>
+		<SimpleData name="LOT_NUMBER">5</SimpleData>
+		<SimpleData name="LOCATION">King William Street and Mary Street</SimpleData>
+		<SimpleData name="ADDRESS">140 King William St.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8637477885288,43.2559462013225 -79.8637905922682,43.2558571624673 -79.8638819329308,43.2556583473841 -79.863289352418,43.2555240528046 -79.8632303256617,43.2554853444091 -79.8633396795828,43.2551952952126 -79.862945104802,43.255090434826 -79.8626835063963,43.2556881357461 -79.8637477885288,43.2559462013225</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">35</SimpleData>
+		<SimpleData name="LOT_NUMBER">56</SimpleData>
+		<SimpleData name="LOCATION">Main Street East and Emerald Street South</SimpleData>
+		<SimpleData name="ADDRESS">30 Emerald St. S.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.854793753682,43.2519395981039 -79.8552255221484,43.252049261224 -79.8552880378715,43.2519084276452 -79.8548558888665,43.2517986736054 -79.854793753682,43.2519395981039</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">36</SimpleData>
+		<SimpleData name="LOT_NUMBER">62</SimpleData>
+		<SimpleData name="LOCATION">Vine Street</SimpleData>
+		<SimpleData name="ADDRESS">14 Vine St.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8684302516536,43.2600564767177 -79.8681160843516,43.2607996461947 -79.8685403040855,43.2608959970971 -79.8686722665446,43.260584181134 -79.8689169379123,43.260638672545 -79.8690479690903,43.2603374281922 -79.8687229121041,43.2602622050109 -79.8687768707405,43.2601366251759 -79.8684302516536,43.2600564767177</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">37</SimpleData>
+		<SimpleData name="LOT_NUMBER">64</SimpleData>
+		<SimpleData name="LOCATION">Sherman Avenue North</SimpleData>
+		<SimpleData name="ADDRESS">168 Sherman Ave. N.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8358455015894,43.2568738204033 -79.8355251613831,43.256795410098 -79.8354249718455,43.2570312128912 -79.8357453130784,43.2571096270879 -79.8357963122783,43.2569895930331 -79.8358455015894,43.2568738204033</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">38</SimpleData>
+		<SimpleData name="LOT_NUMBER">66</SimpleData>
+		<SimpleData name="LOCATION">Bay Street North and Cannon Street West</SimpleData>
+		<SimpleData name="ADDRESS">106 Bay St. N.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8723358205301,43.2611503875065 -79.8719709433785,43.2610651280661 -79.8719183467792,43.2611855136863 -79.8718758508,43.2611767806372 -79.8718392428173,43.2612714060627 -79.87181590726,43.2612616562637 -79.8716117401266,43.2612128572319 -79.8714306526799,43.2615916513953 -79.8718932075891,43.2616986711303 -79.8719630184358,43.2615421767995 -79.8721491198259,43.2615852205357 -79.8722063069298,43.2614520296604 -79.8723358205301,43.2611503875065</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">39</SimpleData>
+		<SimpleData name="LOT_NUMBER">68</SimpleData>
+		<SimpleData name="LOCATION">Eaton Centre Parkade</SimpleData>
+		<SimpleData name="ADDRESS">28 York Blvd.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8685239376185,43.2598876331604 -79.8688421641516,43.2599649936782 -79.8689054102078,43.2598036395185 -79.8689202541711,43.2598003708753 -79.8692408139692,43.2598832731599 -79.8692638233323,43.259831311939 -79.8695376711979,43.2592144665146 -79.8695231923623,43.2592112618589 -79.869364131443,43.2591915004271 -79.8691178227404,43.2591794305232 -79.8689064424815,43.259184003774 -79.8688149197832,43.2591901411499 -79.8685239376185,43.2598876331604</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">40</SimpleData>
+		<SimpleData name="LOT_NUMBER">6DU</SimpleData>
+		<SimpleData name="LOCATION">Coach House</SimpleData>
+		<SimpleData name="ADDRESS">85 King St. W.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.9575188826259,43.2672541039124 -79.9575443032864,43.2671137372519 -79.9575823382282,43.2668975382483 -79.9572182333742,43.2668575626233 -79.9570416801052,43.2668426099032 -79.9570103711065,43.2670003583242 -79.9568699609845,43.266988839687 -79.9568411314303,43.2671409152751 -79.9573340458655,43.2672072080519 -79.9573323863753,43.2672305787078 -79.9575188826259,43.2672541039124</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">41</SimpleData>
+		<SimpleData name="LOT_NUMBER">9DU</SimpleData>
+		<SimpleData name="LOCATION">Bank Of Montreal</SimpleData>
+		<SimpleData name="ADDRESS">77 King St. W.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.956671170674,43.2666998517323 -79.956476481338,43.2666794137054 -79.9564371058788,43.2668477840146 -79.9566391272609,43.2668749352684 -79.9566533482419,43.2667972339358 -79.956671170674,43.2666998517323</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">42</SimpleData>
+		<SimpleData name="LOT_NUMBER">58</SimpleData>
+		<SimpleData name="LOCATION">Barton Street East and Harmony Avenue</SimpleData>
+		<SimpleData name="ADDRESS">1368 Barton St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8046754936726,43.2484702202269 -79.8044594318956,43.2484225808263 -79.8043416772135,43.2486940129791 -79.8045581014912,43.2487439462533 -79.8046754936726,43.2484702202269</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">43</SimpleData>
+		<SimpleData name="LOT_NUMBER">6</SimpleData>
+		<SimpleData name="LOCATION">Rosedale Drive</SimpleData>
+		<SimpleData name="ADDRESS">Rosedale &amp; King</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.7530688264535,43.2169187895864 -79.7530219580815,43.2170230329087 -79.7533623530937,43.2170911910138 -79.753399662262,43.216981313643 -79.7530688264535,43.2169187895864</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">44</SimpleData>
+		<SimpleData name="LOT_NUMBER">7</SimpleData>
+		<SimpleData name="LOCATION">Main Street East and Ferguson Avenue South</SimpleData>
+		<SimpleData name="ADDRESS">171 Main St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.86240754689,43.2540275246159 -79.8626668000437,43.2540993443728 -79.8626630900414,43.254104805678 -79.8629635532794,43.2541918020324 -79.8631705973851,43.2538695727549 -79.8626472983056,43.2537235866062 -79.8625968614409,43.2537382938057 -79.8624806230846,43.253915879652 -79.86240754689,43.2540275246159</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">45</SimpleData>
+		<SimpleData name="LOT_NUMBER">69</SimpleData>
+		<SimpleData name="LOCATION">York Boulevard Parkette</SimpleData>
+		<SimpleData name="ADDRESS">12 York Blvd.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8687025355478,43.259459532366 -79.8687635270652,43.259313334077 -79.8688149197832,43.2591901411499 -79.8685534380464,43.2592168863543 -79.8684743220011,43.2594076939701 -79.8687025355478,43.259459532366</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">46</SimpleData>
+		<SimpleData name="LOT_NUMBER">70</SimpleData>
+		<SimpleData name="LOCATION">Hughson Street North</SimpleData>
+		<SimpleData name="ADDRESS">207 Hughson St. N.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8651187517843,43.2626214574963 -79.865540915054,43.2627190300266 -79.8656113952679,43.2625535732127 -79.8651912676433,43.2624559788165 -79.8651187517843,43.2626214574963</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">47</SimpleData>
+		<SimpleData name="LOT_NUMBER">72</SimpleData>
+		<SimpleData name="LOCATION">East Avenue North and King Street East</SimpleData>
+		<SimpleData name="ADDRESS">11 East Ave. N.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8553934378789,43.2534265144243 -79.8558377538867,43.2535307224474 -79.8558820207723,43.2534280124066 -79.8557395781598,43.2533938513609 -79.8557798663864,43.253302370784 -79.8554807857788,43.2532321170092 -79.8553934378789,43.2534265144243</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">48</SimpleData>
+		<SimpleData name="LOT_NUMBER">73</SimpleData>
+		<SimpleData name="LOCATION">King William Street and Wellington Street North</SimpleData>
+		<SimpleData name="ADDRESS">253 King William St.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8590160556413,43.2549890717434 -79.8589834563801,43.2550683298916 -79.8589613254718,43.255062983715 -79.8588694049939,43.2552865642717 -79.8592593229252,43.2553816132986 -79.8593938171008,43.2550803738062 -79.8590160556413,43.2549890717434</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">49</SimpleData>
+		<SimpleData name="LOT_NUMBER">74</SimpleData>
+		<SimpleData name="LOCATION">King Street West and Hess Street South</SimpleData>
+		<SimpleData name="ADDRESS">263 King St. W.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8770226926438,43.2587874071437 -79.8772672487865,43.2588548245479 -79.8773513295884,43.2586616958226 -79.8771063909954,43.2585965557009 -79.8770226926438,43.2587874071437</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">50</SimpleData>
+		<SimpleData name="LOT_NUMBER">76</SimpleData>
+		<SimpleData name="LOCATION">Catharine Street South and Hunter Street East</SimpleData>
+		<SimpleData name="ADDRESS">75 Catherine St. S.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8662652886769,43.2530690897723 -79.8663661724776,43.2528312494864 -79.8663666622304,43.2528247710423 -79.866262767147,43.2527989516776 -79.8662659486316,43.2527920091645 -79.866126388899,43.2527568054715 -79.866165680519,43.2526507185011 -79.8658933438541,43.2525834196997 -79.8657293970877,43.2529385266931 -79.8661920616846,43.2530512489231 -79.8662652886769,43.2530690897723</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">51</SimpleData>
+		<SimpleData name="LOT_NUMBER">79</SimpleData>
+		<SimpleData name="LOCATION">Barton Street East</SimpleData>
+		<SimpleData name="ADDRESS">402 Barton St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8483623367866,43.2596552418246 -79.8485302178237,43.2592645021919 -79.8483618825289,43.2592211504836 -79.8482841098409,43.2593954540011 -79.8482287413757,43.2593812185289 -79.8481271579485,43.2595964051191 -79.8483623367866,43.2596552418246</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">52</SimpleData>
+		<SimpleData name="LOT_NUMBER">8</SimpleData>
+		<SimpleData name="LOCATION">King Street East and Jarvis Street</SimpleData>
+		<SimpleData name="ADDRESS">297 King St. E.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8605151593025,43.2543131605659 -79.8606618556669,43.2540564633599 -79.8602919809149,43.2539400411485 -79.8601453685974,43.2541964577781 -79.8601143522107,43.2542490802881 -79.8597184886894,43.2541201591041 -79.8596679310328,43.2542158833898 -79.8602050815663,43.2543888863428 -79.8602585838383,43.2542965453681 -79.860422778993,43.2543472022867 -79.8604431907828,43.2543149819667 -79.8604839673663,43.2543051166895 -79.8605151593025,43.2543131605659</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">53</SimpleData>
+		<SimpleData name="LOT_NUMBER">80</SimpleData>
+		<SimpleData name="LOCATION">Bay Street South and King Street West</SimpleData>
+		<SimpleData name="ADDRESS">22 Bay St. S.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.874610893863,43.2572975050385 -79.8742712850111,43.2572031574734 -79.8742542030616,43.2572008282536 -79.8740886336421,43.2575927732511 -79.8739431077301,43.2579310661523 -79.8751041050038,43.2582620984903 -79.8752850321824,43.2579280962378 -79.8753185019816,43.2578660092361 -79.8751853787533,43.2578370309216 -79.874948866441,43.2577710964971 -79.8749901162355,43.2576930408626 -79.8745313122284,43.2575682657771 -79.8746576323735,43.2573104218198 -79.874610893863,43.2572975050385</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">54</SimpleData>
+		<SimpleData name="LOT_NUMBER">81</SimpleData>
+		<SimpleData name="LOCATION">Ferguson Avenue North</SimpleData>
+		<SimpleData name="ADDRESS">11 Ferguson Ave. N.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8616396255808,43.2548113787838 -79.8621921298454,43.2549834500587 -79.8622633552678,43.2548607274219 -79.8617113343852,43.2546878202718 -79.8616396255808,43.2548113787838</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">55</SimpleData>
+		<SimpleData name="LOT_NUMBER">82</SimpleData>
+		<SimpleData name="LOCATION">Victoria Avenue North and Barton Street East</SimpleData>
+		<SimpleData name="ADDRESS">294 Victoria Ave. N.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8529408165541,43.2614755655759 -79.8524276907712,43.2613549898686 -79.8523035249211,43.2616292503975 -79.8528141569566,43.261754527243 -79.8529408165541,43.2614755655759</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">56</SimpleData>
+		<SimpleData name="LOT_NUMBER">84</SimpleData>
+		<SimpleData name="LOCATION">Kenilworth Avenue North and Albany Avenue</SimpleData>
+		<SimpleData name="ADDRESS">36 Newlands Ave.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8074010195097,43.2480426483506 -79.8072033914366,43.2479991017094 -79.8069778336383,43.2485224409285 -79.8071754632261,43.2485659879736 -79.8074010195097,43.2480426483506</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">57</SimpleData>
+		<SimpleData name="LOT_NUMBER">9</SimpleData>
+		<SimpleData name="LOCATION">Upper Wellington Street</SimpleData>
+		<SimpleData name="ADDRESS">584 Upper Wellington St.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.8675314790541,43.2381125266077 -79.8670794293109,43.2380027755576 -79.8670233326125,43.2381335925924 -79.8674753668209,43.2382433644198 -79.8675314790541,43.2381125266077</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">58</SimpleData>
+		<SimpleData name="LOT_NUMBER">2DU</SimpleData>
+		<SimpleData name="LOCATION">Post Office</SimpleData>
+		<SimpleData name="ADDRESS">8 Foundry St.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.9581603004079,43.2661302321333 -79.9581521828705,43.2661670697578 -79.9581301355649,43.2661640946246 -79.9581059886936,43.2662737368192 -79.9585675601794,43.2663357092251 -79.9585997129877,43.2661897145087 -79.9581603004079,43.2661302321333</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">59</SimpleData>
+		<SimpleData name="LOT_NUMBER">3DU</SimpleData>
+		<SimpleData name="LOCATION">Canada Trust</SimpleData>
+		<SimpleData name="ADDRESS">82 King St. W.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.957619669102,43.2656036721917 -79.9574556463034,43.2655567708027 -79.957400508749,43.2655677544665 -79.9573834910661,43.2655815492383 -79.9573760297835,43.2656343471042 -79.9573401111118,43.2657910361131 -79.9572972865757,43.2659778563016 -79.95724866191,43.2662032901459 -79.9574860906152,43.2662332038318 -79.9575184578686,43.2660901702786 -79.9575086701747,43.2660878857555 -79.9575677290488,43.2658302537726 -79.957619669102,43.2656036721917</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">60</SimpleData>
+		<SimpleData name="LOT_NUMBER">1DU</SimpleData>
+		<SimpleData name="LOCATION">Booth Street</SimpleData>
+		<SimpleData name="ADDRESS">45 King St. W.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.9556428292739,43.2663996425919 -79.9555049712669,43.2663809275132 -79.9554406371823,43.2666359376131 -79.9554338450609,43.2666350156478 -79.9553577434357,43.266942299641 -79.9551900050812,43.2669231969212 -79.9551042319241,43.2672829646952 -79.9553512020779,43.2673152688437 -79.9554086750097,43.2670648065072 -79.9554643073429,43.2670371671608 -79.9556508263645,43.2670555359974 -79.95566594959,43.2669783274756 -79.9555056410944,43.2669572147998 -79.9555866697999,43.266622387477 -79.9555839012991,43.26662201282 -79.95563470885,43.2664070098296 -79.9556407647825,43.2664078197076 -79.9556428292739,43.2663996425919</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">61</SimpleData>
+		<SimpleData name="LOT_NUMBER">4DU</SimpleData>
+		<SimpleData name="LOCATION">Royal Bank</SimpleData>
+		<SimpleData name="ADDRESS">48-70 King St. W.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.9568160413868,43.2653920507153 -79.9564541079242,43.2652999586546 -79.9563412924353,43.2657682524421 -79.9559912463041,43.2657185060587 -79.9559727045369,43.2657872074287 -79.956317641289,43.2658317557286 -79.9564623741798,43.2658670424438 -79.9563857249047,43.2661520043278 -79.9564691890196,43.2661614849625 -79.9564856676363,43.2661638315178 -79.9565486098071,43.2661563547424 -79.9566434411615,43.266170363798 -79.9566547486804,43.2661193767726 -79.9568909388362,43.2661443593946 -79.9569128791621,43.2660413184001 -79.9566951183431,43.2660129939414 -79.9567382443298,43.26583799614 -79.9567579089016,43.2656775293284 -79.9567965258527,43.2654878894449 -79.9568160413868,43.2653920507153</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark>
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#Municipal_Parking_Lots">
+		<SimpleData name="OBJECTID">62</SimpleData>
+		<SimpleData name="LOT_NUMBER">7DU</SimpleData>
+		<SimpleData name="LOCATION">Hatt Street</SimpleData>
+		<SimpleData name="ADDRESS">23 Hatt St.</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>-79.9560466585947,43.2651942790359 -79.9556316320023,43.2650849737724 -79.9553762864934,43.2650119200554 -79.9551592465625,43.2657413191971 -79.9556121284643,43.2658185337343 -79.9556486943597,43.2656785177567 -79.9559182183037,43.2657152902749 -79.9559827013291,43.2654473506481 -79.9560466585947,43.2651942790359</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+</Folder>
+</Document></kml>

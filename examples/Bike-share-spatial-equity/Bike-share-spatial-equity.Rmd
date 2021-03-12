@@ -1,60 +1,75 @@
 ---
-title: Examining spatial equity of a public bicycle share program using Floating Catchment Area methods 
+title: Examining spatial equity and accessibility to a public bicycle share program using a balanced floating catchment area approach 
 author:
-  - name: Antonio Paez
-    email: paez@mcmaster.ca
-    affiliation: Some School
-    footnote: 1
   - name: Elise Desjardins
     email: desjae@mcmaster.ca
     affiliation: Some School
-    footnote: 2
+    footnote: 1
   - name: Christopher D. Higgins
     email: cd.higgins@utoronto.ca
     affiliation: Another University
     footnote: 2
+  - name: Antonio Paez
+    email: paezha@mcmaster.ca
+    affiliation: Some School
+    footnote: 2
 address:
   - code: McMaster University
-    address: School of Earth, Environment & Society, 1280 Main Street West, Hamilton, ON
+    address: School of Earth, Environment & Society, 1280 Main Street West, Hamilton, ON L8S4L8
   - code: University of Toronto Scarborough
-    address: Department, Street, City, State, Zip
+    address: Department of Geography & Planning, 1265 Military Trail, Toronto, ON M1C1A4
 footnote:
   - code: 1
     text: "Corresponding Author"
   - code: 2
     text: "Equal contribution"
-abstract: |
-  This is the abstract.
-
-  It consists of two paragraphs.
+abstract: 
+  
+  Public bicycle share programs are implemented to promote cycling as a convenient and sustainable mode of transportation. These systems can also play a role in addressing transportation needs and advancing transportation equity if they make cycling more accessible to lower income or disadvantaged populations. Recent studies assessing equity in bike sharing have found differences in ridership or membership based on income, education, and trip purpose. In Ontario, the City of Hamilton launched a public bicycle share program in 2015 that currently has over 900 operational bicycles and 130 docking stations. In 2018, the non-profit organization that operates the program launched an equity initiative to provide subsidized memberships and to expand service by adding twelve docking stations. Previous research found that Hamilton’s public bicycle share program targeted well disadvantaged areas in the city compared to programs in other Canadian cities.  Since the time or distance that members of the population need to reach a bicycle share station decreases the potential of accessing the program, the location of stations matters. Unlike other public amenities with greater ability to adapt to crowding, the utility of stations is limited by the number of bicycles that they can hold, which makes crowding effects critical; the system may not necessarily be improved if stations are easy to reach but offer only a small number of bicycles. In this research, we revisit the case of Hamilton and investigate equity differentials in accessibility to bicycle share stations. We compare accessibility in the program with and without the equity stations to assess the effect of the initiative. Previous research on cycling equity or accessibility has used a macro-level approach with entire neighbourhoods or census tracts as the unit of analysis, although there are recent exceptions. In contrast, we implement our analysis parting from microscopic zones to better reflect travel to a docking station, which often happens at the sub-neighborhood level. We then reaggregate the estimated accessibility to Dissemination Areas for further analysis using census data. Equity analysis of this type is possible thanks to a newly developed approach for accessibility using balanced floating catchment areas. We find that the addition of equity stations achieved its goal to increase accessibility for lower income populations, although the increase was relatively modest (2.10 bicycles/person with equity stations vs 1.97 bicycles/person without equity stations). Further research is needed to determine whether this encouraged more cycling.
 
 journal: "Transportation Research Part D: Transport and Environment"
 date: "`r Sys.Date()`"
-bibliography: mybibfile.bib
+bibliography: references.bib
 #linenumbers: true
 #numbersections: true
 csl: elsevier-harvard.csl
 output: rticles::elsevier_article
 ---
 
-```{r echo=FALSE}
-library(dplyr)
-library(disk.frame)
-library(pycno)
-library(readr)
-library(r5r) # the r5r package requires Java Development Kit version 11, which can be downloaded from https://www.oracle.com/java/technologies/javase-jdk11-downloads.html
-library(sf)
-library(tidyverse)
+```{r, include=FALSE}
+rm(list = ls())
+```
+
+```{r, include=FALSE}
 library(data.table)
+library(dplyr)
 library(gdistance)
 library(kableExtra)
 library(raster)
 library(rgdal)
 library(sf)
+library(tidyverse)
 library(units)
+library(disk.frame)
+library(pycno)
+library(readr)
+library(r5r) # the r5r package requires Java Development Kit version 11, which can be downloaded from https://www.oracle.com/java/technologies/javase-jdk11-downloads.html
+library(tinytex)
+library(ggplot2)
+theme_set(theme_bw())
 ```
 
-```{r echo=FALSE}
+```{r, include=FALSE}
+equity_stations <- data.frame(longitude = c(	
+-79.84364993846138, -79.8362839215856, -79.83144521746212, -79.82217214949738, -79.8160211746482, -79.8192304372373, -79.82500255113169, -79.8268599805827, -79.83888834759689, -79.82740849222654, -79.82342541216097, -79.84240606419081), latitude = c(43.265340158000654, 43.25632467284136, 43.25528943845642, 43.25291050074978, 43.25147804403345, 43.24444659758296, 43.2421627336722, 43.24634382671116, 43.249432741404554, 43.251126444296524, 43.24892849896579, 43.25831920064561))
+```
+
+```{r, include=FALSE}
+#equity_stations <- st_as_sf(equity_stations, coords = c("longitude", "latitude"), 
+    #crs = st_crs(sobi_service), agr = "constant")
+```
+
+```{r, include=FALSE}
 load("hamilton_cma.RData")
 load("hamilton_da_2016.RData")
 load("population_sobi.RData") #interpolated population in SoBi area
@@ -63,26 +78,36 @@ load("sobi_hubs_original.RData") #SoBi hubs, minus ERI hubs
 load("sobi_service.RData") #core service area for SoBi
 load("ttm_walk.RData") #travel time matrix for interpolated population in SoBi area
 load("ttm_walk_original.RData") #travel time matrix for system without ERI hubs
+load("accessibility.RData") #full accessibility table for SoBi system
+load("accessibility_map_original.RData") #map of accessibility in original SoBi system
+load("accessibility_map_equity.RData") #map of accessibility in current system with ERI
+load("hamilton_da_sobi.RData")
+load("population_sobi_original.RData") #population in original system
+load("mhi.RData") #median household income by DA
 ```
 
-Introduction
+Background
 ===================
 
-Public bicycle share programs (PBSP) 
+Public bicycle share programs (PBSP) have been implemented in over 800 cities worldwide and a great deal has been learned about their typical users [@fishmanBikeshareReviewRecent2016]. In many cities, males use bike share more than females [@breyWantRideMy2017; @fishmanBikeshareReviewRecent2016] as do younger age cohorts [@@breyWantRideMy2017; @buckAreBikeshareUsers2013; @fullerUseNewPublic2011]. One study found that bike share users in Washington, DC were more likely to be female [@buckAreBikeshareUsers2013], but the authors note that they relied on self-reported data from the annual member survey, which presents bias in the sample, and other travel survey data collected before the bike share began operations in 2010, which did not provide a comprehensive demographic profile. There is some evidence that bike share users are less likely to own a car [@buckAreBikeshareUsers2013; @reillyNoncyclistsFrequentCyclists2020], which suggests that bike share programs could increase transportation options. However, the relationship between income or education and bike share use is less clear. Neighbourhoods with more bikes from Seattle, WA's dockless bike share system had more college-educated residents, local community resources, and higher incomes [@mooneyFreedomStationSpatial2019]. On the other hand, stations in disadvantaged communities in Chicago generated most of the average annual trips [@qianBikesharingEquityDisadvantaged2020] and individuals from minority or lower socioeconomic status neighbourhoods in Minneapolis-St. Paul used the city's PBSP more [@wangNeighborhoodSociodemographicCharacteristics2019]. Being university educated was also a significant correlate of bike share use in Montreal, Canada [@fullerUseNewPublic2011]. On the other hand, members who reside in minority-concentrated and lower socioeconomic status neighbourhoods use the Minneapolis-St Paul bike share more frequently [@wangNeighborhoodSociodemographicCharacteristics2019]. Financial savings have been found to motivate those on a low income to use bike share [@fishmanBikeshareReviewRecent2016]. Many studies have found that proximity to a bike share station, either living or working near one, is an important determinant of use or having a membership [@fishmanBikeshareReviewRecent2016; @fullerUseNewPublic2011]. This makes sense given that individuals are more likely to use services or programs that they can easily access, which highlights the need for bike share systems to be highly accessible for diverse populations in order to increase use. The potential of bike share programs to increase cycling levels has been explored recently [@hosfordEvaluationImpactPublic2018; @hosfordEvaluatingImpactImplementing2019], but more longitudinal evidence is needed to determine their impact on encouraging more cycling and offering more opportunities for physical activity.
 
-This paper uses the city of Hamilton, located in Ontario, Canada, as a case study. The city launched the program, called SoBi Hamilton, in March 2015 with 115 stations and 750 bicycles [@Hamilton2020]. The core service area spans 35 km^2 of the city and approximately 180,000 people live there [see Figure 1]. The program was enthusiastically welcomed in the city - within three weeks of launching, 10,000 trips had been made. In 2017, Hamilton Bike Share Inc., the non-profit organization that operates the program, initiated an equity program, Everyone Rides Initiative (ERI), to remove barriers that may prevent individuals from accessing bike share in Hamilton. To increase spatial equity, an additional 75 bicycles and 15 stations were added to the system, which expanded it to more disadvantaged areas in the city [see Figure 2]. The program also offers subsidized memberships to individuals who identify as low income. As of June 2020, the bike share program has 900 bikes and over 130 stations, and over 26,000 active memberships [@Hamilton2020]. 
+Several studies have recently explored the equity of PBSP in North American cities to understand who has access to bike share and where stations are located. Equity can be achieved in two different ways: equal spatial distribution across a region (e.g., horizontal equity) or greater access to vulnerable or disadvantaged populations (e.g., vertical equity) [@chenExploringEquityPerformance2019]. Both are of interest to researchers and transport planners since they are often linked in that advantage, or conversely disadvantage, have spatial patterns. Using a negative binomial regression model, Qian and Jaller [-@qianBikesharingEquityDisadvantaged2020] estimated ridership in Chicago's PBSP among disadvantaged communities and found some disparities. While annual members in disadvantaged communities have a significantly lower share of trips compared to other areas in the city, they make longer trips. This suggests that they may be using PBSP for work commuting, which points to the importance of ensuring equitable access [@qianBikesharingEquityDisadvantaged2020]. Similar results were found in Philadelphia, where lower income areas generate fewer trips and efforts to increase equity within the program have not been as successful as intended [@caspiBikesharingPhiladelphiaLowerincome2019].
 
-```{r echo=FALSE}
+Since the time or distance that members of the population need to reach a bicycle share station decreases the potential of accessing the program, the location and size (e.g., maximum number of bicycles available) of stations matters. Unlike other public amenities with greater ability to adapt to crowding, like health care services, the utility of stations is limited by the number of bicycles that they can hold, which makes crowding effects critical; the system may not necessarily be improved if stations are easy to reach but offer only a small number of bicycles. The location of stations is also important to increase the utility of bike share.  Thus, spatial accessibility is important to consider when investigating equity issues, particularly for services or amenities that can increase transportation options such as PBSPs.  
+
+Using floating catchment area methods, a novel approach that has not been used yet in cycling research, we examine accessibility to a public bicycle share program in Hamilton, Ontario. Our analysis builds upon a previous and recent study [@hosfordWhoArePublic2018], which found that disadvantaged areas in Hamilton are better served by the city's PBSP compared to other Canadian cities [i.e., Toronto, Vancouver, Montreal, and Ottawa-Gatineau] with PBSPs where advantaged areas have greater access. Hosford and Winters [-@hosfordWhoArePublic2018] acknowledge that "Hamilton stands out in that the lower income neighborhoods are located near the city center and wealthier neighborhoods are in the surrounding suburban areas". Therefore, the core service area for the PBSP in Hamilton is by default in more disadvantaged areas compared to other Canadian cities, but there is also a great deal of variation in income in the city center as well because of the local university and increasing gentrification. This paper explores the contribution of specific stations that were added to Hamilton's PBSP to reducing both horizontal and vertical inequities and investigates accessibility across the core service area.
+
+Case Study {#sec:study}
+======================
+
+This paper uses the city of Hamilton, located in Ontario, Canada, as a case study. The city launched a public bicycle share program, called SoBi Hamilton, in March 2015 with 115 stations and 750 bicycles [@hamiltonHamiltonBikeShare2015]. Stations are spaced between 300 and 600 metres apart. The core service area spans 35 km^2 of the city and _approximately 130,000 can reach a bike share hub within 30 minutes of walking_ [see Figure 1 where the core service area is outlined in blue]. This represents roughly one fifth of the population in Hamilton, according to the 2016 Canadian Census. The program was enthusiastically welcomed in the city - within three weeks of launching, 10,000 trips had been made [@hamiltonHamiltonBikeShare2015]. In 2017, Hamilton Bike Share Inc., the non-profit organization that operates the program, initiated an equity program, Everyone Rides Initiative (ERI), to remove barriers that may prevent individuals from accessing bike share in Hamilton. To increase spatial equity, an additional 75 bicycles and 15 stations were added to the system, which expanded it to more disadvantaged areas in the city [see Figure 2]. The program also offers subsidized memberships to individuals who identify as low income. As of June 2020, the bike share program has 900 bikes and 130 stations, and over 26,000 active memberships [@hamiltonHamiltonBikeShare2015]. Hamilton Bike Share has conducted one membership survey to date in 2018 [@civicplanSoBiHamiltonMembership2017], and the findings from 420 members are broadly in line with the trends that we discussed above [see @fishmanBikeshareReviewRecent2016 for a recent review of the literature]. The majority of respondents live within the core service area and the gender split is typical: 57% of respondents are male and 41% are female. The majority of respondents, both male and female, are between 25 and 34 years of age, but the percentage of male respondents is higher in the subsequent age groups. Respondents use bike share for commuting (40% of trips) or errands and meetings (24% of trips), and nearly 50% of trips have an average length of 11 to 20 minutes. As a result of having a bike share membership, 49% of respondents report that they use their private vehicle less often or much less often but 48% report that their private vehicle use has remained about the same. This suggests that SoBi Hamilton has been useful for certain kinds of trips but not all, meaning that some trips continue to require a private vehicle.
+
+```{r, include=FALSE}
 sobi_service <- sobi_service %>%
   dplyr::filter(AREA_NAME == "Core Service Area")
 ```
 
-```{r echo=FALSE}
-bounding_box <- st_bbox(sobi_service %>%
-                          st_buffer(500))
-```
-
-```{r echo=FALSE}
+```{r, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "The core service area of SoBi Hamilton is outlined in blue. Dissemination areas in the Hamilton Census Metropolitan Area (CMA) are outlined in grey."}
 ggplot() + 
   geom_sf(data = hamilton_da_2016,
           fill = NA,
@@ -92,16 +117,844 @@ ggplot() +
           colour = "blue")
 ```
 
+```{r, include=FALSE}
+eri_hubs <- sobi_hubs %>% 
+             filter(OBJECTID>=117) %>% filter(OBJECTID<=128)
+```
 
-Methods
-===================
+```{r figure-1, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "The spatial distribution of PBSP stations in Hamilton, Ontario. The service area of the PBSP is outlined in blue, and dissemination areas within the Hamilton CMA that can reach a SoBi hub within 30 minutes of walking are outlined in grey."}
+ggplot() + 
+  geom_sf(fill = "antiquewhite1") +
+  geom_sf(data = hamilton_da_sobi, aes(color = "gray")) +
+  geom_sf(data = sobi_service, fill = NA, aes(color = "blue")) + 
+  geom_sf(data = sobi_hubs_original, size = 1, aes(color = "red")) +
+  geom_sf(data = eri_hubs, size = 1, aes(color = "green"))+
+  scale_color_identity(name = "Station Type",
+                       breaks = c("red", "green"),
+                       labels = c("Original Station", "Equity Station"),
+                       guide = "legend")
+```
 
+Methods {#sec:methods}
+======================
 
+## Floating Catchment Area
 
+Floating catchment area (FCA) methods are an approach commonly used in the accessibility literature. More recently, the _balanced_ floating catchment area approach was developed to address issues with demand inflation and supply inflation [@paezDemandLevelService2019]. Balanced floating catchment area methods have been used to explore accessibility to health care providers [@paezDemandLevelService2019] and COVID-19 health care services [@pereiraGeographicAccessCOVID192021], but have not yet been used in the cycling literature to explore issues of accessibility.
+
+The first step is to allocate the population to be serviced by each PBSP station: 
+$$P_j = {\sum_{i = 1}^{n} P_i{w_{ij}}}$$
+In the second step, the level of service at each bicycle share station is the capacity at the location (i.e., the maximum number of bicycle racks) divided by its estimated service population:
+$$L_j = \frac {S_j}{P_j} = \frac {S_j}{{\sum_{i = 1}^{n} P_i{w_{ij}}}}$$
+
+Finally, accessibility is calculated:
+$$A_i = {\sum_{j = 1}^{J} L_j{w_{ji}}} = {\sum_{j = 1}^{J} \frac {S_j{w_{ji}}}{\sum_{i = 1}^{n} P_i{w_{ij}}}}$$
+
+Weights are then calculated:
+$$w_{ij} = f({c_{ij}})$$
+
+The approach replaces the weights in the calculations above, and uses instead a set of suitably normalized weights as follows:
+$${w_{ij}^{i} = \frac {w_{ij}}{\sum_{j = 1}^{J} {w_{ji}}}}$$
+and
+$${w_{ij}^{j} = \frac {w_{ij}}{\sum_{j = 1}^{J} {w_{ji}}}}$$
+
+These weights satisfy the following properties:
+$$\sum_{j = 1}^{J} {w^i_{ji}} = 1$$
+
+and
+$$\sum_{j = 1}^{J} {w^j_{ji}} = 1$$
+
+Finally, accessibility is calculated:
+$$A_i = {\sum_{j = 1}^{J} \frac {S_j{w^j_{ij}}}{\sum_{i = 1}^{n} P_i{w^i_{ij}}}}$$
+
+## Pycnophylactic Interpolation
+
+We first plotted the population in all dissemination areas within SoBi Hamilton's core service area. Since pycnophylactic interpolation occurs at such a micro scale, we had to ensure that population numbers were not interpolated or allocated to areas where people do not live in Hamilton (i.e., where schools or parks are located). To do so, we retrieved shapefiles for the following municipal data from Open Hamilton: Hamilton's public bicycle share program, the public bicycle share program core service area, golf courses, parks, designated large employment areas, municipal parking lots, cemeteries, environmentally sensitive areas, streets, educational institutions, places of worship, municipal service centres, recreation and community centres, arenas, emergency stations, fire stations, police stations, railways, and hospitals. Figure 3 shows where these spaces are located within SoBi Hamilton's core service area. Next, we extracted these geographic features from the PBSP core service area and used pycnophylactic interpolation methods to reallocate population to smaller polygons.
+
+## Travel Time Matrix
+
+[BBBike](https://download.bbbike.org/osm/bbbike/) is an online cycle route planner that interfaces with OpenStreetMap. We extracted OpenStreetMap data for SoBi Hamilton's service area to calculate walking times from each population cell to nearby bicycle share stations, using a walking distance of 10km and a walking time of 30 minutes as a threshold. A travel time matrix was created with the origins as the coordinates of the population cells and the destinations as the coordinates of the bicycle share stations within the selected threshold.
+
+## Data
+
+All data for this research were accessed from Open Hamilton^[https://open.hamilton.ca/], an online repository of data curated by the City of Hamilton, in November 2020. 
 
 Results
 ===================
 
+```{r figure-2, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Population in all dissemination areas in the SoBi Hamilton core service area and within 30 minutes of walking to a bike share station."}
+ggplot() +
+  geom_sf(data = hamilton_da_sobi,
+          aes(fill = POP2011),
+          color = NA) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_fill_distiller(palette = "YlOrRd", direction = 1)
+```
+
+
+```{r figure-4, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Interpolated population cells in the SoBi Hamilton core service area (outlined in black) and within 30 minutes walk to the core service area. Geographic features have been extracted. Dissemination area polygons are outlined in grey."}
+ggplot() + 
+  geom_sf(data = population_sobi,
+          aes(color = population)) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1) +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA,
+          color = "lightgray") + 
+  geom_sf(data = sobi_service,
+          fill = NA,
+          colour = "blue")
+```
+
+```{r figure-5, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Interpolated population units in the SoBi Hamilton core service area (outlined in black) and within 30 minutes walk to the core service area. Green circles represent the location of the equity stations that were added in 2018. Red circles represent the original stations. The service area of the PBSP is outlined in blue, and dissemination areas from the 2016 Canadian Census are outlined in light grey."}
+ggplot() + 
+  geom_sf(fill = "antiquewhite1") +
+  geom_sf(data = population_sobi, aes(color = population)) +
+  scale_color_distiller(palette = "YlOrRd", direction = 1) +
+  geom_sf(data = hamilton_da_sobi, fill = NA, color = "lightgray") + 
+  geom_sf(data = sobi_hubs_original, size = 1.5, shape = 21, fill = "red") +
+  geom_sf(data = eri_hubs, size = 1.5, shape = 21, fill = "green") +
+  geom_sf(data = sobi_service, fill = NA, colour = "blue")
+```
+
+## Accessibility Calculations at Different Thresholds
+
+We conduct a sensitivity analysis to calculate accessibility at different thresholds: 3 minutes, 5 minutes, 10 minutes, and 15 minutes. We did these calculations for both the current system with equity stations and the original system without equity stations to compare how accessibility changes at different thresholds with the addition of the equity stations.
+
+```{r echo=FALSE}
+# current system with equity stations
+ttm_walk <- left_join(ttm_walk, 
+                      population_sobi,
+                      by = "UID")
+```
+
+```{r echo=FALSE} 
+# original system without equity stations
+ttm_walk_o <- left_join(ttm_walk_o, 
+                      population_sobi_original,
+                      by = "UID")
+```
+
+```{r, echo=FALSE}
+ttm_walk_o <- ttm_walk_o[-c(5,7:8)]
+```
+
+```{r echo=FALSE}
+ttm_walk <- ttm_walk %>% dplyr::select(-geometry)
+
+ttm_walk_o <- ttm_walk_o %>% dplyr::select(-geometry)
+```
+
+```{r, include=FALSE}
+# current system with equity stations
+ttm_walk <- left_join(ttm_walk, sobi_hubs %>% dplyr::select(OBJECTID, RACKS_AMOU), by=c("OBJECTID" = "OBJECTID"))
+ttm_walk <- ttm_walk %>% dplyr::select(-geometry)
+head(ttm_walk)
+```
+
+```{r, include=FALSE}
+# original system without equity stations
+ttm_walk_o <- left_join(ttm_walk_o, sobi_hubs_original %>% dplyr::select(OBJECTID, RACKS_AMOU), by=c("OBJECTID" = "OBJECTID"))
+ttm_walk_o <- ttm_walk_o %>% dplyr::select(-geometry)
+head(ttm_walk_o)
+```
+
+```{r echo=FALSE}
+#data frames for current and original systems
+names(ttm_walk) <- c('UID', 'hub', 'travel_time', 'population', 'racks')
+
+names(ttm_walk_o) <- c('UID', 'hub', 'travel_time', 'population', 'racks')
+```
+
+```{r, echo=FALSE}
+population_sobi_original <- population_sobi_original[-c(3,5:6)]
+```
+
+### Threshold of 3 Minutes Walk
+
+```{r, echo=FALSE}
+#minimum threshold for accessibility calculations
+dist_threshold <- 3
+```
+
+```{r echo=FALSE}
+ttm_walk_min <- ttm_walk %>%
+  mutate(impedance_binary = ifelse(travel_time <= dist_threshold, 1, 0))
+
+ttm_walk_o_min <- ttm_walk_o %>%
+  mutate(impedance_binary = ifelse(travel_time <= dist_threshold, 1, 0))
+```
+
+```{r echo=FALSE}
+sum_b1_min <- ttm_walk_min %>%
+  group_by(UID) %>%
+  summarize(sum_b1_min = sum(impedance_binary),
+            .groups = "drop")
+
+sum_b1_o_min <- ttm_walk_o_min %>%
+  group_by(UID) %>%
+  summarize(sum_b1_o_min = sum(impedance_binary),
+            .groups = "drop")
+```
+
+```{r echo=FALSE}
+sum_b2_min <- ttm_walk_min %>%
+  group_by(hub) %>%
+  summarize(sum_b2_min = sum(impedance_binary))
+
+sum_b2_o_min <- ttm_walk_o_min %>%
+  group_by(hub) %>%
+  summarize(sum_b2_o_min = sum(impedance_binary))
+```
+
+```{r echo=FALSE}
+ttm_walk_min <- ttm_walk_min %>%
+  left_join(sum_b1_min, by = "UID") %>%
+  left_join(sum_b2_min, by = "hub")
+
+ttm_walk_o_min <- ttm_walk_o_min %>%
+  left_join(sum_b1_o_min, by = "UID") %>%
+  left_join(sum_b2_o_min, by = "hub")
+```
+
+```{r echo=FALSE}
+ttm_walk_min <- ttm_walk_min %>%
+  dplyr::filter(sum_b1_min > 0)
+
+ttm_walk_o_min <- ttm_walk_o_min %>%
+  dplyr::filter(sum_b1_o_min > 0)
+```
+
+```{r echo=FALSE}
+ttm_walk_min <- ttm_walk_min %>% 
+  dplyr::mutate(balanced_impedance_1 = impedance_binary/sum_b1_min, 
+         balanced_impedance_2 = impedance_binary/sum_b2_min)
+
+ttm_walk_o_min <- ttm_walk_o_min %>% 
+  dplyr::mutate(balanced_impedance_1 = impedance_binary/sum_b1_o_min, 
+         balanced_impedance_2 = impedance_binary/sum_b2_o_min)
+```
+
+```{r echo=FALSE}
+ttm_walk_min %>% 
+  dplyr::filter(hub == "46") %>%
+  pull(balanced_impedance_2) %>%
+  sum()
+
+ttm_walk_o_min %>% 
+  dplyr::filter(hub == "46") %>%
+  pull(balanced_impedance_2) %>%
+  sum()
+```
+
+```{r, include=FALSE}
+sobi_los_min <- ttm_walk_min %>%
+  dplyr::filter(impedance_binary > 0) %>% # filter impedance == 0 to avoid divisions by zero
+  group_by(hub) %>%
+  summarize(sobi_los_min = first(racks) / sum((population * balanced_impedance_1)),
+            .groups = "drop")
+
+sobi_los_o_min <- ttm_walk_o_min %>%
+  dplyr::filter(impedance_binary > 0) %>% # filter impedance == 0 to avoid divisions by zero
+  group_by(hub) %>%
+  summarize(sobi_los_o_min = first(racks) / sum((population * balanced_impedance_1)),
+            .groups = "drop")
+```
+
+```{r, include=FALSE}
+ttm_walk_min <- ttm_walk_min %>%
+  left_join(sobi_los_min, by = "hub")
+
+ttm_walk_o_min <- ttm_walk_o_min %>%
+  left_join(sobi_los_o_min, by = "hub")
+```
+
+```{r, include=FALSE}
+sobi_accessibility_min <- ttm_walk_min %>%
+  group_by(UID) %>%
+  summarize(accessibility_min = sum(sobi_los_min * balanced_impedance_2),
+            .groups = "drop")
+
+sobi_accessibility_o_min <- ttm_walk_o_min %>%
+  group_by(UID) %>%
+  summarize(accessibility_o_min = sum(sobi_los_o_min * balanced_impedance_2),
+            .groups = "drop")
+```
+
+```{r, echo=FALSE}
+#current system with equity stations
+sobi_accessibility_min %>% 
+  pull(accessibility_min) %>% 
+  sum()
+
+sobi_los_min %>% 
+  pull(sobi_los_min) %>%
+  sum()
+```
+
+```{r, echo=FALSE}
+#original system without equity stations
+sobi_accessibility_o_min %>% 
+  pull(accessibility_o_min) %>% 
+  sum()
+
+sobi_los_o_min %>% 
+  pull(sobi_los_o_min) %>%
+  sum()
+```
+
+```{r, include=FALSE}
+population_sobi <- population_sobi %>%
+  left_join(sobi_accessibility_min,
+            by = "UID")
+
+population_sobi_original <- population_sobi_original %>%
+  left_join(sobi_accessibility_o_min,
+            by = "UID")
+```
+
+```{r, echo=FALSE}
+#accessibility plot for current system with equity stations at 3 minutes walk
+ggplot(data = population_sobi,
+       fill = accessibility_min) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+```{r, echo=FALSE}
+#accessibility plot for original system without equity stations at 3 mins walk
+ggplot(data = population_sobi_original) +
+  geom_sf(aes(color = accessibility_o_min)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+```{r, echo=FALSE}
+#level of equitable service in current system at 3 mins walk
+population_sobi %>%
+  mutate(Lei_min = accessibility_min - sum(sobi_los_min$sobi_los_min)/nrow(population_sobi %>% drop_na(accessibility_min))) %>%
+  ggplot() +
+  geom_sf(aes(color = Lei_min)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
+```
+
+```{r, echo=FALSE}
+#level of equitable service in original system at 3 mins walk
+population_sobi_original %>%
+  mutate(Lei_min = accessibility_o_min - sum(sobi_los_o_min$sobi_los_o_min)/nrow(population_sobi_original %>% drop_na(accessibility_o_min))) %>%
+  ggplot() +
+  geom_sf(aes(color = Lei_min)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
+```
+
+```{r, echo=FALSE}
+sum(population_sobi$accessibility_min) # current system with equity
+sum(population_sobi_original$accessibility_o_min) # original system
+```
+
+```{r, echo=FALSE}
+population_sobi <- population_sobi %>% mutate(PPR_min = sum(accessibility_min/nrow(population_sobi)))
+
+# "equitable" share of the total level of service is NA due to division by zero
+```
+
+```{r, echo=FALSE}
+population_sobi_original <- population_sobi_original %>% mutate(PPR_min = sum(accessibility_o_min/nrow(population_sobi_original)))
+
+# "equitable" share of the total level of service is NA due to division by zero
+```
+
+```{r accessibility_disparities, include=FALSE}
+# Disparity in this case is defined as the difference between the calculated accessibility (which is interpreted as the local provider-to-population ratio) and the local provider-to-population ratio if the level of service was distributed uniformly
+
+population_sobi <- population_sobi %>% mutate(disparity_min = accessibility_min - PPR_min)
+
+population_sobi_original <- population_sobi_original %>% mutate(disparity_min = accessibility_o_min - PPR_min)
+```
+
+```{r, echo=FALSE}
+# disparity in current system
+
+population_sobi %>%
+  ggplot() +
+  geom_sf(aes(color = disparity_min)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
+```
+
+```{r, echo=FALSE}
+# disparity in original system
+
+population_sobi_original %>%
+  ggplot() +
+  geom_sf(aes(color = disparity_min)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
+```
+
+```{r, echo=FALSE}
+ggplot() +
+  geom_sf(data = population_sobi,
+          aes(color = accessibility_min)) +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA) + 
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+```{r, echo=FALSE}
+ggplot() +
+  geom_sf(data = population_sobi_original,
+          aes(color = accessibility_o_min)) +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA) + 
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+### Threshold of 5 Minutes Walk
+
+### Threshold of 10 Minutes Walk
+
+```{r, echo=FALSE}
+dist_threshold <- 10
+```
+
+```{r echo=FALSE}
+ttm_walk_max <- ttm_walk %>%
+  mutate(impedance_binary = ifelse(travel_time <= dist_threshold, 1, 0))
+
+ttm_walk_o_max <- ttm_walk_o %>%
+  mutate(impedance_binary = ifelse(travel_time <= dist_threshold, 1, 0))
+```
+
+```{r echo=FALSE}
+sum_b1 <- ttm_walk %>%
+  group_by(UID) %>%
+  summarize(sum_b1 = sum(impedance_binary),
+            .groups = "drop")
+
+sum_b1_o <- ttm_walk_o %>%
+  group_by(UID) %>%
+  summarize(sum_b1_o = sum(impedance_binary),
+            .groups = "drop")
+```
+
+```{r echo=FALSE}
+sum_b2 <- ttm_walk %>%
+  group_by(hub) %>%
+  summarize(sum_b2 = sum(impedance_binary))
+
+sum_b2_o <- ttm_walk_o %>%
+  group_by(hub) %>%
+  summarize(sum_b2_o = sum(impedance_binary))
+```
+
+```{r echo=FALSE}
+ttm_walk <- ttm_walk %>%
+  left_join(sum_b1, by = "UID") %>%
+  left_join(sum_b2, by = "hub")
+
+ttm_walk_o <- ttm_walk_o %>%
+  left_join(sum_b1_o, by = "UID") %>%
+  left_join(sum_b2_o, by = "hub")
+```
+
+```{r echo=FALSE}
+ttm_walk <- ttm_walk %>%
+  dplyr::filter(sum_b1 > 0)
+
+ttm_walk_o <- ttm_walk_o %>%
+  dplyr::filter(sum_b1_o > 0)
+```
+
+```{r echo=FALSE}
+ttm_walk <- ttm_walk %>% 
+  dplyr::mutate(balanced_impedance_1 = impedance_binary/sum_b1, 
+         balanced_impedance_2 = impedance_binary/sum_b2)
+
+ttm_walk_o <- ttm_walk_o %>% 
+  dplyr::mutate(balanced_impedance_1 = impedance_binary/sum_b1_o, 
+         balanced_impedance_2 = impedance_binary/sum_b2_o)
+```
+
+```{r echo=FALSE}
+ttm_walk %>% 
+  dplyr::filter(hub == "46") %>%
+  pull(balanced_impedance_2) %>%
+  sum()
+
+ttm_walk_o %>% 
+  dplyr::filter(hub == "46") %>%
+  pull(balanced_impedance_2) %>%
+  sum()
+```
+
+```{r, include=FALSE}
+sobi_los <- ttm_walk %>%
+  dplyr::filter(impedance_binary > 0) %>% # filter impedance == 0 to avoid divisions by zero
+  group_by(hub) %>%
+  summarize(sobi_los = first(racks) / sum((population * balanced_impedance_1)),
+            .groups = "drop")
+
+sobi_los_o <- ttm_walk_o %>%
+  dplyr::filter(impedance_binary > 0) %>% # filter impedance == 0 to avoid divisions by zero
+  group_by(hub) %>%
+  summarize(sobi_los_o = first(racks) / sum((population * balanced_impedance_1)),
+            .groups = "drop")
+```
+
+```{r, include=FALSE}
+ttm_walk <- ttm_walk %>%
+  left_join(sobi_los, by = "hub")
+
+ttm_walk_o <- ttm_walk_o %>%
+  left_join(sobi_los_o, by = "hub")
+```
+
+```{r, include=FALSE}
+sobi_accessibility <- ttm_walk %>%
+  group_by(UID) %>%
+  summarize(accessibility = sum(sobi_los * balanced_impedance_2),
+            .groups = "drop")
+
+sobi_accessibility_o <- ttm_walk_o %>%
+  group_by(UID) %>%
+  summarize(accessibility_o = sum(sobi_los_o * balanced_impedance_2),
+            .groups = "drop")
+```
+
+```{r, echo=FALSE}
+#current system with equity stations
+sobi_accessibility %>% 
+  pull(accessibility) %>% 
+  sum()
+
+sobi_los %>% 
+  pull(sobi_los) %>%
+  sum()
+```
+
+```{r, echo=FALSE}
+#original system without equity stations
+sobi_accessibility_o %>% 
+  pull(accessibility_o) %>% 
+  sum()
+
+sobi_los_o %>% 
+  pull(sobi_los_o) %>%
+  sum()
+```
+
+```{r, echo=FALSE}
+population_sobi_original <- population_sobi_original[-c(3,5:6)]
+```
+
+```{r, include=FALSE}
+population_sobi <- population_sobi %>%
+  left_join(sobi_accessibility,
+            by = "UID")
+
+population_sobi_original <- population_sobi_original %>%
+  left_join(sobi_accessibility_o,
+            by = "UID")
+```
+
+```{r, include=FALSE}
+population_sobi <- population_sobi %>% drop_na()
+population_sobi_original <- population_sobi_original %>% drop_na()
+```
+
+```{r, echo=FALSE}
+#accessibility plot for current system with equity stations
+ggplot(data = population_sobi) +
+  geom_sf(aes(color = accessibility)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+```{r, echo=FALSE}
+#accessibility plot for original system without equity stations
+ggplot(data = population_sobi_original) +
+  geom_sf(aes(color = accessibility_o)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+```{r, echo=FALSE}
+#level of equitable service in current system
+population_sobi %>%
+  mutate(Lei = accessibility - sum(sobi_los$sobi_los)/nrow(population_sobi %>% drop_na(accessibility))) %>%
+  ggplot() +
+  geom_sf(aes(color = Lei)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
+```
+
+```{r, echo=FALSE}
+#level of equitable service in original system
+population_sobi_original %>%
+  mutate(Lei = accessibility_o - sum(sobi_los_o$sobi_los_o)/nrow(population_sobi_original %>% drop_na(accessibility_o))) %>%
+  ggplot() +
+  geom_sf(aes(color = Lei)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
+```
+
+```{r, echo=FALSE}
+sum(population_sobi$accessibility) # current system with equity
+sum(population_sobi_original$accessibility_o) # original system
+```
+
+```{r, echo=FALSE}
+population_sobi <- population_sobi %>% mutate(PPR = sum(accessibility/nrow(population_sobi)))
+
+# "equitable" share of the total level of service in the current system is 0.0004864108 per population cell
+```
+
+```{r, echo=FALSE}
+population_sobi_original <- population_sobi_original %>% mutate(PPR = sum(accessibility_o/nrow(population_sobi_original)))
+
+# "equitable" share of the total level of service in the current system is 0.0005049342 per population cell
+```
+
+```{r accessibility_disparities, include=FALSE}
+# Disparity in this case is defined as the difference between the calculated accessibility (which is interpreted as the local provider-to-population ratio) and the local provider-to-population ratio if the level of service was distributed uniformly
+
+population_sobi <- population_sobi %>% mutate(disparity = accessibility - PPR)
+
+population_sobi_original <- population_sobi_original %>% mutate(disparity = accessibility_o - PPR)
+```
+
+```{r, echo=FALSE}
+# disparity in current system
+
+population_sobi %>%
+  ggplot() +
+  geom_sf(aes(color = disparity)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
+```
+
+```{r, echo=FALSE}
+# disparity in original system
+
+population_sobi_original %>%
+  ggplot() +
+  geom_sf(aes(color = disparity)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_gradient2()
+```
+
+```{r, echo=FALSE}
+ggplot() +
+  geom_sf(data = population_sobi,
+          aes(color = accessibility)) +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA) + 
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+```{r, echo=FALSE}
+ggplot() +
+  geom_sf(data = population_sobi_original,
+          aes(color = accessibility_o)) +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA) + 
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+```{r, include=FALSE}
+accessibility_da <- population_sobi %>%
+  st_join(hamilton_da_sobi %>% dplyr::select(DA))
+
+accessibility_da_original <- population_sobi_original %>%
+  st_join(hamilton_da_sobi %>% dplyr::select(DA))
+```
+
+```{r, include=FALSE}
+accessibility_da <- accessibility_da %>%
+  group_by(DA) %>%
+  summarize(population = sum(population),
+            accessibility = sum(accessibility),
+            .groups = "drop")
+
+accessibility_da_original <- accessibility_da_original %>%
+  group_by(DA) %>%
+  summarize(population = sum(population),
+            accessibility_o = sum(accessibility_o),
+            .groups = "drop")
+```
+
+```{r, include=FALSE}
+accessibility_da <- accessibility_da %>%
+  st_drop_geometry() %>%
+  left_join(hamilton_da_sobi %>% 
+              dplyr::select(DA, geometry),
+            by = "DA") %>%
+  st_as_sf()
+
+accessibility_da_original <- accessibility_da_original %>%
+  st_drop_geometry() %>%
+  left_join(hamilton_da_sobi %>% 
+              dplyr::select(DA, geometry),
+            by = "DA") %>%
+  st_as_sf()
+```
+
+```{r, echo=FALSE}
+#accessibility plot by DA in current system
+
+ggplot() +
+  geom_sf(data = accessibility_da,
+          aes(fill = accessibility),
+          color = "black") +
+  scale_fill_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+```{r, echo=FALSE}
+#accessibility plot by DA in original system
+
+ggplot() +
+  geom_sf(data = accessibility_da_original,
+          aes(fill = accessibility_o),
+          color = "black") +
+  scale_fill_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+```{r, include=FALSE}
+accessibility_da <- accessibility_da %>%
+  left_join(accessibility_da_original %>% 
+              st_drop_geometry() %>%
+              rename(population_o = population),
+              dplyr::select(DA, accessibility_o, population_o),
+            by = "DA") %>%
+  mutate(accessibility_o = replace_na(accessibility_o, 0), # The population serviced grows with the new stations, and as a result some original population is zero
+         population_o = replace_na(population_o, 0)) # Same for accessibility
+
+```
+
+```{r, include=FALSE}
+accessibility_da <- accessibility_da %>%
+  mutate(R_a = accessibility - accessibility_o)
+```
+
+```{r, echo=FALSE}
+#disparity without equity stations
+ggplot() +
+  geom_sf(data = accessibility_da,
+          aes(fill = R_a),
+          color = "black") +
+  scale_fill_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+```{r, include=FALSE}
+accessibility_da <- accessibility_da %>%
+  left_join(mhi %>%
+              transmute(DA = GeoUID,
+                        median_household_income = `v_CA16_2397: Median total income of households in 2015 ($)`),
+            by = "DA")
+```
+
+```{r, include=FALSE}
+data <- bi_class(accessibility_da %>%
+                   drop_na(),
+                 x = accessibility_o, 
+                 y = median_household_income, 
+                 style = "quantile", 
+                 dim = 3) %>%
+  st_as_sf()
+```
+
+```{r, echo=FALSE}
+#accessibility of original system at 10 mins walk
+ map <- ggplot() +
+  geom_sf(data = data, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
+  bi_scale_fill(pal = "DkBlue", dim = 3) +
+  bi_theme()
+
+map
+```
+
+```{r, include=FALSE}
+legend <- bi_legend(pal = "DkBlue",
+                    dim = 3,
+                    xlab = "Higher accessibility ",
+                    ylab = "Higher income",
+                    size = 6)
+```
+
+```{r, echo=FALSE}
+#accessibility of original system at 10 mins walk 
+ cowplot::ggdraw() +
+ cowplot::draw_plot(map, 0, 0, 1, 1) +
+ cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+```
+
+```{r, include=FALSE}
+data_equity <- bi_class(accessibility_da %>%
+                   drop_na(),
+                 x = accessibility, 
+                 y = median_household_income, 
+                 style = "quantile", 
+                 dim = 3) %>%
+  st_as_sf()
+```
+
+```{r, echo=FALSE}
+#accessibility of current system at 10 mins walk
+ map_equity <- ggplot() +
+  geom_sf(data = data_equity, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
+  bi_scale_fill(pal = "DkBlue", dim = 3) +
+  bi_theme()
+
+map_equity
+```
+
+```{r, include=FALSE}
+legend_equity <- bi_legend(pal = "DkBlue",
+                    dim = 3,
+                    xlab = "Higher accessibility ",
+                    ylab = "Higher income",
+                    size = 6)
+```
+
+```{r, echo=FALSE}
+#accessibility of current system at 10 mins walk
+ cowplot::ggdraw() +
+ cowplot::draw_plot(map_equity, 0, 0, 1, 1) +
+ cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+```
+
+### Threshold of 15 Minutes Walk
+
+## Comparison
+
+Include table with total # of people who can reach a station within 3 minutes walk, 5 minutes, 10 minutes, and 15 minutes, to compare accessibility at different thresholds for both current and original system.
 
 Discussion
 ===================

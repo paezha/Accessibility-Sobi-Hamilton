@@ -1,0 +1,979 @@
+---
+title: "00-Data-Processing-for-sobiEquity"
+---
+
+## Introduction
+
+In this notebook we create some examples of processing the data for the analysis of accessibility to Hamilton Bike share docking stations. Particularly, we're interested in spatial interpolation of the population for small areas.
+
+## Preliminaries
+
+Clear environment:
+```{r}
+rm(list = ls())
+```
+
+Load packages used in the notebook:
+```{r message = FALSE}
+library(cancensus)
+library(disk.frame)
+library(pycno)
+library(readr)
+library(r5r) # the r5r package requires Java Development Kit version 11, which can be downloaded from https://www.oracle.com/java/technologies/javase-jdk11-downloads.html
+library(sf)
+library(tidyverse)
+```
+
+Define some parameters for `disk.frame` and `r5r`:
+```{r}
+setup_disk.frame()
+options(scipen = 999)
+options(java.parameters = "-Xmx6G")
+options(future.globals.maxSize = Inf)
+```
+
+Data used in this notebook was retrieved from two sources: Open Hamilton and the 2016 Canadian Census. Open Hamilton is an online repository of data from the City of Hamilton. The provenance of the datasets is below.
+
+## Provenance of data: City of Hamilton
+
+Source?
+
+### SoBi Hubs
+
+`SoBi_Hubs.shp`
+
+The dataset was last updated on *November 9, 2020* and was downloaded for this project on *November 10, 2020*. This dataset contains the following attributes that are of interest to this research: location of hubs (address, longitude, and latitude) and the number of racks available at each hub. The dataset also includes the number of bicycles available at each hub, but since this changes daily, this information is not useful for our purposes. The maximum number of bicycles that a hub *could* have (i.e., the baseline) available is important for calculating accessibility in a given area.
+
+We can also retrieve the data weekly over a certain period, for example 4 weeks, to calculate the average number of bicycles that are at each hub. Variations in the number of bicycles could also be informative. For instance, some hubs may systematically have more or less bicycles than others (i.e., excess of supply around the University campus).
+
+### SoBi Service Area
+
+`SoBi_Service_Areas.shp`
+
+The dataset was last updated on *November 9, 2020* and was downloaded for this project on *November 10, 2020*. Hamilton's bike share program is available only in the lower city from Dundas to Ottawa Street North. There is one isolated hub beyond this service area at Van Wagner's Beach for tourism purposes.
+
+### Golf Courses
+
+`Golf_Courses.shp`
+
+The dataset was last updated on *November 1, 2020* and was downloaded for this project on *November 10, 2020*. This dataset contains the location of City and privately owned golf courses in Hamilton.
+
+### Parks
+
+`Parks.shp`
+
+The dataset was last updated on *November 8, 2020* and was downloaded for this project on *November 10, 2020*. This dataset contains the location of parks and other green spaces in Hamilton.
+
+### Large Employment Areas
+
+`Employment_Lands.shp`
+
+The dataset contains Employment Land boundaries in Hamilton and was last updated on *November 12, 2020*. It was downloaded for this project on *November 13, 2020*. This dataset contains the location of large business parks and industrial lands in Hamilton.
+
+### Municipal Parking Lots
+
+`Municipal_Parking_Lots.shp`
+
+The dataset contains the location of municipal car parks in Hamilton and was last updated on *November 9, 2020*. It was downloaded for this project on *November 13, 2020*.
+
+### Cemeteries
+
+`Cemeteries.shp`
+
+The dataset contains the location of cemeteries in Hamilton. It was downloaded for this project on *November 13, 2020*.
+
+### Environmentally Sensitive Areas
+
+`Environmentally_Sensitive_Areas_Boundaries.shp`
+
+The dataset contains the location of Environmentally Sensitive Areas (ESAs) in Hamilton. ESAs are either land or water areas containing natural features or significant ecological functions in Hamilton. The data were downloaded on *November 13, 2020*.
+
+### Street Centreline
+
+`Street_Centreline.shp`
+
+The dataset contains the street network in Hamilton. Data attributes include road classification so highways can be extracted. The dataset was last updated on *November 15, 2020* and downloaded on *November 16, 2020*.
+
+### Educational Institutions
+
+`Educational_Institutions.shp`
+
+The dataset contains the location of all educational institutions and schools in Hamilton. The dataset was last updated on *November 15, 2020* and downloaded on *November 16, 2020*.
+
+### Places of Worship
+
+`Places_of_Worship.shp`
+
+The dataset contains the location of buildings used for religious congregations in Hamilton. The dataset was last updated on *November 15, 2020* and downloaded on *November 16, 2020*.
+
+### Municipal Service Centres
+
+`Municipal_Service_Centres.shp`
+
+The dataset contains the location of all municipal service centres in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *November 11, 2020* and downloaded on *November 16, 2020*.
+
+### Recreation and Community Centres
+
+`Recreation_and_Community_Centres.shp`
+
+The dataset contains the location of all recreation and community centres in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *November 15, 2020* and downloaded on *November 16, 2020*.
+
+### Arenas
+
+`Arenas.shp`
+
+The dataset contains the location of all indoor arenas in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *November 12, 2020* and downloaded on *November 16, 2020*.
+
+### EMS Stations
+
+`EMS_Stations.shp`
+
+The dataset contains the location of all Emergency Management Services (EMS) Ambulance stations in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *November 11, 2020* and downloaded on *November 16, 2020*.
+
+### Fire Stations
+
+`Fire_Stations.shp`
+
+The dataset contains the location of all fire stations in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *November 15, 2020* and downloaded on *November 16, 2020*.
+
+### Police Stations
+
+`Police_Stations.shp`
+
+The dataset contains the location of all police stations in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *November 13, 2020* and downloaded on *November 16, 2020*.
+
+### Hospitals
+
+`Hospitals.shp`
+
+The dataset contains the location of all hospitals in Hamilton. This includes Hamilton City Hall. The dataset was last updated on *April 2, 2019* and downloaded on *November 16, 2020*.
+
+### Railways
+
+## Provenance of data: census
+
+We can get an API key to use `cancensus` from [CensusMapper](https://censusmapper.ca/). Once you have an API key, it can be stored locally this way:
+```{r eval=FALSE}
+set_api_key("your-key", install = TRUE)
+```
+
+Once you have your API you can use `cancensus` like in this example.
+
+Use `cancensus` to check and download census data. Check the regions:
+```{r}
+list_census_regions('CA16') %>% 
+  dplyr::filter(level == "CMA", name %in% c("Hamilton"))
+```
+
+We need PR_UID 35.
+
+List census data sets:
+```{r}
+list_census_datasets()
+```
+
+We need CA16.
+
+Search variables:
+```{r}
+find_census_vectors("population", 
+                    dataset = "CA16", 
+                    type = "total", 
+                    query_type = "keyword", 
+                    interactive = FALSE)
+```
+
+```{r}
+find_census_vectors("median household income", 
+                    dataset = "CA16", 
+                    type = "total", 
+                    query_type = "keyword", 
+                    interactive = FALSE)
+```
+
+We need v_CA16_401 and v_CA16_2397.
+
+Retrieve data:
+```{r}
+population_da_2016 <- get_census(dataset='CA16', 
+                          regions=list(CMA=c("35537")),
+                          vectors=c("v_CA16_401"),
+                          level='DA', 
+                          use_cache = FALSE)
+
+mhi <- get_census(dataset='CA16', 
+                          regions=list(CMA=c("35537")),
+                          vectors=c("v_CA16_2397"),
+                          level='DA', 
+                          use_cache = FALSE)
+```
+
+### Read data
+
+Load data files:
+```{r}
+load("input-data-files/hamilton_cma.RData")
+load("input-data-files/hamilton_da_2016.RData")
+```
+
+These two data files are simple features with the dissemination areas according to the 2016 Census, and the boundary of Hamilton CMA.
+```{r}
+ggplot() +
+  geom_sf(data = hamilton_cma)
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = hamilton_da_2016)
+```
+
+Read Sobi service area:
+```{r}
+sobi_service <- st_read("input-data-files/SoBi_Service_Areas.shp")
+```
+
+Plot service areas:
+```{r}
+ggplot() +
+  geom_sf(data = sobi_service,
+          aes(fill = AREA_NAME))
+```
+
+There is a Core Service Area and a much smaller service area at Van Wagner's. This is a location at the beach with service for beach goers. We will remove this area from further analysis:
+```{r}
+sobi_service <- sobi_service %>%
+  dplyr::filter(AREA_NAME == "Core Service Area")
+```
+
+Bounding box of population in serviced areas:
+```{r}
+bounding_box <- st_bbox(sobi_service %>%
+                          st_buffer(500))
+```
+
+Plot:
+```{r}
+ggplot() + 
+  geom_sf(data = hamilton_da_2016,
+          fill = NA,
+          color = "lightgray") + 
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = st_as_sfc(bounding_box),
+          linetype = "dashed",
+          fill = NA)
+```
+
+Read parks:
+```{r}
+parks <- st_read("input-data-files/Parks.shp")
+```
+
+Read cemeteries:
+```{r}
+cemeteries <- st_read("input-data-files/Cemeteries.shp")
+```
+
+Read environmentally sensitive areas:
+```{r}
+esa <- st_read("input-data-files/Environmentally_Sensitive_Areas_Boundaries.shp")
+```
+
+Read golf courses:
+```{r}
+golf_courses <- st_read("input-data-files/Golf_Courses.shp")
+```
+
+Read employment land areas, which include business parks and industrial lands:
+```{r}
+employment_lands <- st_read("input-data-files/Employment_Lands.shp")
+```
+
+Read railways:
+```{r}
+railways <- st_read("input-data-files/Railways.shp")
+```
+
+Read municipal parking lots:
+```{r}
+municipal_parking <- st_read("input-data-files/Municipal_Parking_Lots.shp")
+```
+
+Read street network:
+```{r}
+streets <- st_read("input-data-files/Street_Centreline.shp")
+```
+
+Filter for provincial highways:
+```{r}
+streets <- streets %>% dplyr::filter(ROAD_CLASS == "Provincial Highway")
+```
+
+Read educational institutions:
+```{r}
+schools <- st_read("input-data-files/Educational_Institutions.shp")
+```
+
+Read places of worship:
+```{r}
+religious_places <- st_read("input-data-files/Places_of_Worship.shp")
+```
+
+Read municipal service centres:
+```{r}
+service_centres <- st_read("input-data-files/Municipal_Service_Centres.shp")
+```
+
+Read recreation and centres:
+```{r}
+recreation_centres <- st_read("input-data-files/Recreation_and_Community_Centres.shp")
+```
+
+Read arenas:
+```{r}
+arenas <- st_read("input-data-files/Arenas.shp")
+```
+
+Read EMS stations:
+```{r}
+ems <- st_read("input-data-files/EMS_Stations.shp")
+```
+
+Read fire stations:
+```{r}
+fire <- st_read("input-data-files/Fire_Stations.shp")
+```
+
+Read police stations:
+```{r}
+police <- st_read("input-data-files/Police_Stations.shp")
+```
+
+Read hospitals:
+```{r}
+hospitals <- st_read("input-data-files/Hospitals.shp")
+```
+
+### Extract features in service area
+
+Project the Hamilton DA zones to the same projection of the SoBi Service Area:
+```{r}
+hamilton_da_2016 <- st_transform(hamilton_da_2016, crs = st_crs(sobi_service))
+```
+
+Extract DAs in service area:
+```{r}
+hamilton_da_sobi <- hamilton_da_2016[st_as_sfc(bounding_box),]
+```
+
+Recreate the bounding box:
+```{r}
+bounding_box <- st_bbox(hamilton_da_sobi)
+```
+
+Extract parks in service area:
+```{r}
+parks_sobi <- st_crop(parks, st_as_sfc(bounding_box))
+```
+
+Extract cemeteries in service area:
+```{r}
+cemeteries_sobi <- st_crop(cemeteries, st_as_sfc(bounding_box))
+```
+
+Extract environmentally sensitive areas in service area:
+```{r}
+esa_sobi <- st_crop(esa, st_as_sfc(bounding_box))
+```
+
+Extract golf courses in service area:
+```{r}
+golf_sobi <- st_crop(golf_courses, st_as_sfc(bounding_box))
+```
+
+Extract employment lands in service area:
+```{r}
+employment_sobi <- st_crop(employment_lands, st_as_sfc(bounding_box))
+```
+
+Extract railways in service area:
+```{r}
+railways_sobi <- st_crop(railways, st_as_sfc(bounding_box))
+```
+
+Extract municipal parking lots in service area:
+```{r}
+parking_sobi <- st_crop(municipal_parking, st_as_sfc(bounding_box))
+```
+
+Extract provincial highways in service area:
+```{r}
+highways_sobi <- st_crop(streets, st_as_sfc(bounding_box))
+```
+
+Extract educational institutions in service area:
+```{r}
+schools_sobi <- st_crop(schools, st_as_sfc(bounding_box))
+```
+
+Extract places of worship in service area:
+```{r}
+religious_sobi <- st_crop(religious_places, st_as_sfc(bounding_box))
+```
+
+Extract municipal service centres in service area:
+```{r}
+service_sobi <- st_crop(service_centres, st_as_sfc(bounding_box))
+```
+
+Extract recreation and community centres in service area:
+```{r}
+recreation_sobi <- st_crop(recreation_centres, st_as_sfc(bounding_box))
+```
+
+Extract indoor arenas in service area:
+```{r}
+arenas_sobi <- st_crop(arenas, st_as_sfc(bounding_box))
+```
+
+Extract educational institutions in service area:
+```{r}
+schools_sobi <- st_crop(schools, st_as_sfc(bounding_box))
+```
+
+Extract EMS stations in service area:
+```{r}
+ems_sobi <- st_crop(ems, st_as_sfc(bounding_box))
+```
+
+Extract fire stations in service area:
+```{r}
+fire_sobi <- st_crop(fire, st_as_sfc(bounding_box))
+```
+
+Extract police stations in service area:
+```{r}
+police_sobi <- st_crop(police, st_as_sfc(bounding_box))
+```
+
+Extract hospitals in service area:
+```{r}
+hospitals_sobi <- st_crop(hospitals, st_as_sfc(bounding_box))
+```
+
+### Prepare population data
+
+Transmute to retain only variables of interest:
+```{r}
+population_da_2016 <- population_da_2016 %>%
+  transmute(DA = factor(`GeoUID`), population = Population)
+```
+
+Join population table to DAs in service areas:
+```{r}
+hamilton_da_sobi <- hamilton_da_sobi %>%
+  left_join(population_da_2016, by = "DA")
+```
+
+### Visualize geographical data
+
+Plot population:
+```{r}
+ggplot() +
+  geom_sf(data = hamilton_da_sobi,
+          aes(fill = population),
+          color = NA) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_fill_distiller(palette = "YlOrRd", direction = 1)
+```
+
+Plot "Green" spaces:
+```{r}
+ggplot() +
+  geom_sf(data = parks_sobi,
+          fill = "blue") +
+  geom_sf(data = cemeteries_sobi,
+          fill = "gray") +
+  geom_sf(data = esa_sobi,
+          fill = "green") +
+  geom_sf(data = golf_sobi,
+          fill = "lightskyblue") +
+  geom_sf(data = employment_sobi,
+          fill = "purple") +
+  geom_sf(data = railways_sobi,
+          fill = "wheat") +
+  geom_sf(data = parking_sobi,
+          fill = "lightpink") +
+  geom_sf(data = highways_sobi,
+          fill = "orange") +
+  geom_sf(data = schools_sobi,
+          fill = "red") +
+  geom_sf(data = religious_sobi,
+          fill = "pink") +
+  geom_sf(data = service_sobi,
+          fill = "yellow") +
+  geom_sf(data = recreation_sobi,
+          fill = "yellow") +
+  geom_sf(data = arenas_sobi,
+          fill = "yellow") +
+  geom_sf(data = ems_sobi,
+          fill = "yellow") +
+  geom_sf(data = ems_sobi,
+          fill = "yellow") +
+  geom_sf(data = fire_sobi,
+          fill = "yellow") +
+  geom_sf(data = police_sobi,
+          fill = "yellow") +
+  geom_sf(data = hospitals_sobi,
+          fill = "yellow") +
+  geom_sf(data = sobi_service,
+          fill = NA,
+          color = "black") +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA,
+          color = "gray") +
+  scale_fill_distiller(palette = "YlOrRd", direction = 1)
+```
+
+### Prepare geographical data for interpolation
+
+Union of the "green space" features:
+```{r}
+parks_sobi <- st_combine(parks_sobi)
+cemeteries_sobi <- st_combine(cemeteries_sobi)
+esa_sobi <- st_combine(esa_sobi)
+golf_sobi <- st_combine(golf_sobi)
+employment_sobi <- st_combine(employment_sobi)
+railways_sobi <- st_combine(railways_sobi)
+parking_sobi <- st_combine(parking_sobi)
+highways_sobi <- st_combine(highways_sobi)
+schools_sobi <- st_combine(schools_sobi)
+religious_sobi <- st_combine(religious_sobi)
+service_sobi <- st_combine(service_sobi)
+recreation_sobi <- st_combine(recreation_sobi)
+arenas_sobi <- st_combine(arenas_sobi)
+ems_sobi <- st_combine(ems_sobi)
+fire_sobi <- st_combine(fire_sobi)
+police_sobi <- st_combine(police_sobi)
+hospitals_sobi <- st_combine(hospitals_sobi)
+```
+
+Check that the topology is valid:
+```{r}
+st_is_valid(parks_sobi)
+st_is_valid(cemeteries_sobi)
+st_is_valid(esa_sobi)
+st_is_valid(golf_sobi)
+st_is_valid(employment_sobi)
+st_is_valid(railways_sobi)
+st_is_valid(parking_sobi)
+st_is_valid(highways_sobi)
+st_is_valid(schools_sobi)
+st_is_valid(religious_sobi)
+st_is_valid(service_sobi)
+st_is_valid(recreation_sobi)
+st_is_valid(arenas_sobi)
+st_is_valid(ems_sobi)
+st_is_valid(fire_sobi)
+st_is_valid(police_sobi)
+st_is_valid(hospitals_sobi)
+```
+
+Make valid:
+```{r}
+parks_sobi <- st_make_valid(parks_sobi)
+esa_sobi <- st_make_valid(esa_sobi)
+parking_sobi <- st_make_valid(parking_sobi)
+```
+
+### Remove all features that are not population from the DAs
+
+Remove the parks from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi, parks_sobi)
+```
+
+Remove the cemeteries from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, cemeteries_sobi)
+```
+
+Remove environmentally sensitive areas from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, esa_sobi)
+```
+
+Remove golf courses from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, golf_sobi)
+```
+
+Remove employment lands from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, employment_sobi)
+```
+
+Remove railways from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, railways_sobi)
+```
+
+Remove municipal parking lots from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, parking_sobi)
+```
+
+Remove provincial highways from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, highways_sobi)
+```
+
+Remove educational institutions from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, schools_sobi)
+```
+
+Remove places of worship from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, religious_sobi)
+```
+
+Remove municipal service centres from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, service_sobi)
+```
+
+Remove recreation and community centres from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, recreation_sobi)
+```
+
+Remove arenas from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, arenas_sobi)
+```
+
+Remove EMS stations from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, ems_sobi)
+```
+Remove fire stations from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, fire_sobi)
+```
+Remove police stations from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, police_sobi)
+```
+
+Remove hospitals from the DAs (use `st_difference()`):
+```{r}
+hamilton_da_sobi_clean <- st_difference(hamilton_da_sobi_clean, hospitals_sobi)
+```
+
+Plot the new DAs (minus green) and compare to original DAs:
+```{r}
+ggplot() +
+  geom_sf(data = hamilton_da_sobi_clean,
+          color = NA,
+          fill = "blue") +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA,
+          color = "black")
+```
+
+## Interpolate population
+
+Pycnophylactic interpolation needs a `SpatialPolygonsDataFrame` object. Convert the simple features object:
+```{r}
+hamilton_da_sobi_clean.sp <- as(hamilton_da_sobi_clean, "Spatial")
+```
+
+Extract the population from the spatial object:
+```{r}
+pop <- hamilton_da_sobi_clean.sp@data$population
+```
+
+Pycnophylactic interpolation:
+```{r}
+filter <- stats::filter # Important! `filter()` should be from `stats`, not `dplyer`
+interpolated_pop <- pycno(x = hamilton_da_sobi_clean.sp, pops = pop, celldim = 50)
+```
+
+Convert to pixels and then simple features:
+```{r}
+interpolated_pop.pix <- as(interpolated_pop, "SpatialPixelsDataFrame")
+interpolated_pop <- data.frame(population = interpolated_pop.pix$dens, 
+                               x = interpolated_pop.pix@coords[,1],
+                               y = interpolated_pop.pix@coords[,2]) %>%
+  st_as_sf(coords = c("x", "y"),
+           crs = st_crs(hamilton_da_sobi))
+```
+
+Check the population totals:
+```{r}
+sum(hamilton_da_sobi_clean$population)
+sum(interpolated_pop$population)
+```
+
+Plot interpolated population:
+```{r}
+ggplot() + 
+  geom_sf(data = interpolated_pop,
+          aes(color = population)) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1) +
+  geom_sf(data = hamilton_da_sobi,
+          fill = NA,
+          color = "lightgray") + 
+  geom_sf(data = sobi_service,
+          fill = NA)
+```
+
+## Extract population in service area
+
+Extract population cells in the service area (and buffer)
+```{r}
+interpolated_pop_clean <- interpolated_pop[sobi_service %>% st_buffer(500),]
+```
+
+Note that some cells have population values of zero:
+```{r}
+interpolated_pop_clean %>% dplyr::select(population) %>% summary()
+```
+
+Filter all cells with non-zero population values:
+```{r}
+interpolated_pop_clean <- interpolated_pop_clean %>%
+            dplyr::filter(population > 0)
+```
+
+Add identifier for the population cells:
+```{r}
+interpolated_pop_clean <- interpolated_pop_clean %>%
+            mutate(UID = 1:n())
+```
+
+Plot interpolated population again:
+```{r}
+ggplot() + 
+  geom_sf(data = interpolated_pop_clean,
+          aes(color = population)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+## Bikeshare system
+
+Read Sobi hubs:
+```{r}
+sobi_hubs <- st_read("input-data-files/SoBi_Hubs.shp")
+```
+
+Plot interpolated population and SoBi hubs:
+```{r}
+ggplot() + 
+  geom_sf(data = interpolated_pop_clean,
+          aes(color = population)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = sobi_hubs) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1)
+```
+
+Remove SoBi hub on beach:
+```{r}
+sobi_hubs <- sobi_hubs %>%
+  dplyr::filter(NAME != "Van Wagners")
+```
+
+Plot again:
+```{r}
+ggplot() + 
+  geom_sf(data = interpolated_pop_clean,
+          aes(color = population)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = sobi_hubs,
+          aes(shape = hub_type, 
+              size = RACKS_AMOU)) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1) +
+  scale_size(range = c(1, 4))
+```
+
+Identify ERI hubs that were implemented in 2018 to increase accessibility for under-serviced and disadvantaged areas of the city. This reflects the original state of the system without the equity stations:
+```{r}
+sobi_hubs <- sobi_hubs %>%
+  dplyr::mutate(hub_type = case_when(NAME == "Mars at Wentworth - ERI01" ~ "ERI",
+                                     NAME == "Sherman at Barton - ERI02" ~ "ERI",
+                                     NAME == "Barton at Lottridge - ERI03" ~ "ERI",
+                                     NAME == "Barton and Belview - ERI05" ~ "ERI",
+                                     NAME == "Barton at Ottawa - ERI06" ~ "ERI",
+                                     NAME == "Ottawa at Dunsmure - ERI07" ~ "ERI",
+                                     NAME == "Maple at Rothsay - ERI08" ~ "ERI",
+                                     NAME == "King at Dunsmure - ERI09" ~ "ERI",
+                                     NAME == "Dunsmure at Sherman - ERI10" ~ "ERI",
+                                     NAME == "Gage at Cannon - ERI11" ~ "ERI",
+                                     NAME == "Belview at Cannon - ERI12" ~ "ERI",
+                                     NAME == "Westinghouse at Barton - ERI13" ~ "ERI",
+                                     TRUE ~ "Conventional"),
+                hub_type = factor(hub_type))
+
+```
+
+Plot again:
+```{r}
+ggplot() + 
+  geom_sf(data = interpolated_pop_clean,
+          aes(color = population)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = sobi_hubs,
+          aes(shape = hub_type,
+              size = RACKS_AMOU)) +
+  scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1) +
+  scale_size(range = c(1, 4)) + 
+  facet_wrap(~hub_type)
+```
+
+After removing the twelve ERI hubs, there is much less coverage in the east end of the service area. Again, the service area is the area where a cyclist can use a SoBi bike. It makes sense then that ERI would want to fill this gap in coverage because individuals who live in the east end of the service area could theoretically use the bike share system but may not live near a hub. For this reason, twelve hubs were added in 2018 to expand the system.
+
+## Routing for entire system
+
+I used [BBBike](https://download.bbbike.org/osm/bbbike/) to extract OSM data for Hamilton - not the whole city, but enough to cover SoBI's service area. The name of the file is `planet_-80.042,43.183_-79.748,43.309.osm.pbf`. Copy to folder `r5_graph`.
+
+Set Up R5 Routing. First define the path to where the graph is located:
+```{r set up r5 path, include=FALSE}
+r5_path <- file.path("./r5_graph")
+```
+
+Build the graph:
+```{r build-graph, include = FALSE}
+r5_sobi <- setup_r5(data_path = r5_path, verbose = FALSE)
+```
+
+Prepare Input Data for `r5r`. The origins are the coordinates of the population cells and the destinations the coordinates of the SoBi hubs:
+```{r prepare-inputs}
+# save origin centroids in format expected by R5R (id, lon, lat)
+origins_i <- data.frame(UID = interpolated_pop_clean$UID, 
+              interpolated_pop_clean %>%
+                st_transform(crs = 4326) %>%
+                st_coordinates()) %>%
+    rename(lon = X, lat = Y, id = UID) %>%
+    dplyr::select(id, lon, lat)
+
+# now SoBi hubs
+destinations_j <- data.frame(OBJECTID = sobi_hubs$OBJECTID, 
+              sobi_hubs %>%
+                st_transform(crs = 4326) %>%
+                st_coordinates()) %>%
+    rename(lon = X, lat = Y, id = OBJECTID) %>%
+    dplyr::select(id, lon, lat)
+```
+
+Calculate OD Matrix for Walking:
+```{r calculate walking od matrix, include=FALSE}
+# set up batching according to how many origin rows to process at one time
+chunksize = 2000 # larger chunks for walking will give enough origins in each chunk to allow multiprocessing to spin up with R5R
+num_chunks = ceiling(nrow(origins_i)/chunksize)
+
+# create origin-destination pairs
+origins_chunks <- as.disk.frame(origins_i,
+                          outdir = "./df/origins_i",
+                          nchunks = num_chunks,
+                          overwrite = TRUE)
+
+start.time <- Sys.time()
+pb <- txtProgressBar(0, num_chunks, style = 3)
+
+for (i in 1:num_chunks){
+  origins_i_chunk <- get_chunk(origins_chunks, i)
+  ttm_chunk <- travel_time_matrix(r5_sobi,
+                          origins = origins_i_chunk,
+                          destinations = destinations_j,
+                          mode = c("WALK"),
+                          departure_datetime = as.POSIXct(strptime("2020-03-02 08:00:00", "%Y-%m-%d %H:%M:%S", tz = "EST5EDT")),
+                          max_walk_dist = 10000, # metres
+                          max_trip_duration = 30)
+  
+  # export output as disk.frame
+  ifelse(i == 1, output_df <- as.disk.frame(ttm_chunk,
+                                            nchunks = 1,
+                                            outdir = "./df/output_ttm_walk",
+                                            compress = 50,
+                                            overwrite = TRUE),
+         add_chunk(output_df, ttm_chunk, chunk_id = i))
+  setTxtProgressBar(pb, i)
+}
+end.time <- Sys.time()
+ttm_walk_time <- end.time - start.time
+ttm_walk_time
+```
+
+## Extract travel time matrix
+
+```{r load od matrix for walk and subway, include=FALSE}
+# connect to the walking travel time matrix disk frame
+ttm_walk.disk.frame <- disk.frame("./df/output_ttm_walk")
+#opportunities_j <- as.data.frame(nyc_cb_point) %>% select(GEOID10, total_emp) %>% rename(toId = GEOID10, o_j = total_emp)
+```
+
+Convert disk.frame to data frame:
+```{r}
+ttm_walk <- as.data.frame(ttm_walk.disk.frame) %>%
+  transmute(UID = as.numeric(fromId), OBJECTID = as.numeric(toId), travel_time)
+```
+
+Join hub type information to travel time table:
+```{r}
+ttm_walk <- ttm_walk %>%
+  left_join(sobi_hubs %>%
+              st_drop_geometry() %>%
+              dplyr::select(OBJECTID,
+                            hub_type),
+            by = "OBJECTID")
+```
+
+## Save data to disk
+
+Rename data frame:
+```{r}
+population_50x50 <- interpolated_pop_clean
+```
+
+Clean DA boundaries:
+```{r}
+hamilton_da_2016 <- hamilton_da_2016 %>%
+  dplyr::select(-POP2011) %>%
+  left_join(population_da_2016,
+            by = "DA") %>%
+  left_join(mhi %>%
+              transmute(GeoUID, median_total_income = `v_CA16_2397: Median total income of households in 2015 ($)`),
+            by = c("DA" = "GeoUID")) %>%
+  left_join(hamilton_da_sobi %>%
+              st_drop_geometry() %>%
+              transmute(DA,
+                        sobi_service = "Yes"),
+            by = "DA") %>%
+  mutate(sobi_service = ifelse(is.na(sobi_service), "No", "Yes") %>%
+           factor())
+```
+
+
+Save data files:
+```{r}
+save(hamilton_cma, file = "output-data-files/hamilton_cma.RData", compress = "xz")
+save(hamilton_da_2016, file = "output-data-files/hamilton_da_2016.RData", compress = "xz")
+save(population_50x50, file = "output-data-files/population_50x50.RData", compress = "xz")
+save(sobi_hubs, file = "output-data-files/sobi_hubs.RData", compress = "xz")
+save(sobi_service, file = "output-data-files/sobi_service.RData", compress = "xz")
+save(ttm_walk, file = "output-data-files/ttm_walk.RData", compress = "xz")
+```
+
+Copy files to folder `data` of the package.

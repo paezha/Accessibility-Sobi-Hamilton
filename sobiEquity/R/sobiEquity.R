@@ -21,3 +21,4 @@ NULL
 #' @usage data(hamilton_cma)
 #' @source Statistics Canada
 "hamilton_cma"
+

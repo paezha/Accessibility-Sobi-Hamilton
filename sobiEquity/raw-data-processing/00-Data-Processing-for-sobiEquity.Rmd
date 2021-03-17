@@ -150,6 +150,12 @@ The dataset contains the location of all hospitals in Hamilton. This includes Ha
 
 ### Railways
 
+INFO
+
+### Community Downtown
+
+INFO
+
 ## Provenance of data: census
 
 We can get an API key to use `cancensus` from [CensusMapper](https://censusmapper.ca/). Once you have an API key, it can be stored locally this way:
@@ -352,6 +358,11 @@ police <- st_read("input-data-files/Police_Stations.shp")
 Read hospitals:
 ```{r}
 hospitals <- st_read("input-data-files/Hospitals.shp")
+```
+
+Read community downtown:
+```{r}
+community_downtown <- st_read("input-data-files/Community_Downtown.shp")
 ```
 
 ### Extract features in service area
@@ -799,8 +810,7 @@ ggplot() +
   geom_sf(data = sobi_service,
           fill = NA) +
   geom_sf(data = sobi_hubs,
-          aes(shape = hub_type, 
-              size = RACKS_AMOU)) +
+          aes(size = RACKS_AMOU)) +
   scale_color_distiller(palette = "YlOrRd", 
                         direction = 1) +
   scale_size(range = c(1, 4))
@@ -823,6 +833,17 @@ sobi_hubs <- sobi_hubs %>%
                                      NAME == "Westinghouse at Barton - ERI13" ~ "ERI",
                                      TRUE ~ "Conventional"),
                 hub_type = factor(hub_type))
+
+```
+
+Identify hubs that were deactivated:
+```{r}
+sobi_hubs <- sobi_hubs %>%
+  dplyr::mutate(hub_status = case_when(OBJECTID == 114 ~ "Deactivated",
+                                       OBJECTID == 115 ~ "Deactivated",
+                                       OBJECTID == 116 ~ "Deactivated",
+                                       TRUE ~ "Active"),
+                hub_status = factor(hub_status))
 
 ```
 
@@ -936,7 +957,8 @@ ttm_walk <- ttm_walk %>%
   left_join(sobi_hubs %>%
               st_drop_geometry() %>%
               dplyr::select(OBJECTID,
-                            hub_type),
+                            hub_type,
+                            hub_status),
             by = "OBJECTID")
 ```
 
@@ -968,6 +990,7 @@ hamilton_da_2016 <- hamilton_da_2016 %>%
 
 Save data files:
 ```{r}
+save(community_downtown, file = "output-data-files/community_downtown.RData", compress = "xz")
 save(hamilton_cma, file = "output-data-files/hamilton_cma.RData", compress = "xz")
 save(hamilton_da_2016, file = "output-data-files/hamilton_da_2016.RData", compress = "xz")
 save(population_50x50, file = "output-data-files/population_50x50.RData", compress = "xz")

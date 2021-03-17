@@ -56,64 +56,14 @@ library(ggplot2)
 theme_set(theme_bw())
 ```
 
-```{r}
+```{r invoke-data, include=FALSE}
+data("community_downtown")
 data("hamilton_cma")
 data("hamilton_da_2016")
 data("population_50x50")
 data("sobi_service")
 data("sobi_hubs")
 data("ttm_walk")
-```
-
-
-```{r coordinates-of-equity-stations, include=FALSE}
-# define the coordinates of the equity stations
-# equity_stations <- data.frame(longitude = c(-79.84364993846138, 
-#                                             -79.8362839215856,
-#                                             -79.83144521746212, 
-#                                             -79.82217214949738, 
-#                                             -79.8160211746482, 
-#                                             -79.8192304372373, 
-#                                             -79.82500255113169, 
-#                                             -79.8268599805827, 
-#                                             -79.83888834759689, 
-#                                             -79.82740849222654, 
-#                                             -79.82342541216097, 
-#                                             -79.84240606419081), 
-#                               latitude = c(43.265340158000654, 
-#                                            43.25632467284136, 
-#                                            43.25528943845642, 
-#                                            43.25291050074978, 
-#                                            43.25147804403345, 
-#                                            43.24444659758296, 
-#                                            43.2421627336722, 
-#                                            43.24634382671116,
-#                                            43.249432741404554,
-#                                            43.251126444296524, 
-#                                            43.24892849896579, 
-#                                            43.25831920064561))
-```
-
-```{r, include=FALSE}
-#equity_stations <- st_as_sf(equity_stations, coords = c("longitude", "latitude"), 
-    #crs = st_crs(sobi_service), agr = "constant")
-```
-
-```{r load-data, include=FALSE}
-#load("accessibility.RData") #full accessibility table for SoBi system
-#load("accessibility_map_original.RData") #map of accessibility in original SoBi system
-#load("accessibility_map_equity.RData") #map of accessibility in current system with ERI
-# load("hamilton_cma.RData")
-# load("hamilton_da_2016.RData")
-# load("hamilton_da_sobi.RData")
-# load("mhi.RData") #median household income by DA
-# load("population_sobi.RData") #interpolated population in SoBi area
-#load("population_sobi_original.RData") #population in original system
-# load("sobi_hubs.RData") #location of SoBi hubs, minus Van Wagner's beach
-# load("sobi_hubs_original.RData") #SoBi hubs, minus ERI hubs
-# load("sobi_service.RData") #core service area for SoBi
-# load("ttm_walk.RData") #travel time matrix for interpolated population in SoBi area
-# load("ttm_walk_original.RData") #travel time matrix for system without ERI hubs
 ```
 
 Background
@@ -154,15 +104,6 @@ ggplot() +
           colour = "black")
 ```
 
-```{r filter-eri-hubs, include=FALSE}
-# eri_hubs <- sobi_hubs %>% 
-#              filter(OBJECTID>=117 & OBJECTID<=128)
-```
-
-```{r, include=FALSE}
-sobi_downtown <- st_read("Community_Downtown.shp")
-```
-
 ```{r sobi-stations-in-hamilton, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "The spatial distribution of bike share stations in Hamilton, Ontario. The service area of Hamilton Bike Share is outlined in blue and the city's downtown core is outlined in light blue. Dissemination areas within the Hamilton CMA that touch the bounding box of the core service area are outlined in grey."}
 ggplot() + 
   geom_sf(data = hamilton_da_2016 %>% 
@@ -171,12 +112,13 @@ ggplot() +
   geom_sf(data = sobi_service, 
           fill = NA,
           color = "black") +
-  geom_sf(data = sobi_downtown %>%
+  geom_sf(data = community_downtown %>%
             dplyr::filter(NAME == "Hamilton"),
           fill = "dark green",
           color = "dark green") +
   geom_sf(data = sobi_hubs %>% 
-            dplyr::filter(hub_type == "Conventional"), 
+            dplyr::filter(hub_type == "Conventional" & 
+                            hub_status == "Active"), # Remove deactivated hubs
           size = 1.5, 
           shape = 21, 
           fill = "blue") +
@@ -310,7 +252,7 @@ ggplot() +
   geom_sf(data = sobi_service,
           fill = NA,
           colour = "black") +
-  geom_sf(data = sobi_downtown %>%
+  geom_sf(data = community_downtown %>%
             dplyr::filter(NAME == "Hamilton"),
           fill = NA,
           color = "dark green")
@@ -325,7 +267,8 @@ ggplot() +
           fill = NA, 
           color = "lightgray") + 
   geom_sf(data = sobi_hubs %>% 
-            dplyr::filter(hub_type == "Conventional"), 
+            dplyr::filter(hub_type == "Conventional" &
+                            hub_status == "Active"), 
           size = 1.5, 
           shape = 21, 
           fill = "blue") +
@@ -338,7 +281,7 @@ ggplot() +
           colour = "black") +
   scale_color_distiller(palette = "YlOrRd", 
                         direction = 1) +
-  geom_sf(data = sobi_downtown %>%
+  geom_sf(data = community_downtown %>%
             dplyr::filter(NAME == "Hamilton"),
           fill = NA,
           color = "dark green") +
@@ -369,16 +312,13 @@ ttm_walk <- ttm_walk %>%
 
 ```{r echo=FALSE}
 #data frames for current and original systems
-names(ttm_walk) <- c('UID', 
-                     'hub', 
-                     'travel_time',
+names(ttm_walk) <- c("UID", 
+                     "hub", 
+                     "travel_time",
                      "hub_type",
-                     'population',
-                     'racks')
-```
-
-```{r, echo=FALSE}
-#population_sobi_original <- population_sobi_original[-c(3, 5:6)]
+                     "hub_status",
+                     "population",
+                     "racks")
 ```
 
 ### Varying thresholds
@@ -386,13 +326,15 @@ names(ttm_walk) <- c('UID',
 For the system without the equity stations we remove the equity stations from the travel time matrix before calculating accessibility in at most 3 minutes:
 ```{r}
 results_3min_conventional <- ttm_walk %>%
-  dplyr::filter(hub_type == "Conventional") %>%
+  dplyr::filter(hub_type == "Conventional" &
+                  hub_status == "Active") %>%
   b2sfca(threshold = 3)
 ```
 
 All stations:
 ```{r}
 results_3min_all <- ttm_walk %>%
+  dplyr::filter(hub_status == "Active") %>%
   b2sfca(threshold = 3)
 ```
 
@@ -411,13 +353,15 @@ sum(results_3min_all$accessibility$accessibility)
 For the system without the equity stations we remove the equity stations from the travel time matrix before calculating accessibility in at most 5 minutes:
 ```{r}
 results_5min_conventional <- ttm_walk %>%
-  dplyr::filter(hub_type == "Conventional") %>%
+  dplyr::filter(hub_type == "Conventional" &
+                  hub_status == "Active") %>%
   b2sfca(threshold = 5)
 ```
 
 All stations:
 ```{r}
 results_5min_all <- ttm_walk %>%
+  dplyr::filter(hub_status == "Active") %>%
   b2sfca(threshold = 5)
 ```
 
@@ -436,13 +380,15 @@ sum(results_5min_all$accessibility$accessibility)
 For the system without the equity stations we remove the equity stations from the travel time matrix before calculating accessibility in at most 10 minutes:
 ```{r}
 results_10min_conventional <- ttm_walk %>%
-  dplyr::filter(hub_type == "Conventional") %>%
+  dplyr::filter(hub_type == "Conventional" &
+                  hub_status == "Active") %>%
   b2sfca(threshold = 10)
 ```
 
 All stations:
 ```{r}
 results_10min_all <- ttm_walk %>%
+  dplyr::filter(hub_status == "Active") %>%
   b2sfca(threshold = 10)
 ```
 
@@ -461,13 +407,15 @@ sum(results_10min_all$accessibility$accessibility)
 For the system without the equity stations we remove the equity stations from the travel time matrix before calculating accessibility in at most 15 minutes:
 ```{r}
 results_15min_conventional <- ttm_walk %>%
-  dplyr::filter(hub_type == "Conventional") %>%
+  dplyr::filter(hub_type == "Conventional" &
+                  hub_status == "Active") %>%
   b2sfca(threshold = 15)
 ```
 
 All stations:
 ```{r}
 results_15min_all <- ttm_walk %>%
+  dplyr::filter(hub_status == "Active") %>%
   b2sfca(threshold = 15)
 ```
 

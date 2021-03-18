@@ -358,26 +358,43 @@ sum(results_3min_all$accessibility$accessibility)
 For the system without the equity stations, we remove the equity stations from the travel time matrix before calculating accessibility in at most 5 minutes walk.
 
 ```{r med-conventional, include=FALSE}
-results_5min_conventional <- ttm_walk %>%
+results_6min_conventional <- ttm_walk %>%
   dplyr::filter(hub_type == "Conventional" &
                   hub_status == "Active") %>%
-  b2sfca(threshold = 5)
+  b2sfca(threshold = 6)
 ```
 
 ```{r med-all, include=FALSE}
-results_5min_all <- ttm_walk %>%
+results_6min_all <- ttm_walk %>%
   dplyr::filter(hub_status == "Active") %>%
-  b2sfca(threshold = 5)
+  b2sfca(threshold = 6)
 ```
 
 ```{r, med-sum-conventional, echo=FALSE}
-sum(results_5min_conventional$los$los)
-sum(results_5min_conventional$accessibility$accessibility)
+sum(results_6min_conventional$los$los)
+sum(results_6min_conventional$accessibility$accessibility)
 ```
 
 ```{r med-sum-all, echo=FALSE}
 sum(results_5min_all$los$los)
 sum(results_5min_all$accessibility$accessibility)
+```
+
+```{r include=FALSE}
+# Testing different thresholds to check how accessibility changes
+accessibility_test <- data.frame(threshold = c(3:15), 
+                                 accessibility = numeric(13))
+for(i in 1:13){
+  results_test <- ttm_walk %>%
+  dplyr::filter(hub_type == "Conventional" &
+                  hub_status == "Active") %>%
+  b2sfca(threshold = i +2)
+  accessibility_test$accessibility[i] <- sum(results_test$accessibility$accessibility)
+}
+
+ggplot(accessibility_test, 
+       aes(x = threshold, y = accessibility)) +
+  geom_line()
 ```
 
 ### Ten Minutes
@@ -535,235 +552,113 @@ Include table with total # of people who can reach a station within 3 minutes wa
 
 ```{r, include=FALSE}
 # drop geometry
-test <- accessibility %>% st_drop_geometry()
+test <- accessibility
 
 # join accessibility to population cells
-test <- test %>% left_join(population_50x50, by = "UID")
-```
-
-```{r, include=FALSE}
-test0 <- population_50x50 %>%
-  st_join(hamilton_da_2016 %>% dplyr::select(DA))
-```
-
-```{r, include=FALSE}
-test <- test0 %>% left_join(test, by = "UID")
-```
-
-```{r, include=FALSE}
-# object is a combination of accessibility, population_50x50, with DAs
-test <- test %>% drop_na()
-```
-
-```{r, include=FALSE}
-test <- subset(test, select = -c(1)) %>% dplyr::select(-geometry.y)
-```
-
-```{r, include=FALSE}
-accessibility <- test
-```
-
-```{r, include=FALSE}
-min_all <- accessibility %>%
-            dplyr::filter(threshold == "3 min") %>% 
-            dplyr::filter(system == "All stations")
-
-min_con <- accessibility %>%
-            dplyr::filter(threshold == "3 min") %>%
-            dplyr::filter(system == "Conventional")
-
-avg_all <- accessibility %>%
-            dplyr::filter(threshold == "5 min") %>% 
-            dplyr::filter(system == "All stations")
-
-avg_con <- accessibility %>%
-            dplyr::filter(threshold == "5 min") %>%
-            dplyr::filter(system == "Conventional")
-
-max_all <- accessibility %>%
-            dplyr::filter(threshold == "10 min") %>% 
-            dplyr::filter(system == "All stations")
-
-max_con <- accessibility %>%
-            dplyr::filter(threshold == "10 min") %>%
-            dplyr::filter(system == "Conventional")
-
-ext_all <- accessibility %>%
-            dplyr::filter(threshold == "15 min") %>% 
-            dplyr::filter(system == "All stations")
-
-ext_con <- accessibility %>%
-            dplyr::filter(threshold == "15 min") %>%
-            dplyr::filter(system == "Conventional")
-
-```
-
-```{r, include=FALSE}
-# aggregate population and accessibility by DA
-min_all <- min_all %>%
-           group_by(DA) %>%
-             summarize(population = sum(population.y),
-             accessibility = sum(accessibility)) %>%
-           st_join(hamilton_da_2016 %>% dplyr::select(median_total_income))
-
-min_con <- min_con %>%
-           group_by(DA) %>%
-             summarize(population = sum(population.y),
-             accessibility = sum(accessibility)) %>%
-           st_join(hamilton_da_2016 %>% dplyr::select(median_total_income))
-
-avg_all <- avg_all %>%
-           group_by(DA) %>%
-             summarize(population = sum(population.y),
-             accessibility = sum(accessibility)) %>%
-           st_join(hamilton_da_2016 %>% dplyr::select(median_total_income))
-
-avg_con <- avg_con %>%
-           group_by(DA) %>%
-             summarize(population = sum(population.y),
-             accessibility = sum(accessibility)) %>%
-           st_join(hamilton_da_2016 %>% dplyr::select(median_total_income))
-
-max_all <- max_all %>%
-           group_by(DA) %>%
-             summarize(population = sum(population.y),
-             accessibility = sum(accessibility)) %>%
-           st_join(hamilton_da_2016 %>% dplyr::select(median_total_income))
-
-max_con <- max_con %>%
-           group_by(DA) %>%
-             summarize(population = sum(population.y),
-             accessibility = sum(accessibility)) %>%
-           st_join(hamilton_da_2016 %>% dplyr::select(median_total_income))
-
-ext_all <- ext_all %>%
-           group_by(DA) %>%
-             summarize(population = sum(population.y),
-             accessibility = sum(accessibility)) %>%
-           st_join(hamilton_da_2016 %>% dplyr::select(median_total_income))
-
-ext_con <- ext_con %>%
-           group_by(DA) %>%
-             summarize(population = sum(population.y),
-             accessibility = sum(accessibility)) %>%
-           st_join(hamilton_da_2016 %>% dplyr::select(median_total_income))
+test <- test %>% st_join(population_50x50 %>% dplyr::select(-UID)) %>%
+  rename(population50x50 = population)
 ```
 
 ```{r}
-min_all <- min_all %>%
-  st_drop_geometry() %>%
-  left_join(hamilton_da_2016 %>% 
-              dplyr::select(DA, geometry),
-            by = "DA") %>%
-  st_as_sf()
+test <- test %>%
+  st_join(hamilton_da_2016)
+```
 
-min_con <- min_con %>%
+```{r}
+agg_accessibility_da <- test %>%
+  group_by(DA, 
+           system,
+           threshold) %>%
+  summarize(accessibility = sum(accessibility),
+            median_total_income = first(median_total_income), 
+            .groups = "drop") %>%
   st_drop_geometry() %>%
-  left_join(hamilton_da_2016 %>% 
-              dplyr::select(DA, geometry),
-            by = "DA") %>%
-  st_as_sf()
-
-avg_all <- avg_all %>%
-  st_drop_geometry() %>%
-  left_join(hamilton_da_2016 %>% 
-              dplyr::select(DA, geometry),
-            by = "DA") %>%
-  st_as_sf()
-
-avg_con <- avg_con %>%
-  st_drop_geometry() %>%
-  left_join(hamilton_da_2016 %>% 
-              dplyr::select(DA, geometry),
-            by = "DA") %>%
-  st_as_sf()
-
-max_all <- max_all %>%
-  st_drop_geometry() %>%
-  left_join(hamilton_da_2016 %>% 
-              dplyr::select(DA, geometry),
-            by = "DA") %>%
-  st_as_sf()
-
-max_con <- max_con %>%
-  st_drop_geometry() %>%
-  left_join(hamilton_da_2016 %>% 
-              dplyr::select(DA, geometry),
-            by = "DA") %>%
-  st_as_sf()
-
-ext_all <- ext_all %>%
-  st_drop_geometry() %>%
-  left_join(hamilton_da_2016 %>% 
-              dplyr::select(DA, geometry),
-            by = "DA") %>%
-  st_as_sf()
-
-ext_con <- ext_con %>%
-  st_drop_geometry() %>%
-  left_join(hamilton_da_2016 %>% 
-              dplyr::select(DA, geometry),
-            by = "DA") %>%
+  left_join(hamilton_da_2016 %>% dplyr::select(DA, geometry),
+            by = c("DA" = "DA")) %>%
   st_as_sf()
 ```
 
 ```{r}
-data_min_all <- bi_class(min_all,
-                 x = accessibility, 
-                 y = median_total_income, 
-                 style = "quantile", 
-                 dim = 3) %>%
-  st_as_sf()
+data_map <- agg_accessibility_da %>%
+            dplyr::filter(threshold == "3 min", 
+                          system == "All stations") %>%
+  bi_class(x = accessibility, 
+           y = median_total_income, 
+           style = "quantile", 
+           dim = 3) %>%
+  st_as_sf() 
 
-data_min_con <- bi_class(min_con,
-                 x = accessibility, 
-                 y = median_total_income, 
-                 style = "quantile", 
-                 dim = 3) %>%
-  st_as_sf()
+map_min_all <- ggplot() +
+  geom_sf(data = data_map,
+          mapping = aes(fill = bi_class), 
+          color = "white", 
+          size = 0.1, 
+          show.legend = FALSE) +
+  bi_scale_fill(pal = "DkBlue", 
+                dim = 3) +
+  bi_theme()
 
-data_avg_all <- bi_class(avg_all,
-                 x = accessibility, 
-                 y = median_total_income, 
-                 style = "quantile", 
-                 dim = 3) %>%
-  st_as_sf()
+legend <- bi_legend(pal = "DkBlue",
+                    dim = 3,
+                    xlab = "Higher accessibility ",
+                    ylab = "Higher income",
+                    size = 6)
 
-data_avg_con <- bi_class(avg_con,
-                 x = accessibility, 
-                 y = median_total_income, 
-                 style = "quantile", 
-                 dim = 3) %>%
-  st_as_sf()
-
-data_max_all <- bi_class(max_all,
-                 x = accessibility, 
-                 y = median_total_income, 
-                 style = "quantile", 
-                 dim = 3) %>%
-  st_as_sf()
-
-data_max_con <- bi_class(max_con,
-                 x = accessibility, 
-                 y = median_total_income, 
-                 style = "quantile", 
-                 dim = 3) %>%
-  st_as_sf()
-
-data_ext_all <- bi_class(ext_all,
-                 x = accessibility, 
-                 y = median_total_income, 
-                 style = "quantile", 
-                 dim = 3) %>%
-  st_as_sf()
-
-data_ext_con <- bi_class(ext_con,
-                 x = accessibility, 
-                 y = median_total_income, 
-                 style = "quantile", 
-                 dim = 3) %>%
-  st_as_sf()
+cowplot::ggdraw() +
+  cowplot::draw_plot(map_min_all, 0, 0, 1, 1) +
+  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
 ```
+
+Coming back to the question of accessibility by income:
+```{r}
+# Find the income quintiles of the population served by SoBi
+iq <- hamilton_da_2016 %>% 
+  dplyr::filter(sobi_service == "Yes") %>%
+  pull(median_total_income) %>%
+  quantile(c(0, 0.2, 0.4, 0.6, 0.8, 1), na.rm = TRUE)
+```
+
+```{r}
+# Add a variable to identify the income 
+agg_accessibility_income <- test %>% 
+  dplyr::filter(system == "All stations", threshold == "10 min") %>%
+  mutate(income_quintile = case_when(median_total_income <= iq[2] ~ "Bottom 20%",
+                                     median_total_income > iq[2] & median_total_income <= iq[3] ~ "Second 20%",
+                                     median_total_income > iq[3] & median_total_income <= iq[4] ~ "Third 20%",
+                                     median_total_income > iq[4] & median_total_income <= iq[5] ~ "Fourth 20%",
+                                     median_total_income > iq[5] ~ "Top 20%"))
+
+inc_stats_All_10 <- agg_accessibility_income %>%
+  st_drop_geometry() %>%
+  dplyr::filter(system == "All stations", threshold == "10 min") %>%
+  group_by(income_quintile) %>%
+  summarize(accessibility = sum(accessibility),
+            population = sum(population50x50))
+```
+
+```{r}
+# Add a variable to identify the income 
+agg_accessibility_income <- test %>% 
+  dplyr::filter(system == "Conventional", threshold == "10 min") %>%
+  mutate(income_quintile = case_when(median_total_income <= iq[2] ~ "Bottom 20%",
+                                     median_total_income > iq[2] & median_total_income <= iq[3] ~ "Second 20%",
+                                     median_total_income > iq[3] & median_total_income <= iq[4] ~ "Third 20%",
+                                     median_total_income > iq[4] & median_total_income <= iq[5] ~ "Fourth 20%",
+                                     median_total_income > iq[5] ~ "Top 20%"))
+
+inc_stats_Conv_10 <- agg_accessibility_income %>%
+  st_drop_geometry() %>%
+  dplyr::filter(system == "Conventional", threshold == "10 min") %>%
+  group_by(income_quintile) %>%
+  summarize(accessibility = sum(accessibility),
+            population = sum(population50x50))
+```
+
+```{r}
+rbind(inc_stats_All_10,  
+      inc_stats_Conv_10)
+```
+
 ```{r figure-10, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 3 minutes walk (minimum threshold) varying by median total income in the current system with equity stations."}
 map_min_all <- ggplot() +
   geom_sf(data = data_min_all, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +

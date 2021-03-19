@@ -839,8 +839,7 @@ sobi_hubs <- sobi_hubs %>%
 Identify hubs that were deactivated:
 ```{r}
 sobi_hubs <- sobi_hubs %>%
-  dplyr::mutate(hub_status = case_when(OBJECTID == 114 ~ "Deactivated",
-                                       OBJECTID == 115 ~ "Deactivated",
+  dplyr::mutate(hub_status = case_when(OBJECTID == 115 ~ "Deactivated",
                                        OBJECTID == 116 ~ "Deactivated",
                                        TRUE ~ "Active"),
                 hub_status = factor(hub_status))

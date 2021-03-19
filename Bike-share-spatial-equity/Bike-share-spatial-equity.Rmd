@@ -109,7 +109,7 @@ ggplot() +
           colour = "black")
 ```
 
-```{r sobi-stations-in-hamilton, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "The spatial distribution of bike share stations in Hamilton, Ontario. The service area of Hamilton Bike Share is outlined in blue and the city's downtown core is outlined in light blue. Dissemination areas within the Hamilton CMA that touch the bounding box of the core service area are outlined in grey."}
+```{r sobi-stations-in-hamilton, echo=FALSE, fig.align = 'center', out.width = "100%", fig.cap = "The spatial distribution of bike share stations in Hamilton, Ontario. The service area of Hamilton Bike Share is outlined in blue and the city's downtown core is outlined in light blue. Dissemination areas within the Hamilton CMA that touch the bounding box of the core service area are outlined in grey."}
 ggplot() + 
   geom_sf(data = hamilton_da_2016 %>% 
             dplyr::filter(sobi_service == "Yes"),
@@ -124,12 +124,13 @@ ggplot() +
   geom_sf(data = sobi_hubs %>% 
             dplyr::filter(hub_type == "Conventional" & 
                             hub_status == "Active"), # Remove deactivated hubs
-          size = 1.5, 
-          shape = 21, 
+          aes(size = RACKS_AMOU),
+          shape = 21,
           fill = "blue") +
   geom_sf(data =  sobi_hubs %>% 
             dplyr::filter(hub_type == "ERI"), 
-          size = 1.5, shape = 21, 
+          aes(size = RACKS_AMOU), 
+          shape = 21,
           fill = "green")
 ```
 
@@ -243,7 +244,6 @@ ggplot() +
                        direction = 1)
 ```
 
-
 ```{r figure-4, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Interpolated population cells in the SoBi Hamilton core service area (outlined in black) and within 30 minutes of walking to the core service area (outlined in blue). The downtown area is outlined in dark green. Geographic features have been extracted. Dissemination area polygons are outlined in grey."}
 ggplot() + 
   geom_sf(data = population_50x50,
@@ -293,11 +293,30 @@ ggplot() +
   facet_grid(rows = vars(hub_type))
 ```
 
-## Accessibility at Different Thresholds
+## Accessibility by Distance
 
-Consensus regarding the distance that individuals are willing to walk to access a PBSP is lacking, therefore the literature on walking behaviour was consulted to determine the thresholds for the sensitivity analysis. Previous studies have found that living within 250 metres [@fullerUseNewPublic2011] and 300 metres [@kabraBikeShareSystemsAccessibility2020] is correlated with bike share use, while other research has found that walking trips are less than 600 metres and rarely more than 1200 metres [@millwardActivetransportWalkingBehavior2013] or a median distance of 650 metres [@larsenQuarterMileReexamining2010]. For this reason, we experiment with various walking thresholds by conducting a sensitivity analysis to calculate accessibility at different walking times: 3 minutes, 5 minutes, 10 minutes, and 15 minutes. We repeat these calculations for both the current system and the original system to compare how accessibility changes at different thresholds with the addition of the equity stations.
+Consensus regarding the distance that individuals are willing to walk to access a PBSP is lacking, therefore the literature on walking behaviour was consulted to determine the thresholds for the sensitivity analysis. Previous studies have found that living within 250 metres [@fullerUseNewPublic2011] and 300 metres [@kabraBikeShareSystemsAccessibility2020] is correlated with bike share use, while other research has found that walking trips are less than 600 metres and rarely more than 1200 metres [@millwardActivetransportWalkingBehavior2013] or a median distance of 650 metres [@larsenQuarterMileReexamining2010]. As seen in Table \ref{tab:accessibility-sensibility}, we find that accessibility increases with a threshold between two and four minutes, but is then maximized at 5 minutes. At some stations, Hamilton Bike Share will depict a map to show the user the locations of the other nearest stations within a five minute walk, which suggests that this is an average distance that people are anticipated to walk. Accessibility decreases significantly after eight minutes, which is intuitive given that demand on a limited supply increases as more people can reach each bike share station.
 
-```{r join-population-to-travel-time-data, echo=FALSE}
+For this reason, we experiment with various walking thresholds by conducting a sensitivity analysis to calculate accessibility at different walking times: 3 minutes, 5 minutes, 10 minutes, and 15 minutes. We categorize these thresholds as minimum, average, maximum, and extreme, respectively. At each threshold, we compare accessibility between the current system and the original system to examine the contribution of the additional equity stations.
+
+```{r accessibility-sensibility, echo=FALSE}
+# Testing different thresholds to check how accessibility changes
+accessibility_test <- data.frame(threshold = c(3:15), 
+                                 accessibility = numeric(13))
+for(i in 1:13){
+  results_test <- ttm_walk %>%
+  dplyr::filter(hub_type == "Conventional" &
+                hub_status == "Active") %>%
+  b2sfca(threshold = i +2)
+  accessibility_test$accessibility[i] <- sum(results_test$accessibility$accessibility)
+}
+
+ggplot(accessibility_test, 
+       aes(x = threshold, y = accessibility)) +
+  geom_line()
+```
+
+```{r join-population-to-travel-time-data, include=FALSE}
 # current system with equity stations
 ttm_walk <- left_join(ttm_walk, 
                       population_50x50 %>%
@@ -315,7 +334,7 @@ ttm_walk <- ttm_walk %>%
             by = c("OBJECTID" = "OBJECTID"))
 ```
 
-```{r echo=FALSE}
+```{r, include=FALSE}
 #data frames for current and original systems
 names(ttm_walk) <- c("UID", 
                      "hub", 
@@ -328,12 +347,12 @@ names(ttm_walk) <- c("UID",
 
 ### Three Minutes
 
-For the system without the equity stations, we remove the equity stations from the travel time matrix before calculating accessibility in at most 3 minutes walk.
+At this threshold, we find that there are 25.2 bicycle racks per person in the original system.  With the addition of equity stations, there are now 25.4 bicycles per person. Figure \ref{fig:figure-6} presents a comparison of accessibility between the systems. Accessibility is fairly uniform, with the exception of two small areas near the university and the waterfront park where accessibility is slightly higher. Equity stations are shown in green, which helps to demonstrate how they increase accessibility between the systems.
 
 ```{r min-conventional, include=FALSE}
 results_3min_conventional <- ttm_walk %>%
   dplyr::filter(hub_type == "Conventional" &
-                  hub_status == "Active") %>%
+                hub_status == "Active") %>%
   b2sfca(threshold = 3)
 ```
 
@@ -352,27 +371,48 @@ sum(results_3min_conventional$accessibility$accessibility)
 sum(results_3min_all$los$los)
 sum(results_3min_all$accessibility$accessibility)
 ```
+```{r figure-6, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 3 minutes walk (minimum threshold) compared between current system with equity stations and the original system without equity stations."}
+ggplot() +
+  geom_sf(data = population_50x50,
+          color = "lightgray") +
+  geom_sf(data = accessibility %>%
+            dplyr::filter(threshold == "3 min"),
+       aes(color = accessibility)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_distiller(palette = "PuRd", 
+                        direction = 1) +
+  facet_grid(system ~ threshold)  +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "ERI"), 
+          size = 1.5, shape = 21, 
+          fill = "green")
+```
 
 ### Five Minutes
 
-For the system without the equity stations, we remove the equity stations from the travel time matrix before calculating accessibility in at most 5 minutes walk.
+At this threshold, we find that there are 68.6 bicycle racks per person in the original system.  With the addition of equity stations, there are now 68.8 bicycles per person. Figure \ref{fig:figure-7} presents a comparison of accessibility between the systems. Again, accessibility is fairly uniform, with the exception of one area near the waterfront park where accessibility is higher.
 
 ```{r med-conventional, include=FALSE}
-results_6min_conventional <- ttm_walk %>%
+results_5min_conventional <- ttm_walk %>%
   dplyr::filter(hub_type == "Conventional" &
-                  hub_status == "Active") %>%
-  b2sfca(threshold = 6)
+                hub_status == "Active") %>%
+  b2sfca(threshold = 5)
 ```
 
 ```{r med-all, include=FALSE}
-results_6min_all <- ttm_walk %>%
+results_5min_all <- ttm_walk %>%
   dplyr::filter(hub_status == "Active") %>%
-  b2sfca(threshold = 6)
+  b2sfca(threshold = 5)
 ```
 
 ```{r, med-sum-conventional, echo=FALSE}
-sum(results_6min_conventional$los$los)
-sum(results_6min_conventional$accessibility$accessibility)
+sum(results_5min_conventional$los$los)
+sum(results_5min_conventional$accessibility$accessibility)
 ```
 
 ```{r med-sum-all, echo=FALSE}
@@ -380,31 +420,37 @@ sum(results_5min_all$los$los)
 sum(results_5min_all$accessibility$accessibility)
 ```
 
-```{r include=FALSE}
-# Testing different thresholds to check how accessibility changes
-accessibility_test <- data.frame(threshold = c(3:15), 
-                                 accessibility = numeric(13))
-for(i in 1:13){
-  results_test <- ttm_walk %>%
-  dplyr::filter(hub_type == "Conventional" &
-                  hub_status == "Active") %>%
-  b2sfca(threshold = i +2)
-  accessibility_test$accessibility[i] <- sum(results_test$accessibility$accessibility)
-}
-
-ggplot(accessibility_test, 
-       aes(x = threshold, y = accessibility)) +
-  geom_line()
+```{r figure-7, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 5 minutes walk (average threshold) compared between current system with equity stations and the original system without equity stations."}
+#accessibility plot for current system with equity stations at 5 minutes walk
+ggplot() +
+  geom_sf(data = population_50x50,
+          color = "lightgray") +
+  geom_sf(data = accessibility %>%
+            dplyr::filter(threshold == "5 min"),
+       aes(color = accessibility)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_distiller(palette = "PuRd", 
+                        direction = 1) +
+  facet_grid(system ~ threshold)  +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "ERI"), 
+          size = 1.5, shape = 21, 
+          fill = "green")
 ```
 
 ### Ten Minutes
 
-For the system without the equity stations, we remove the equity stations from the travel time matrix before calculating accessibility in at most 10 minutes.
+At this threshold, we find that there are 3.61 bicycle racks per person in the original system.  With the addition of equity stations, there are now 3.74 bicycles per person. Figure \ref{fig:figure-8} presents a comparison of accessibility between the systems. We begin to see differences in accessibility across the service area, with users near the university and its adjacent neighbourhoods, as well as neighbourhoods north of the downtown area have slightly higher accessibility. While the differences are modest, they are more apparent at this threshold than at shorter walking distances.
 
 ```{r avg-conventional, include=FALSE}
 results_10min_conventional <- ttm_walk %>%
   dplyr::filter(hub_type == "Conventional" &
-                  hub_status == "Active") %>%
+                hub_status == "Active") %>%
   b2sfca(threshold = 10)
 ```
 
@@ -424,14 +470,37 @@ sum(results_10min_all$los$los)
 sum(results_10min_all$accessibility$accessibility)
 ```
 
+```{r figure-8, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 10 minutes walk (maximum threshold) compared between current system with equity stations and the original system without equity stations."}
+#accessibility plot for current system with equity stations at 10 minutes walk
+ggplot() +
+  geom_sf(data = population_50x50,
+          color = "lightgray") +
+  geom_sf(data = accessibility %>%
+            dplyr::filter(threshold == "10 min"),
+       aes(color = accessibility)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_distiller(palette = "PuRd", 
+                        direction = 1) +
+  facet_grid(system ~ threshold)  +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "ERI"), 
+          size = 1.5, shape = 21, 
+          fill = "green")
+```
+
 ### Fifteen Minutes
 
-For the system without the equity stations, we remove the equity stations from the travel time matrix before calculating accessibility in at most 15 minutes walk.
+At this threshold, we find that there are 2.44 bicycle racks per person in the original system.  With the addition of equity stations, there are now 2.55 bicycles per person. Figure \ref{fig:figure-9} presents a comparison of accessibility between the systems. Users near the university and the neighbourhoods north of the downtown area (outlined in green) have the highest accessibility, followed by those who live in the city's downtown area. Accessibility in the east end of the core service area remains low.
 
 ```{r max-conventional, include=FALSE}
 results_15min_conventional <- ttm_walk %>%
   dplyr::filter(hub_type == "Conventional" &
-                  hub_status == "Active") %>%
+                hub_status == "Active") %>%
   b2sfca(threshold = 15)
 ```
 
@@ -449,6 +518,29 @@ sum(results_15min_conventional$accessibility$accessibility)
 ```{r max-sum-all, echo=FALSE}
 sum(results_15min_all$los$los)
 sum(results_15min_all$accessibility$accessibility)
+```
+
+```{r figure-9, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 15 minutes walk (extreme threshold) compared between current system with equity stations and the original system without equity stations."}
+#accessibility plot for current system with equity stations at 15 minutes walk
+ggplot() +
+  geom_sf(data = population_50x50,
+          color = "lightgray") +
+  geom_sf(data = accessibility %>%
+            dplyr::filter(threshold == "15 min"),
+       aes(color = accessibility)) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  scale_color_distiller(palette = "PuRd", 
+                        direction = 1) +
+  facet_grid(system ~ threshold)  +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "ERI"), 
+          size = 1.5, shape = 21, 
+          fill = "green")
 ```
 
 ```{r, include=FALSE}
@@ -485,70 +577,15 @@ accessibility <- accessibility %>%
   st_as_sf()
 ```
 
-```{r figure-6, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 3 minutes walk (minimum threshold) compared between current system with equity stations and the original system without equity stations."}
-ggplot() +
-  geom_sf(data = population_50x50,
-          color = "lightgray") +
-  geom_sf(data = accessibility %>%
-            dplyr::filter(threshold == "3 min"),
-       aes(color = accessibility)) +
-  geom_sf(data = sobi_service,
-          fill = NA) +
-  scale_color_distiller(palette = "YlOrRd", 
-                        direction = 1) +
-  facet_grid(system ~ threshold)
-```
+## Accessibility by Median Total Income
 
-```{r figure-7, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 5 minutes walk (average threshold) compared between current system with equity stations and the original system without equity stations."}
-#accessibility plot for current system with equity stations at 5 minutes walk
-ggplot() +
-  geom_sf(data = population_50x50,
-          color = "lightgray") +
-  geom_sf(data = accessibility %>%
-            dplyr::filter(threshold == "5 min"),
-       aes(color = accessibility)) +
-  geom_sf(data = sobi_service,
-          fill = NA) +
-  scale_color_distiller(palette = "YlOrRd", 
-                        direction = 1) +
-  facet_grid(system ~ threshold)
-```
+Approximately 138,000 people live within Hamilton Bike Share's core service area or within a 10 minute walk to the service area. We find that over 118,000 people can access a bicycle share station within a 15 minute walk, which represents roughly 85% of the total population in Hamilton Bike Share's core service area [see Table \ref{tab:table-2}]. While previous research found that neighbourhoods with more disadvantage are better serviced by Hamilton Bike Share [@hosfordWhoArePublic2018], the authors used the Pampalon Deprivation Index from 2011 as a measure of socioeconomic status. Instead, we use median total income for each dissemination area to examine whether disparities in accessibility exist within the core service area. We divide income by quantiles: bottom 20%, second 20%, third 20%, fourth 20%, and top 20%.  One of the unique properties of the balanced floating catchment area method is that data can be reaggregated from small to larger polygons while preserving the total population and number of bicycle racks at each station. This avoids demand and supply inflation, and also enables us to present findings in a way that is easier to interpret (i.e., at the dissemination area level). 
 
-```{r figure-8, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 10 minutes walk (maximum threshold) compared between current system with equity stations and the original system without equity stations."}
-#accessibility plot for current system with equity stations at 10 minutes walk
-ggplot() +
-  geom_sf(data = population_50x50,
-          color = "lightgray") +
-  geom_sf(data = accessibility %>%
-            dplyr::filter(threshold == "10 min"),
-       aes(color = accessibility)) +
-  geom_sf(data = sobi_service,
-          fill = NA) +
-  scale_color_distiller(palette = "YlOrRd", 
-                        direction = 1) +
-  facet_grid(system ~ threshold)
-```
+Panels 1 and 2 depict bivariate choropleth maps with the combined spatial distribution of accessibility and median total income per household for the different thresholds. Our analysis demonstrates that the stations added to Hamilton's public bicycle share program to increase equity for disadvantaged neighbourhoods achieved their goal by increasing accessibility, albeit only modestly. By implementing equity stations in more areas with lower median total income in Hamilton, the PBSP has achieved greater horizontal equity by extending the spatial distribution of bicycles across the city. This is particularly evident at shorter walking distances of three and five minutes.
 
-```{r figure-9, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 15 minutes walk (extreme threshold) compared between current system with equity stations and the original system without equity stations."}
-#accessibility plot for current system with equity stations at 15 minutes walk
-ggplot() +
-  geom_sf(data = population_50x50,
-          color = "lightgray") +
-  geom_sf(data = accessibility %>%
-            dplyr::filter(threshold == "15 min"),
-       aes(color = accessibility)) +
-  geom_sf(data = sobi_service,
-          fill = NA) +
-  scale_color_distiller(palette = "YlOrRd", 
-                        direction = 1) +
-  facet_grid(system ~ threshold)
-```
+However, we found that dissemination areas with lower total household income do not necessarily have greater access to the program [see Table \ref{tab:table-3}]. Income disparities still persist, however only at certain thresholds. With and without equity stations, people in the top 20% of income have the highest level of accessibility at a threshold of ten and fifteen minutes. At distance thresholds of three and five minutes, people in the second 20% have the highest level of accessibility by a significant amount. This is due to the concentration of stations near or within the city's downtown area and the "lower city" which historically has been more disadvantaged compared to the surrounding suburban neighbourhoods. This is an artifact of the city's steel industry which led to more blue collar and working class people living in the city's downtown area and "lower city". However, the bottom 20%, who may benefit the most from Hamilton Bike Share's equity initiatives, have the lowest accessibility at three minutes threshold and the second lowest accessibility at all other thresholds.
 
-## Comparison
-
-Include table with total # of people who can reach a station within 3 minutes walk, 5 minutes, 10 minutes, and 15 minutes, to compare accessibility at different thresholds for both current and original system.
-
-## Accessibility and Median Household Income
+On the whole, we find that areas that have less than their equitable share of the level of service are some of the most socioeconomically disadvantaged areas in the city. This finding aligns with other studies that have found disparities in station or bike location along income lines in New York City [@babagoliExploringHealthSpatial2019], Tampa [@chenExploringEquityPerformance2019], and Seattle [@mooneyFreedomStationSpatial2019].
 
 ```{r, include=FALSE}
 # drop geometry
@@ -559,12 +596,12 @@ test <- test %>% st_join(population_50x50 %>% dplyr::select(-UID)) %>%
   rename(population50x50 = population)
 ```
 
-```{r}
+```{r, include=FALSE}
 test <- test %>%
   st_join(hamilton_da_2016)
 ```
 
-```{r}
+```{r, include=FALSE}
 agg_accessibility_da <- test %>%
   group_by(DA, 
            system,
@@ -578,7 +615,7 @@ agg_accessibility_da <- test %>%
   st_as_sf()
 ```
 
-```{r}
+```{r figure-10, echo=FALSE, fig.align = 'center', out.width = "65%"}
 data_map <- agg_accessibility_da %>%
             dplyr::filter(threshold == "3 min", 
                           system == "All stations") %>%
@@ -588,7 +625,250 @@ data_map <- agg_accessibility_da %>%
            dim = 3) %>%
   st_as_sf() 
 
-map_min_all <- ggplot() +
+data_map <- ggplot() +
+  geom_sf(data = data_map,
+          mapping = aes(fill = bi_class), 
+          color = "white", 
+          size = 0.1, 
+          show.legend = FALSE) +
+  bi_scale_fill(pal = "DkCyan", 
+                dim = 3) +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "ERI"), 
+          size = 1.5, 
+          shape = 21, 
+          fill = "orange") +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "Conventional"), 
+          size = 1.5, 
+          shape = 21, 
+          fill = "purple") +
+  bi_theme() +
+  ggtitle("Accessibility by Income with Equity Stations \n at 3 Minutes Threshold") + 
+  theme(plot.title = element_text(face = "bold", colour = "black", size = 12))
+
+legend <- bi_legend(pal = "DkCyan",
+                    dim = 3,
+                    xlab = "Higher accessibility ",
+                    ylab = "Higher income",
+                    size = 6)
+
+cowplot::ggdraw() +
+  cowplot::draw_plot(data_map, 0, 0, 1, 1) +
+  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+```
+
+```{r figure-11, echo=FALSE, fig.align = 'center', out.width = "65%"}
+data_map <- agg_accessibility_da %>%
+            dplyr::filter(threshold == "3 min", 
+                          system == "Conventional") %>%
+  bi_class(x = accessibility, 
+           y = median_total_income, 
+           style = "quantile", 
+           dim = 3) %>%
+  st_as_sf() 
+
+data_map <- ggplot() +
+  geom_sf(data = data_map,
+          mapping = aes(fill = bi_class), 
+          color = "white", 
+          size = 0.1, 
+          show.legend = FALSE) +
+  bi_scale_fill(pal = "DkCyan", 
+                dim = 3) +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "Conventional"), 
+          size = 1.5, 
+          shape = 21, 
+          fill = "purple") +
+  bi_theme() +
+  ggtitle("Accessibility by Income without Equity Stations \n at 3 Minutes Threshold") + 
+  theme(plot.title = element_text(face = "bold", colour = "black", size = 12))
+
+legend <- bi_legend(pal = "DkCyan",
+                    dim = 3,
+                    xlab = "Higher accessibility ",
+                    ylab = "Higher income",
+                    size = 6)
+
+cowplot::ggdraw() +
+  cowplot::draw_plot(data_map, 0, 0, 1, 1) +
+  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+```
+
+```{r figure-12, echo=FALSE, fig.align = 'center', out.width = "65%"}
+data_map <- agg_accessibility_da %>%
+            dplyr::filter(threshold == "5 min", 
+                          system == "All stations") %>%
+  bi_class(x = accessibility, 
+           y = median_total_income, 
+           style = "quantile", 
+           dim = 3) %>%
+  st_as_sf() 
+
+data_map <- ggplot() +
+  geom_sf(data = data_map,
+          mapping = aes(fill = bi_class), 
+          color = "white", 
+          size = 0.1, 
+          show.legend = FALSE) +
+  bi_scale_fill(pal = "DkCyan", 
+                dim = 3) +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "ERI"), 
+          size = 1.5, 
+          shape = 21, 
+          fill = "orange") +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "Conventional"), 
+          size = 1.5, 
+          shape = 21, 
+          fill = "purple") +
+  bi_theme() +
+  ggtitle("Accessibility by Income with Equity Stations \n at 5 Minutes Threshold") + 
+  theme(plot.title = element_text(face = "bold", colour = "black", size = 12))
+
+legend <- bi_legend(pal = "DkCyan",
+                    dim = 3,
+                    xlab = "Higher accessibility ",
+                    ylab = "Higher income",
+                    size = 6)
+
+cowplot::ggdraw() +
+  cowplot::draw_plot(data_map, 0, 0, 1, 1) +
+  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+```
+
+```{r figure-13, echo=FALSE, fig.align = 'center', out.width = "65%"}
+data_map <- agg_accessibility_da %>%
+            dplyr::filter(threshold == "5 min", 
+                          system == "Conventional") %>%
+  bi_class(x = accessibility, 
+           y = median_total_income, 
+           style = "quantile", 
+           dim = 3) %>%
+  st_as_sf() 
+
+data_map <- ggplot() +
+  geom_sf(data = data_map,
+          mapping = aes(fill = bi_class), 
+          color = "white", 
+          size = 0.1, 
+          show.legend = FALSE) +
+  bi_scale_fill(pal = "DkCyan", 
+                dim = 3) +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "Conventional"), 
+          size = 1.5, 
+          shape = 21, 
+          fill = "purple") +
+  bi_theme() +
+  ggtitle("Accessibility by Income without Equity Stations \n at 3 Minutes Threshold") + 
+  theme(plot.title = element_text(face = "bold", colour = "black", size = 12))
+
+legend <- bi_legend(pal = "DkCyan",
+                    dim = 3,
+                    xlab = "Higher accessibility ",
+                    ylab = "Higher income",
+                    size = 6)
+
+cowplot::ggdraw() +
+  cowplot::draw_plot(data_map, 0, 0, 1, 1) +
+  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+```
+
+```{r figure-14, echo=FALSE, fig.align = 'center', out.width = "65%"}
+data_map <- agg_accessibility_da %>%
+            dplyr::filter(threshold == "10 min", 
+                          system == "All stations") %>%
+  bi_class(x = accessibility, 
+           y = median_total_income, 
+           style = "quantile", 
+           dim = 3) %>%
+  st_as_sf() 
+
+data_map <- ggplot() +
+  geom_sf(data = data_map,
+          mapping = aes(fill = bi_class), 
+          color = "white", 
+          size = 0.1, 
+          show.legend = FALSE) +
+  bi_scale_fill(pal = "DkCyan", 
+                dim = 3) +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "ERI"), 
+          size = 1.5, 
+          shape = 21, 
+          fill = "orange") +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "Conventional"), 
+          size = 1.5, 
+          shape = 21, 
+          fill = "purple") +
+  bi_theme() +
+  ggtitle("Accessibility by Income with Equity Stations \n at 10 Minutes Threshold") + 
+  theme(plot.title = element_text(face = "bold", colour = "black", size = 12))
+
+legend <- bi_legend(pal = "DkCyan",
+                    dim = 3,
+                    xlab = "Higher accessibility ",
+                    ylab = "Higher income",
+                    size = 6)
+
+cowplot::ggdraw() +
+  cowplot::draw_plot(data_map, 0, 0, 1, 1) +
+  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+```
+
+```{r figure-15, echo=FALSE, fig.align = 'center', out.width = "65%"}
+data_map <- agg_accessibility_da %>%
+            dplyr::filter(threshold == "10 min", 
+                          system == "Conventional") %>%
+  bi_class(x = accessibility, 
+           y = median_total_income, 
+           style = "quantile", 
+           dim = 3) %>%
+  st_as_sf() 
+
+data_map <- ggplot() +
+  geom_sf(data = data_map,
+          mapping = aes(fill = bi_class), 
+          color = "white", 
+          size = 0.1, 
+          show.legend = FALSE) +
+  bi_scale_fill(pal = "DkCyan", 
+                dim = 3) +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "Conventional"), 
+          size = 1.5, 
+          shape = 21, 
+          fill = "purple") +
+  bi_theme() +
+  ggtitle("Accessibility by Income without Equity Stations \n at 10 Minutes Threshold") +
+  theme(plot.title = element_text(face = "bold", colour = "black", size = 12))
+
+legend <- bi_legend(pal = "DkCyan",
+                    dim = 3,
+                    xlab = "Higher accessibility ",
+                    ylab = "Higher income",
+                    size = 6)
+
+cowplot::ggdraw() +
+  cowplot::draw_plot(data_map, 0, 0, 1, 1) +
+  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+```
+
+```{r figure-16, echo=FALSE, fig.align = 'center', out.width = "65%"}
+data_map <- agg_accessibility_da %>%
+            dplyr::filter(threshold == "15 min", 
+                          system == "All stations") %>%
+  bi_class(x = accessibility, 
+           y = median_total_income, 
+           style = "quantile", 
+           dim = 3) %>%
+  st_as_sf() 
+
+data_map <- ggplot() +
   geom_sf(data = data_map,
           mapping = aes(fill = bi_class), 
           color = "white", 
@@ -596,7 +876,19 @@ map_min_all <- ggplot() +
           show.legend = FALSE) +
   bi_scale_fill(pal = "DkBlue", 
                 dim = 3) +
-  bi_theme()
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "ERI"), 
+          size = 1.5, 
+          shape = 21, 
+          fill = "orange") +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "Conventional"), 
+          size = 1.5, 
+          shape = 21, 
+          fill = "purple") +
+  bi_theme() +
+  ggtitle("Accessibility by Income with Equity Stations \n at 15 Minutes Threshold") + 
+  theme(plot.title = element_text(face = "bold", colour = "black", size = 12))
 
 legend <- bi_legend(pal = "DkBlue",
                     dim = 3,
@@ -605,22 +897,131 @@ legend <- bi_legend(pal = "DkBlue",
                     size = 6)
 
 cowplot::ggdraw() +
-  cowplot::draw_plot(map_min_all, 0, 0, 1, 1) +
+  cowplot::draw_plot(data_map, 0, 0, 1, 1) +
   cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
 ```
 
-Coming back to the question of accessibility by income:
-```{r}
-# Find the income quintiles of the population served by SoBi
+```{r figure-17, echo=FALSE, fig.align = 'center', out.width = "65%"}
+data_map <- agg_accessibility_da %>%
+            dplyr::filter(threshold == "15 min", 
+                          system == "Conventional") %>%
+  bi_class(x = accessibility, 
+           y = median_total_income, 
+           style = "quantile", 
+           dim = 3) %>%
+  st_as_sf() 
+
+data_map <- ggplot() +
+  geom_sf(data = data_map,
+          mapping = aes(fill = bi_class), 
+          color = "white", 
+          size = 0.1, 
+          show.legend = FALSE) +
+  bi_scale_fill(pal = "DkBlue", 
+                dim = 3) +
+  geom_sf(data =  sobi_hubs %>% 
+            dplyr::filter(hub_type == "Conventional"), 
+          size = 1.5, 
+          shape = 21, 
+          fill = "purple") +
+  bi_theme() +
+  ggtitle("Accessibility by Income without Equity Stations \n at 15 Minutes Threshold") + 
+  theme(plot.title = element_text(face = "bold", colour = "black", size = 12))
+
+legend <- bi_legend(pal = "DkBlue",
+                    dim = 3,
+                    xlab = "Higher accessibility ",
+                    ylab = "Higher income",
+                    size = 6)
+
+cowplot::ggdraw() +
+  cowplot::draw_plot(data_map, 0, 0, 1, 1) +
+  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+```
+
+```{r, include=FALSE}
+# Find the income quantiles of the population served by SoBi
 iq <- hamilton_da_2016 %>% 
   dplyr::filter(sobi_service == "Yes") %>%
   pull(median_total_income) %>%
   quantile(c(0, 0.2, 0.4, 0.6, 0.8, 1), na.rm = TRUE)
 ```
 
-```{r}
+```{r income-all-3, include=FALSE}
 # Add a variable to identify the income 
-agg_accessibility_income <- test %>% 
+agg_accessibility_all_3 <- test %>% 
+  dplyr::filter(system == "All stations", threshold == "3 min") %>%
+  mutate(income_quintile = case_when(median_total_income <= iq[2] ~ "Bottom 20%",
+                                     median_total_income > iq[2] & median_total_income <= iq[3] ~ "Second 20%",
+                                     median_total_income > iq[3] & median_total_income <= iq[4] ~ "Third 20%",
+                                     median_total_income > iq[4] & median_total_income <= iq[5] ~ "Fourth 20%",
+                                     median_total_income > iq[5] ~ "Top 20%"))
+
+inc_stats_all_3 <- agg_accessibility_all_3 %>%
+  st_drop_geometry() %>%
+  #dplyr::filter(system == "All stations", threshold == "10 min") %>%
+  group_by(income_quintile) %>%
+  summarize(accessibility = sum(accessibility),
+            population = sum(population50x50))
+```
+
+```{r income-con-3, include=FALSE}
+# Add a variable to identify the income 
+agg_accessibility_con_3 <- test %>% 
+  dplyr::filter(system == "Conventional", threshold == "3 min") %>%
+  mutate(income_quintile = case_when(median_total_income <= iq[2] ~ "Bottom 20%",
+                                     median_total_income > iq[2] & median_total_income <= iq[3] ~ "Second 20%",
+                                     median_total_income > iq[3] & median_total_income <= iq[4] ~ "Third 20%",
+                                     median_total_income > iq[4] & median_total_income <= iq[5] ~ "Fourth 20%",
+                                     median_total_income > iq[5] ~ "Top 20%"))
+
+inc_stats_con_3 <- agg_accessibility_con_3 %>%
+  st_drop_geometry() %>%
+  #dplyr::filter(system == "Conventional", threshold == "10 min") %>%
+  group_by(income_quintile) %>%
+  summarize(accessibility = sum(accessibility),
+            population = sum(population50x50))
+```
+
+```{r income-all-5, include=FALSE}
+# Add a variable to identify the income 
+agg_accessibility_all_5 <- test %>% 
+  dplyr::filter(system == "All stations", threshold == "5 min") %>%
+  mutate(income_quintile = case_when(median_total_income <= iq[2] ~ "Bottom 20%",
+                                     median_total_income > iq[2] & median_total_income <= iq[3] ~ "Second 20%",
+                                     median_total_income > iq[3] & median_total_income <= iq[4] ~ "Third 20%",
+                                     median_total_income > iq[4] & median_total_income <= iq[5] ~ "Fourth 20%",
+                                     median_total_income > iq[5] ~ "Top 20%"))
+
+inc_stats_all_5 <- agg_accessibility_all_5 %>%
+  st_drop_geometry() %>%
+  #dplyr::filter(system == "All stations", threshold == "10 min") %>%
+  group_by(income_quintile) %>%
+  summarize(accessibility = sum(accessibility),
+            population = sum(population50x50))
+```
+
+```{r income-con-5, include=FALSE}
+# Add a variable to identify the income 
+agg_accessibility_con_5 <- test %>% 
+  dplyr::filter(system == "Conventional", threshold == "5 min") %>%
+  mutate(income_quintile = case_when(median_total_income <= iq[2] ~ "Bottom 20%",
+                                     median_total_income > iq[2] & median_total_income <= iq[3] ~ "Second 20%",
+                                     median_total_income > iq[3] & median_total_income <= iq[4] ~ "Third 20%",
+                                     median_total_income > iq[4] & median_total_income <= iq[5] ~ "Fourth 20%",
+                                     median_total_income > iq[5] ~ "Top 20%"))
+
+inc_stats_con_5 <- agg_accessibility_con_5 %>%
+  st_drop_geometry() %>%
+  #dplyr::filter(system == "Conventional", threshold == "10 min") %>%
+  group_by(income_quintile) %>%
+  summarize(accessibility = sum(accessibility),
+            population = sum(population50x50))
+```
+
+```{r income-all-10, include=FALSE}
+# Add a variable to identify the income 
+agg_accessibility_all_10 <- test %>% 
   dplyr::filter(system == "All stations", threshold == "10 min") %>%
   mutate(income_quintile = case_when(median_total_income <= iq[2] ~ "Bottom 20%",
                                      median_total_income > iq[2] & median_total_income <= iq[3] ~ "Second 20%",
@@ -628,17 +1029,17 @@ agg_accessibility_income <- test %>%
                                      median_total_income > iq[4] & median_total_income <= iq[5] ~ "Fourth 20%",
                                      median_total_income > iq[5] ~ "Top 20%"))
 
-inc_stats_All_10 <- agg_accessibility_income %>%
+inc_stats_all_10 <- agg_accessibility_all_10 %>%
   st_drop_geometry() %>%
-  dplyr::filter(system == "All stations", threshold == "10 min") %>%
+  #dplyr::filter(system == "All stations", threshold == "10 min") %>%
   group_by(income_quintile) %>%
   summarize(accessibility = sum(accessibility),
             population = sum(population50x50))
 ```
 
-```{r}
+```{r income-con-10, include=FALSE}
 # Add a variable to identify the income 
-agg_accessibility_income <- test %>% 
+agg_accessibility_con_10 <- test %>% 
   dplyr::filter(system == "Conventional", threshold == "10 min") %>%
   mutate(income_quintile = case_when(median_total_income <= iq[2] ~ "Bottom 20%",
                                      median_total_income > iq[2] & median_total_income <= iq[3] ~ "Second 20%",
@@ -646,216 +1047,81 @@ agg_accessibility_income <- test %>%
                                      median_total_income > iq[4] & median_total_income <= iq[5] ~ "Fourth 20%",
                                      median_total_income > iq[5] ~ "Top 20%"))
 
-inc_stats_Conv_10 <- agg_accessibility_income %>%
+inc_stats_con_10 <- agg_accessibility_con_10 %>%
   st_drop_geometry() %>%
-  dplyr::filter(system == "Conventional", threshold == "10 min") %>%
+  #dplyr::filter(system == "Conventional", threshold == "10 min") %>%
   group_by(income_quintile) %>%
   summarize(accessibility = sum(accessibility),
             population = sum(population50x50))
 ```
 
-```{r}
-rbind(inc_stats_All_10,  
-      inc_stats_Conv_10)
+```{r income-all-15, include=FALSE}
+# Add a variable to identify the income 
+agg_accessibility_all_15 <- test %>% 
+  dplyr::filter(system == "All stations", threshold == "15 min") %>%
+  mutate(income_quintile = case_when(median_total_income <= iq[2] ~ "Bottom 20%",
+                                     median_total_income > iq[2] & median_total_income <= iq[3] ~ "Second 20%",
+                                     median_total_income > iq[3] & median_total_income <= iq[4] ~ "Third 20%",
+                                     median_total_income > iq[4] & median_total_income <= iq[5] ~ "Fourth 20%",
+                                     median_total_income > iq[5] ~ "Top 20%"))
+
+inc_stats_all_15 <- agg_accessibility_all_15 %>%
+  st_drop_geometry() %>%
+  #dplyr::filter(system == "All stations", threshold == "10 min") %>%
+  group_by(income_quintile) %>%
+  summarize(accessibility = sum(accessibility),
+            population = sum(population50x50))
 ```
 
-```{r figure-10, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 3 minutes walk (minimum threshold) varying by median total income in the current system with equity stations."}
-map_min_all <- ggplot() +
-  geom_sf(data = data_min_all, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
-  bi_scale_fill(pal = "DkBlue", dim = 3) +
-  bi_theme()
+```{r income-con-15, include=FALSE}
+# Add a variable to identify the income 
+agg_accessibility_con_15 <- test %>% 
+  dplyr::filter(system == "Conventional", threshold == "15 min") %>%
+  mutate(income_quintile = case_when(median_total_income <= iq[2] ~ "Bottom 20%",
+                                     median_total_income > iq[2] & median_total_income <= iq[3] ~ "Second 20%",
+                                     median_total_income > iq[3] & median_total_income <= iq[4] ~ "Third 20%",
+                                     median_total_income > iq[4] & median_total_income <= iq[5] ~ "Fourth 20%",
+                                     median_total_income > iq[5] ~ "Top 20%"))
 
-legend <- bi_legend(pal = "DkBlue",
-                    dim = 3,
-                    xlab = "Higher accessibility ",
-                    ylab = "Higher income",
-                    size = 6)
-
-cowplot::ggdraw() +
-  cowplot::draw_plot(map_min_all, 0, 0, 1, 1) +
-  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+inc_stats_con_15 <- agg_accessibility_con_15 %>%
+  st_drop_geometry() %>%
+  #dplyr::filter(system == "Conventional", threshold == "10 min") %>%
+  group_by(income_quintile) %>%
+  summarize(accessibility = sum(accessibility),
+            population = sum(population50x50))
 ```
 
-```{r figure-11, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 3 minutes walk (minimum threshold) varying by median total income in the original system with conventional stations."}
-map_min_con <- ggplot() +
-  geom_sf(data = data_min_con, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
-  bi_scale_fill(pal = "DkBlue", dim = 3) +
-  bi_theme()
+```{r income-3, include=FALSE}
+income_3 <- rbind(inc_stats_all_3,  
+      inc_stats_con_3)
 
-legend <- bi_legend(pal = "DkBlue",
-                    dim = 3,
-                    xlab = "Higher accessibility ",
-                    ylab = "Higher income",
-                    size = 6)
-
-cowplot::ggdraw() +
-  cowplot::draw_plot(map_min_con, 0, 0, 1, 1) +
-  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+income_3
 ```
 
-```{r figure-12, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 5 minutes walk (average threshold) varying by median total income in the current system with equity stations."}
-map_avg_all <- ggplot() +
-  geom_sf(data = data_avg_all, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
-  bi_scale_fill(pal = "DkBlue", dim = 3) +
-  bi_theme()
+```{r income-5, include=FALSE}
+income_5 <- rbind(inc_stats_all_5,  
+      inc_stats_con_5)
 
-legend <- bi_legend(pal = "DkBlue",
-                    dim = 3,
-                    xlab = "Higher accessibility ",
-                    ylab = "Higher income",
-                    size = 6)
-
-cowplot::ggdraw() +
-  cowplot::draw_plot(map_avg_all, 0, 0, 1, 1) +
-  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+income_5
 ```
 
-```{r figure-13, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 5 minutes walk (average threshold) varying by median total income in the original system with conventional stations."}
-map_avg_con <- ggplot() +
-  geom_sf(data = data_avg_con, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
-  bi_scale_fill(pal = "DkBlue", dim = 3) +
-  bi_theme()
+```{r income-10, include=FALSE}
+income_10 <- rbind(inc_stats_all_10,  
+      inc_stats_con_10)
 
-legend <- bi_legend(pal = "DkBlue",
-                    dim = 3,
-                    xlab = "Higher accessibility ",
-                    ylab = "Higher income",
-                    size = 6)
-
-cowplot::ggdraw() +
-  cowplot::draw_plot(map_avg_con, 0, 0, 1, 1) +
-  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
+income_10
 ```
 
-```{r figure-14, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 10 minutes walk (maximum threshold) varying by median total income in the current system with equity stations."}
-map_max_all <- ggplot() +
-  geom_sf(data = data_max_all, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
-  bi_scale_fill(pal = "DkBlue", dim = 3) +
-  bi_theme()
+```{r income-3, include=FALSE}
+income_15 <- rbind(inc_stats_all_15,  
+      inc_stats_con_15)
 
-legend <- bi_legend(pal = "DkBlue",
-                    dim = 3,
-                    xlab = "Higher accessibility ",
-                    ylab = "Higher income",
-                    size = 6)
-
-cowplot::ggdraw() +
-  cowplot::draw_plot(map_max_all, 0, 0, 1, 1) +
-  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
-```
-
-```{r figure-15, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 10 minutes walk (maximum threshold) varying by median total income in the original system with conventional stations."}
-map_max_con <- ggplot() +
-  geom_sf(data = data_max_con, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
-  bi_scale_fill(pal = "DkBlue", dim = 3) +
-  bi_theme()
-
-legend <- bi_legend(pal = "DkBlue",
-                    dim = 3,
-                    xlab = "Higher accessibility ",
-                    ylab = "Higher income",
-                    size = 6)
-
-cowplot::ggdraw() +
-  cowplot::draw_plot(map_max_con, 0, 0, 1, 1) +
-  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
-```
-
-```{r figure-16, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 15 minutes walk (extreme threshold) varying by median total income in the current system with equity stations."}
-map_ext_all <- ggplot() +
-  geom_sf(data = data_ext_all, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
-  bi_scale_fill(pal = "DkBlue", dim = 3) +
-  bi_theme()
-
-legend <- bi_legend(pal = "DkBlue",
-                    dim = 3,
-                    xlab = "Higher accessibility ",
-                    ylab = "Higher income",
-                    size = 6)
-
-cowplot::ggdraw() +
-  cowplot::draw_plot(map_ext_all, 0, 0, 1, 1) +
-  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
-```
-
-```{r figure-17, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 15 minutes walk (extreme threshold) varying by median total income in the original system with conventional stations."}
-map_ext_con <- ggplot() +
-  geom_sf(data = data_ext_con, mapping = aes(fill = bi_class), color = "white", size = 0.1, show.legend = FALSE) +
-  bi_scale_fill(pal = "DkBlue", dim = 3) +
-  bi_theme()
-
-legend <- bi_legend(pal = "DkBlue",
-                    dim = 3,
-                    xlab = "Higher accessibility ",
-                    ylab = "Higher income",
-                    size = 6)
-
-cowplot::ggdraw() +
-  cowplot::draw_plot(map_ext_con, 0, 0, 1, 1) +
-  cowplot::draw_plot(legend, 0.05, .6, 0.2, 0.2)
-```
-
-```{r, include=FALSE}
-sum(population_50x50$population)
-sum(min_all$population)
-sum(avg_all$population)
-sum(max_all$population)
-sum(ext_all$population)
-sum(min_con$population)
-sum(avg_con$population)
-sum(max_con$population)
-sum(ext_con$population)
-```
-
-```{r}
-summary(data_max_all)
-```
-
-```{r}
-demographics_minimum <- rbind(data.frame(min_all %>%  
-                                        dplyr::filter(median_total_income >= "38486") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 1", system = "All Stations"),
-             data.frame(min_all %>% dplyr::filter(median_total_income >= "46336") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 2", system = "All Stations"),
-             data.frame(min_all %>% dplyr::filter(median_total_income >= "56640") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 3", system = "All Stations"),
-             data.frame(min_con %>% dplyr::filter(median_total_income >= "38288") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 1", system = "Conventional"),
-             data.frame(min_con %>% dplyr::filter(median_total_income >= "45696") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 2", system = "Conventional"),
-             data.frame(min_con %>% dplyr::filter(median_total_income >= "57664") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 3", system = "Conventional"))
-```
-
-```{r}
-demographics_maximum <- rbind(data.frame(avg_all %>%  
-                                        dplyr::filter(median_total_income >= "38752") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 1", system = "All Stations"),
-             data.frame(avg_all %>% dplyr::filter(median_total_income >= "47040") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 2", system = "All Stations"),
-             data.frame(avg_all %>% dplyr::filter(median_total_income >= "58912") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 3", system = "All Stations"),
-             data.frame(avg_con %>% dplyr::filter(median_total_income >= "38422") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 1", system = "Conventional"),
-             data.frame(avg_con %>% dplyr::filter(median_total_income >= "45696") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 2", system = "Conventional"),
-             data.frame(avg_con %>% dplyr::filter(median_total_income >= "59264") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 3", system = "Conventional"))
-```
-
-```{r}
-demographics_minimum <- rbind(data.frame(min_all %>%  
-                                        dplyr::filter(median_total_income >= "38486") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 1", system = "All Stations"),
-             data.frame(min_all %>% dplyr::filter(median_total_income >= "46336") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 2", system = "All Stations"),
-             data.frame(min_all %>% dplyr::filter(median_total_income >= "56640") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 3", system = "All Stations"),
-             data.frame(min_con %>% dplyr::filter(median_total_income >= "38288") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 1", system = "Conventional"),
-             data.frame(min_con %>% dplyr::filter(median_total_income >= "45696") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 2", system = "Conventional"),
-             data.frame(min_con %>% dplyr::filter(median_total_income >= "57664") %>% summarise(population = sum(population)), accessibility = "min", income = "Quantile 3", system = "Conventional"))
-```
-
-```{r, include=FALSE}
-sum(population_50x50$population)
-sum(min_all$population)
-sum(avg_all$population)
-sum(max_all$population)
-sum(ext_all$population)
-sum(min_con$population)
-sum(avg_con$population)
-sum(max_con$population)
-sum(ext_con$population)
+income_15
 ```
 
 ```{r table-2, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Population that can reach at least one bike share station at different thresholds in the current system with equity stations and original system with only conventional stations."}
 data_tbl <- data.frame(
-  System = c("All Stations", "Conventional"),
+  System = c("With Equity Stations", "Without Equity Stations"),
   Minimum = c("48,725", "43,238"),
   Average = c("84,655", "75,026"),
   Maximum = c("111,680", "104,298"),
@@ -869,26 +1135,163 @@ kbl(data_tbl) %>%
   add_header_above(c(" " = 1, "3 Minutes" = 1, "5 Minutes" = 1, "10 Minutes" = 1, "15 Minutes" = 1))
 ```
 
+```{r accessibility-income, echo=FALSE}
+accessibility_income <- rbind(
+                        income_3,
+                        income_5,
+                        income_10,
+                        income_15) %>% drop_na()
 
-Discussion
+kbl(accessibility_income,
+    col.names = c("Income Quintile",
+                  "Accessibility",
+                  "Total Population")) %>%
+  kable_paper("striped") %>%
+  pack_rows("With Equity Stations - 3 minutes", 1, 5, 
+            label_row_css = "background-color: #8f9498; color: #fff;") %>%
+  pack_rows("Without Equity Stations - 3 minutes", 6, 10, 
+            label_row_css = "background-color: #8f9498; color: #fff;") %>%
+  pack_rows("With Equity Stations - 5 minutes", 11, 15, 
+            label_row_css = "background-color: #8f9498; color: #fff;") %>%
+  pack_rows("Without Equity Stations - 5 minutes", 16, 20, 
+            label_row_css = "background-color: #8f9498; color: #fff;") %>%
+  pack_rows("With Equity Stations - 10 minutes", 21, 25, 
+            label_row_css = "background-color: #8f9498; color: #fff;") %>%
+  pack_rows("Without Equity Stations - 10 minutes", 26, 30, 
+            label_row_css = "background-color: #8f9498; color: #fff;") %>%
+  pack_rows("With Equity Stations - 15 minutes", 31, 35, 
+            label_row_css = "background-color: #8f9498; color: #fff;") %>%
+  pack_rows("Without Equity Stations - 15 minutes", 36, 40, 
+            label_row_css = "background-color: #8f9498; color: #fff;") %>%
+  #column_spec(2, color = "white",
+      #background = spec_color(accessibility_income$accessibility[1:40], end = 1)) %>%
+  footnote(general = " ",
+           alphabet = c("With equity stations = Hamilton Bike Share current system (118 conventional stations, 12 equity stations)", "Without equity stations = Hamilton Bike Share original system (118 conventional stations, no equity stations)"))
+```
+
+```{r accessibility-difference-3, echo=FALSE}
+# calculate difference in accessibility with equity stations at 3 min
+inc_stats_all_3 <- inc_stats_all_3 %>%
+    left_join(inc_stats_con_3, by = "income_quintile")
+
+names(inc_stats_all_3) <- c("income_quintile", 
+                            "accessibility", 
+                            "population",
+                            "accessibility_o",
+                            "population_o")
+
+inc_stats_all_3$acc_difference <- (inc_stats_all_3$accessibility - inc_stats_all_3$accessibility_o)
+
+inc_stats_all_3$pop_difference <- (inc_stats_all_3$population - inc_stats_all_3$population_o)
+```
+
+```{r accessibility-difference-5, echo=FALSE}
+# calculate difference in accessibility with equity stations at 3 min
+inc_stats_all_5 <- inc_stats_all_5 %>%
+    left_join(inc_stats_con_5, by = "income_quintile")
+
+names(inc_stats_all_5) <- c("income_quintile", 
+                            "accessibility", 
+                            "population",
+                            "accessibility_o",
+                            "population_o")
+
+inc_stats_all_5$acc_difference <- (inc_stats_all_5$accessibility - inc_stats_all_5$accessibility_o)
+
+inc_stats_all_5$pop_difference <- (inc_stats_all_5$population - inc_stats_all_5$population_o)
+```
+
+```{r accessibility-difference-10, echo=FALSE}
+# calculate difference in accessibility with equity stations at 3 min
+inc_stats_all_10 <- inc_stats_all_10 %>%
+    left_join(inc_stats_con_10, by = "income_quintile")
+
+names(inc_stats_all_10) <- c("income_quintile", 
+                            "accessibility", 
+                            "population",
+                            "accessibility_o",
+                            "population_o")
+
+inc_stats_all_10$acc_difference <- (inc_stats_all_10$accessibility - inc_stats_all_10$accessibility_o)
+
+inc_stats_all_10$pop_difference <- (inc_stats_all_10$population - inc_stats_all_10$population_o)
+```
+
+```{r accessibility-difference-10, echo=FALSE}
+# calculate difference in accessibility with equity stations at 3 min
+inc_stats_all_10 <- inc_stats_all_10 %>%
+    left_join(inc_stats_con_10, by = "income_quintile")
+
+names(inc_stats_all_10) <- c("income_quintile", 
+                            "accessibility", 
+                            "population",
+                            "accessibility_o",
+                            "population_o")
+
+inc_stats_all_10$acc_difference <- (inc_stats_all_10$accessibility - inc_stats_all_10$accessibility_o)
+
+inc_stats_all_10$pop_difference <- (inc_stats_all_10$population - inc_stats_all_10$population_o)
+```
+
+```{r accessibility-difference-15, echo=FALSE}
+# calculate difference in accessibility with equity stations at 3 min
+inc_stats_all_15 <- inc_stats_all_15 %>%
+    left_join(inc_stats_con_10, by = "income_quintile")
+
+names(inc_stats_all_15) <- c("income_quintile", 
+                            "accessibility", 
+                            "population",
+                            "accessibility_o",
+                            "population_o")
+
+inc_stats_all_15$acc_difference <- (inc_stats_all_15$accessibility - inc_stats_all_15$accessibility_o)
+
+inc_stats_all_15$pop_difference <- (inc_stats_all_15$population - inc_stats_all_15$population_o)
+```
+
+```{r accessibility-differences, echo=FALSE}
+income_3 <- inc_stats_all_3[ -c(3,5,7) ]
+income_5 <- inc_stats_all_5[ -c(3,5,7) ]
+income_10 <- inc_stats_all_10[ -c(3,5,7) ]
+income_15 <- inc_stats_all_15[ -c(3,5,7) ]
+```
+
+```{r accessibility-income-difference, echo=FALSE}
+accessibility_difference <- rbind(
+                        income_3,
+                        income_5,
+                        income_10,
+                        income_15) %>% drop_na()
+
+kbl(accessibility_difference,
+    col.names = c("Income Quintile",
+                  "Accessibility with Equity Stations",
+                  "Accessibility without Equity Stations",
+                  "Difference")) %>%
+  kable_paper("striped") %>%
+  pack_rows("Threshold - 3 minutes", 1, 5, 
+            label_row_css = "background-color: #8f9498; color: #fff;") %>%
+  pack_rows("Threshold - 5 minutes", 6, 10, 
+            label_row_css = "background-color: #8f9498; color: #fff;") %>%
+  pack_rows("Threshold - 10 minutes", 11, 15, 
+            label_row_css = "background-color: #8f9498; color: #fff;") %>%
+  pack_rows("Threshold - 15 minutes", 16, 20, 
+            label_row_css = "background-color: #8f9498; color: #fff;") %>%
+  column_spec(4, color = "white",
+      background = spec_color(accessibility_income$accessibility[1:40], end = 1)) %>%
+  footnote(general = " ",
+           alphabet = c("With equity stations = Hamilton Bike Share current system (118 conventional stations, 12 equity stations)", "Without equity stations = Hamilton Bike Share original system (118 conventional stations, no equity stations)"))
+```
+
+Study Limitations
 ===================
-
-Our analysis demonstrates that the stations added to Hamilton's public bicycle share program to increase equity for disadvantaged neighbourhoods achieved their goal by increasing accessibility, albeit only modestly. 
-
-By implementing equity stations in more areas with lower median household income in Hamilton, the PBSP has achieved greater horizontal equity by extending the spatial distribution of bicycles across the city. Under the the conditions of the original system, which did not have equity stations, the level of service was _X_. With the addition of twelve equity stations, the level of service increased to _X_.
-
-However, we found that dissemination areas with lower median household income do not necessarily have greater access to the program and that spatial disparities still persist. Under the the conditions of the original system, which did not have equity stations, _X%_ of dissemination areas (or _X%_ of the population) within the core service area with median household income less than 40,000 Canadian dollars could access at least one bicycle share station within 10 minutes walk. Only _X%_ of dissemination areas (or _X%_ of the population) with median household income less than 40,000 Canadian dollars could access at least one bicycle share station within 3 or 5 minutes walk.
-
-Similar to other studies, we find that areas with higher median household income have greater accessibility to Hamilton Bike Share. Our findings align with other studies that have found disparities in station or bike location along income lines in New York City [@babagoliExploringHealthSpatial2019], Tampa [@chenExploringEquityPerformance2019], and Seattle [@mooneyFreedomStationSpatial2019]. 
-
-# Study Limitations
 
 This paper did not examine or compare ridership data between conventional and equity stations. Therefore, further research is needed to determine whether this encouraged more cycling for low-income individuals living near equity stations. Other studies have specifically looked at differences in trip type, frequency, or length among users from disadvantaged neighbourhoods [@caspiBikesharingPhiladelphiaLowerincome2019; @qianBikesharingEquityDisadvantaged2020; @wangNeighborhoodSociodemographicCharacteristics2019], but our analysis is limited by the lack of accessible data to conduct similar analyses for Hamilton Bike Share.
 
 Conclusion
 ===================
 
-The addition of specific equity stations to the public bicycle share program in Hamilton, Ontario had the net effect of increasing accessibility and reducing both horizontal and vertical inequities. In particular, accessibility improved the most for _X_ income groups at _X_ thresholds, but the gains were only modest as the threshold increased ( _2.10_ bicycles/person with equity stations vs _1.97_ bicycles/person without equity stations). Congestion effects were observed at higher thresholds, with accessibility decreasing significantly once the catchment area is increased to 10 minutes walking ( _X_ ). We identified specific areas that would benefit from an increased supply of bicycles which make them ideal candidates for new equity stations. In this way, our paper has made contributions in a positive way by applying an intuitive and useful approach to measure accessibility, and in a normative way by serving to inform future investments in cycle infrastructure.
+The addition of specific equity stations to the public bicycle share program in Hamilton, Ontario had the net effect of increasing accessibility and reducing both horizontal and vertical inequities. In particular, accessibility improved the most for the second 20% income groups at all thresholds, but the gains were only modest. Congestion effects were observed at higher thresholds, with accessibility decreasing significantly once the catchment area is increased to 10 minutes walking. However, We identified specific areas that have both low accessibility and low income which would benefit from an increased supply of bicycles. These are ideal candidates for new equity stations. In this way, our paper has made contributions in a positive way by applying an intuitive and useful approach to measure accessibility to a PBSP, and in a normative way by serving to inform future investments in cycle infrastructure for Hamilton Bike Share.
 
 Wang and Lindsey [-@wangNewBikeShare2019] have noted that there is a lack of research that examines how bike share users' behaviour changes as a result of program changes to station locations or improvements in accessibility. As such, a logical next step to this research is to examine whether Hamilton Bike Share's equity stations increased ridership or resulted in new memberships in areas that were previously under-served. An examination of the types of trips undertaken by residents in these areas would also be informative, such as the study undertaken by Caspi and Norland [-@caspiBikesharingPhiladelphiaLowerincome2019] after bike share stations were implemented in low-income Philadelphia neighbourhoods. The bulk of cycling facilities that have been built in Hamilton to date located in the core service area near the conventional stations. It would be worthwhile to explore the route choice of bike share trips departing or ending at the equity stations and to identify factors that specifically influence trips from these stations, which would extend existing studies conducted by Scott and colleagues [@luUnderstandingBikeShare2018; @scottWhatFactorsInfluence2019; @scottRouteChoiceBike2021]. This paper, combined with additional studies such as those conceptualized above, would serve as a valuable case study for Hamilton and other cities with PBSPs who wish to evaluate and address spatial inequities in accessibility and transportation options in urban areas.
 

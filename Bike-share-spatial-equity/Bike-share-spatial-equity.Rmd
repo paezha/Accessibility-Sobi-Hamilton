@@ -98,11 +98,11 @@ On the whole, existing studies highlight the need for bicycle share systems to b
 
 Accessibility has been applied in both a positive and normative way to inform transportation planning [@paezMeasuringAccessibilityPositive2012], but its utility to this field has evolved over the past century and has increasingly become linked with recent interest in prioritizing local proximity and modes that are suitable for local trips like walking and cycling [@levineCenturyEvolutionAccessibility2020]. As a measure of the ease of reaching potential destinations spread spatially in a given area, accessibility is relevant to PBSPs because it can identify current inequities in usage, as well as guide interventions that increase access for groups that are under-serviced or address gaps in transportation options. It also addresses some of the challenges of other performance measures such as level of service within a transportation network by measuring person-based indicators and exploring differences in use between population groups [@paezMeasuringAccessibilityPositive2012].
 
-Beyond the utility derived from using shared bikes to destinations of value, an important aspect of accessibility associated with PBSPs is the distance an individual must travel to reach a bicycle share station [@kabraBikeShareSystemsAccessibility2020; @wangNewBikeShare2019]. Since the time or distance that members of the population need to reach a bicycle share station decreases the potential of accessing the program and ultimately their use of the program, the location and size (e.g., maximum number of bicycle racks available) of stations matters. Indeed, distance to bicycle share stations is associated with use [@fullerUseNewPublic2011; @wangNewBikeShare2019] and can be a barrier to using PBSPs [@fishmanBarriersBikesharingAnalysis2014]. Kabra et al. [-@kabraBikeShareSystemsAccessibility2020] found that the majority of bike share usage in Paris comes from areas within 300m of stations. Furthermore, unlike other public amenities with greater ability to adapt to crowding, like health care services, the utility of stations is limited by the number of bicycles that they can hold, which makes crowding effects critical. The program may not necessarily be improved if stations are easy to reach but offer only a small number of bicycles. Likewise, more people may not opt to use the program if the supply of bicycles available at the nearest station is insufficient to meet demand. The location and size of stations is important to increase the utility of this public transportation option for more people, thus achieving vertical equity. Accessibility analyses for PBSPs constitute a positive and evaluation-based approach that also has the potential to inform equity efforts. For instance, Wang and Lindsey [-@wangNewBikeShare2019] investigated whether new or relocated bicycle share stations increased accessibility and use, which offered important insights to improve the performance of the program.
+Beyond the utility derived from using shared bikes to reach destinations of value, an important aspect of accessibility associated with PBSPs is the distance an individual must travel to reach a bicycle share station [@kabraBikeShareSystemsAccessibility2020; @wangNewBikeShare2019]. Since the time or distance that members of the population need to reach a bicycle share station decreases the potential of accessing the program and ultimately their use of the program, the location and size (e.g., maximum number of bicycle racks available) of stations matters. Indeed, distance to bicycle share stations is associated with use [@fullerUseNewPublic2011; @wangNewBikeShare2019] and can be a barrier to using PBSPs [@fishmanBarriersBikesharingAnalysis2014]. Kabra et al. [-@kabraBikeShareSystemsAccessibility2020] found that the majority of bike share usage in Paris comes from areas within 300m of stations. Furthermore, unlike other public amenities with greater ability to adapt to crowding, like health care services, the utility of stations is limited by the number of bicycles that they can hold, which makes crowding effects critical. The program may not necessarily be improved if stations are easy to reach but offer only a small number of bicycles. Likewise, more people may not opt to use the program if the supply of bicycles available at the nearest station is insufficient to meet demand. The location and size of stations is important to increase the utility of this public transportation option for more people, thus achieving vertical equity. Accessibility analyses for PBSPs constitute a positive and evaluation-based approach that also has the potential to inform equity efforts. For instance, Wang and Lindsey [-@wangNewBikeShare2019] investigated whether new or relocated bicycle share stations increased accessibility and use, which offered important insights to improve the performance of the program.
 
 Several approaches have been commonly used for measuring place-based accessibility, including cumulative opportunities, gravity, and utility-based measures [@handyMeasuringAccessibilityExploration1997]. Geurs and Van Wee [-@geursAccessibilityEvaluationLanduse2004] and Paez et al. [-@paezMeasuringAccessibilityPositive2012] provide recent overviews of various formulations and applications of accessibility in transportation research. The common gravity-based approach for example involves weighting destination opportunities, such as the quantity of bicycle share stations, by the time required to reach them from an origin using an impedance function [@handyMeasuringAccessibilityExploration1997; @kwanSpaceTimeIntegral1998]. However, while such measures are suitable for capturing the potential for reaching destinations from a given location, they do not take demand or congestion effects into account.
 
-In contrast, floating catchment area (FCA) methods incorporate information on capacity and demand in calculating accessibility. FCA measures have been widely employed in healthcare accessibility research and are typically calculated across two steps. In the first, a ratio of supply to demand at service locations is calculated, such as the number of beds at a hospital divided by the number of people within the catchment area of the hospital, weighted by the distance involved in reaching the facility. Next, these service level ratios are allocated back to the population centres and summarized as a measure of congested accessibility. Thus, this model does a good job of considering potential crowding or competition for services. While there have been many methodological innovations in FCA methods [for example, @delamaterSpatialAccessibilitySuboptimally2013; @luoMeasuresSpatialAccessibility2003; @luoEnhancedTwostepFloating2009; @radkeSpatialDecompositionsModeling2000; @wanThreestepFloatingCatchment2012], a recent improvement to this approach was achieved through a simple and intuitive balanced FCA approach that addressed the effects of demand and service inflation from previous FCA approaches [see @paezDemandLevelService2019].
+In contrast, floating catchment area (FCA) methods incorporate information on capacity and demand in calculating accessibility. FCA measures have been widely employed in healthcare accessibility research and are typically calculated across two steps. In the first, a ratio of supply to demand at service locations is calculated, such as the number of beds at a hospital divided by the number of people within the catchment area of the hospital, weighted by the distance involved in reaching the facility. Next, these service level ratios are allocated back to the population centres and summarized as a measure of congested accessibility. Thus, this model does a good job of considering potential crowding or competition for services. While there have been many methodological innovations in FCA methods [for example, @delamaterSpatialAccessibilitySuboptimally2013; @luoMeasuresSpatialAccessibility2003; @luoEnhancedTwostepFloating2009; @radkeSpatialDecompositionsModeling2000; @wanThreestepFloatingCatchment2012], a recent improvement to this approach was achieved through a simple and intuitive balanced FCA method that addressed the effects of demand and service inflation from previous FCA approaches [see @paezDemandLevelService2019].
 
 When measuring accessibility, researchers have taken different approaches when it comes to aggregation of data, either by using the individual or household as the smallest unit of analysis or larger spatial zones. Previous research on bike share equity has typically used a macro-level approach with aggregate data from entire neighbourhoods or census tracts  [@babagoliExploringHealthSpatial2019; @mooneyFreedomStationSpatial2019; @qianBikesharingEquityDisadvantaged2020; @wangNeighborhoodSociodemographicCharacteristics2019], although there are recent exceptions [@chenExploringEquityPerformance2019; @chenUnobservedHeterogeneityTransportation2021]. This is also true for studies examining correlates of bike share demand [@wangNewBikeShare2019]. Handy and Niemeier [-@handyMeasuringAccessibilityExploration1997] note that using disaggregated data in accessibility analyses provides a more accurate estimate for individuals, which is useful for addressing vertical inequities in PBSP usage.
 
@@ -281,6 +281,28 @@ ggplot() +
   geom_sf(data = population_50x50,
           aes(color = population)) +
   scale_color_distiller(palette = "YlOrRd", 
+                        direction = 1) +
+  geom_sf(data = sobi_service,
+          fill = NA,
+          colour = "black") +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  theme(panel.background = element_rect(fill = "white"))
+```
+
+```{r interpolated-population, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Interpolated population in the Hamilton Bike Share core service area (outlined in black) and within 30 minutes of walking to the core service area (outlined in blue). The downtown area is outlined in dark green. Geographic features have been extracted. Dissemination area polygons are outlined in grey."}
+ggplot() + 
+  geom_sf(data = cropped_da,
+          fill = "gray",
+          color = NA) + 
+  #geom_sf(data = population_50x50,
+  #        aes(color = population)) +
+   #scale_fill_gradient(colours = "YlOrRd") +
+  geom_tile(data = cbind(st_drop_geometry(population_50x50), st_coordinates(population_50x50)),
+            aes(x = X, y = Y, fill = population)) +
+  scale_fill_distiller(palette = "YlOrRd", 
                         direction = 1) +
   geom_sf(data = sobi_service,
           fill = NA,
@@ -488,17 +510,21 @@ accessibility <- accessibility %>%
 
 With a walking distance of three minutes, we find that there are 25.2 bicycle racks per person in the original system. The addition of equity stations increases this ratio slightly to 25.4 bicycles per person. Figure \ref{fig:figure-6} presents a comparison of accessibility between the systems for the population cells. Accessibility is fairly uniform overall, with the exception of two small areas where accessibility is slightly higher.
 
- ```{r figure-6, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 3 minutes walk (minimum threshold) compared between current system with equity stations and the original system without equity stations."}
+```{r figure-6, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 3 minutes walk (minimum threshold) compared between current system with equity stations and the original system without equity stations."}
+accessibility_3min <- accessibility %>% dplyr::filter(threshold == "3 min")
 ggplot() +
   geom_sf(data = population_50x50,
           color = "gray") +
-  geom_sf(data = accessibility %>%
-            dplyr::filter(threshold == "3 min"),
-          aes(color = accessibility)) +
+  #geom_sf(data = accessibility %>%
+  #          dplyr::filter(threshold == "3 min"),
+  #        aes(color = accessibility)) +
+  #scale_color_distiller(palette = "PuRd", 
+  #                      direction = 1) +
+  geom_tile(data = cbind(st_drop_geometry(accessibility_3min), st_coordinates(accessibility_3min)),
+            aes(x = X, y = Y, fill = accessibility)) +
+  scale_fill_distiller(palette = "PuRd", direction = 1) +
   geom_sf(data = sobi_service,
           fill = NA) +
-  scale_color_distiller(palette = "PuRd", 
-                        direction = 1) +
   facet_grid(system ~ threshold)  +
   geom_sf(data = community_downtown %>%
             dplyr::filter(NAME == "Hamilton"),
@@ -508,7 +534,9 @@ ggplot() +
   #           dplyr::filter(hub_type == "ERI"), 
   #         size = 1.5, shape = 21, 
   #         fill = "green") +
-  theme(panel.background = element_rect(fill = "white"))
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank())
 ```
 
 ### Average Threshold
@@ -517,16 +545,21 @@ With a walking distance of five minutes, we find that there are 68.6 bicycle rac
 
 ```{r figure-7, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 5 minutes walk (average threshold) compared between current system with equity stations and the original system without equity stations."}
 #accessibility plot for current system with equity stations at 5 minutes walk
+accessibility_5min <- accessibility %>% dplyr::filter(threshold == "5 min")
+
 ggplot() +
   geom_sf(data = population_50x50,
           color = "gray") +
-  geom_sf(data = accessibility %>%
-            dplyr::filter(threshold == "5 min"),
-          aes(color = accessibility)) +
+  #geom_sf(data = accessibility %>%
+  #          dplyr::filter(threshold == "5 min"),
+  #        aes(color = accessibility)) +
+  #scale_color_distiller(palette = "PuRd", 
+  #                      direction = 1) +
+  geom_tile(data = cbind(st_drop_geometry(accessibility_5min), st_coordinates(accessibility_5min)),
+            aes(x = X, y = Y, fill = accessibility)) +
+  scale_fill_distiller(palette = "PuRd", direction = 1) +
   geom_sf(data = sobi_service,
           fill = NA) +
-  scale_color_distiller(palette = "PuRd", 
-                        direction = 1) +
   facet_grid(system ~ threshold)  +
   geom_sf(data = community_downtown %>%
             dplyr::filter(NAME == "Hamilton"),
@@ -536,7 +569,9 @@ ggplot() +
   #           dplyr::filter(hub_type == "ERI"), 
   #         size = 1.5, shape = 21, 
   #         fill = "green") +
-  theme(panel.background = element_rect(fill = "white"))
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank())
 ```
 
 ### Maximum Threshold
@@ -545,16 +580,20 @@ With a walking distance of ten minutes, we find that there are 3.61 bicycle rack
 
 ```{r figure-8, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 10 minutes walk (maximum threshold) compared between current system with equity stations and the original system without equity stations."}
 #accessibility plot for current system with equity stations at 10 minutes walk
+accessibility_10min <- accessibility %>% dplyr::filter(threshold == "10 min")
 ggplot() +
   geom_sf(data = population_50x50,
           color = "lightgray") +
-  geom_sf(data = accessibility %>%
-            dplyr::filter(threshold == "10 min"),
-          aes(color = accessibility)) +
+  #geom_sf(data = accessibility %>%
+  #          dplyr::filter(threshold == "10 min"),
+  #        aes(color = accessibility)) +
+  #scale_color_distiller(palette = "PuRd", 
+  #                      direction = 1) +
+  geom_tile(data = cbind(st_drop_geometry(accessibility_10min), st_coordinates(accessibility_10min)),
+            aes(x = X, y = Y, fill = accessibility)) +
+  scale_fill_distiller(palette = "PuRd", direction = 1) +
   geom_sf(data = sobi_service,
           fill = NA) +
-  scale_color_distiller(palette = "PuRd", 
-                        direction = 1) +
   facet_grid(system ~ threshold)  +
   geom_sf(data = community_downtown %>%
             dplyr::filter(NAME == "Hamilton"),
@@ -564,7 +603,9 @@ ggplot() +
   #           dplyr::filter(hub_type == "ERI"), 
   #         size = 1.5, shape = 21, 
   #         fill = "green") +
-  theme(panel.background = element_rect(fill = "white"))
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank())
 ```
 
 ### Extreme Threshold
@@ -573,16 +614,21 @@ With a walking distance of fifteen minutes, we find that there are 2.44 bicycle 
 
 ```{r figure-9, echo=FALSE, fig.align = 'center', out.width = "65%", fig.cap = "Accessibility at 15 minutes walk (extreme threshold) compared between current system with equity stations and the original system without equity stations."}
 #accessibility plot for current system with equity stations at 15 minutes walk
+accessibility_15min <- accessibility %>% dplyr::filter(threshold == "15 min")
 ggplot() +
   geom_sf(data = population_50x50,
           color = "lightgray") +
-  geom_sf(data = accessibility %>%
-            dplyr::filter(threshold == "15 min"),
-          aes(color = accessibility)) +
+  #geom_sf(data = accessibility %>%
+  #          dplyr::filter(threshold == "15 min"),
+  #        aes(color = accessibility)) +
+  #scale_color_distiller(palette = "PuRd", 
+  #                      direction = 1) +
+  geom_tile(data = cbind(st_drop_geometry(accessibility_15min), st_coordinates(accessibility_15min)),
+            aes(x = X, y = Y, fill = accessibility)) +
+  scale_fill_distiller(palette = "PuRd", direction = 1) +
   geom_sf(data = sobi_service,
           fill = NA) +
-  scale_color_distiller(palette = "PuRd", 
-                        direction = 1) +
+  
   facet_grid(system ~ threshold)  +
   geom_sf(data = community_downtown %>%
             dplyr::filter(NAME == "Hamilton"),
@@ -592,7 +638,9 @@ ggplot() +
   #           dplyr::filter(hub_type == "ERI"), 
   #         size = 1.5, shape = 21, 
   #         fill = "green") +
-  theme(panel.background = element_rect(fill = "white"))
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank())
 ```
 
 ## Accessibility by Median Household Income

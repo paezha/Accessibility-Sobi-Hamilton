@@ -1,0 +1,25 @@
+---
+title: "Cover Letter"
+output:
+  pdf_document: default
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+To the Editor:
+
+Please find attached our paper submitted to the Virtual Special Issue in Transportation Research Part D: Transport and Environment (SI: Transportation Justice). The paper is titled "Examining spatial equity in accessibility to a public bicycle share program using a balanced floating catchment area approach". We use the city of Hamilton, Ontario in Canada as a case study. The city's public bicycle share program, Hamilton Bike Share, launched in 2015 and started an equity initiative in 2017 which included the addition of 13 stations to the program.
+
+We believe that this paper makes the following contributions to the literature which makes it an excellent inclusion to the special issue on transportation justice:
+
+1.	Our research contributes to the literature on the topic of equity in public bicycle share programs (PBSPs) which has received a lot of attention in North America recently. Recent papers on this topic include Caspi & Noland, 2019, Hosford & Winters, 2018, Mooney et al., 2019, Qian et al., 2019, among others. To the best of our knowledge, the city of Hamilton is the only city in Canada with a PBSP that has an explicit equity program. This makes it an interesting place to examine how specific bike share stations added for the purpose of increasing equity have contributed to addressing horizontal and vertical inequities (see Chen et al., 2019). This case study also builds upon the findings from a recent paper by Hosford & Winters (2018) that explored who is served by PBSPs in Canada.
+
+2. We employ a balanced floating catchment area approach using disaggregate population-level data to measure accessibility at different thresholds: 3 minutes, 5 minutes, 10 minutes, and 15 minutes. This method has not been previously used in the cycling literature to measure accessibility. Unlike other location- and person-based measures of accessibility, floating catchment area methods incorporate information on capacity and demand in calculating accessibility. These measures have been widely employed in healthcare accessibility research and are typically calculated across two steps. In the first, a ratio of supply to demand at service locations is calculated, such as the number of beds at a hospital divided by the number of people within the catchment area of the hospital, weighted by the distance involved in reaching the facility. Next, these service level ratios are allocated back to the population centres and summarized as a measure of congested accessibility. Thus, this model does a good job of considering potential crowding or competition for services, which is an important consideration for PBSPs. Specifically, we use a recent improvement to this approach that was achieved through a simple and intuitive balancing that addressed the effects of demand and service inflation from previous FCA approaches. We also compare accessibility in the system with and without the equity stations at the different thresholds.
+
+3. We found that accessibility is maximized at 5 minutes and gradually decreases until 8 minutes where it plateaus. The analysis indicates that the equity stations increase accessibility, albeit only modestly, for all income quintiles. The second 20% median household income group has the highest level of accessibility at 3 and 5 minutes, while the top 20% has the highest level of accessibility at 10 and 15 minutes. The bottom 20%, those who would arguably benefit the most from inexpensive and healthy transportation options like shared bicycles, have the lowest level of accessibility at 3 minutes and the second lowest level at all other thresholds. This indicates that individuals with the lowest socioeconomic status continue to have poorer access to Hamilton Bike Share despite the addition of equity stations. Based on our analysis, we identify locations in the PBSP core service area where individuals have low median household income and low accessibility, which are ideal candidates for new stations to achieve greater vertical equity in Hamilton Bike Share.
+
+We trust that you will find the paper is worthy of inclusion in the special issue on transportation justice.
+
+Sincerely,
+
+The Authors
+

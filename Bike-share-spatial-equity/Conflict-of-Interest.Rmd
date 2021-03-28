@@ -1,0 +1,8 @@
+---
+title: "Conflict of Interest"
+output:
+  pdf_document: default
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+On behalf of all authors, the corresponding author states that there is no conflict of interest.

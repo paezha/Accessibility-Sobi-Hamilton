@@ -1,11 +1,13 @@
 Package: sobiEquity
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Data package for "Examining horizontal and vertical equity to a public bicycle share program using a balanced floating catchment area accessibility approach "
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Antonio Paez
+Maintainer: Antonio Paez <paezha@mcmaster.ca>
+Description: 
+    sobiEquity is a companion package for the paper "Examining horizontal and vertical equity 
+    to a public bicycle share program using a balanced floating catchment area accessibility 
+    approach". The package includes the data used in the analysis.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true

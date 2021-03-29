@@ -1,7 +1,8 @@
 #' sobiEquity
 #'
-#' sobiEquity is a companion package for the paper "Examining spatial equity and accessibility
-#'  to a public bicycle share program using a balanced floating catchment area approach".
+#' sobiEquity is a companion package for the paper "Examining horizontal and vertical 
+#' equity to a public bicycle share program using a balanced floating catchment area 
+#' accessibility approach".
 #'   The package includes the data used in the analysis.
 #'
 #' @author Elise Desjardins, \email{desjae@@mcmaster.ca}
@@ -22,3 +23,76 @@ NULL
 #' @source Statistics Canada
 "hamilton_cma"
 
+#' Hamilton Community Downtown.
+#'
+#' Boundary of the downtown center of Hamilton, in Ontario, Canada.
+#'
+#' @docType data
+#' @keywords datasets
+#' @keywords transportation
+#' @name community_downtown
+#' @usage data(community_downtown)
+#' @source Open Hamilton
+"community_downtown"
+
+#' Hamilton Dissemination Areas.
+#'
+#' Boundary of the Hamilton DAs, in Ontario, Canada, with median total household income and
+#' population levels within each DA.
+#'
+#' @docType data
+#' @keywords datasets
+#' @keywords transportation
+#' @name hamilton_da_2016
+#' @usage data(hamilton_da_2016)
+#' @source Statistics Canada
+"hamilton_da_2016"
+
+#' Hamilton Interpolated Population.
+#'
+#' Interpolated population from Hamilton DAs, in 50-by-50 m cells.
+#'
+#' @docType data
+#' @keywords datasets
+#' @keywords transportation
+#' @name population_50x50
+#' @usage data(population_50x50)
+#' @source Statistics Canada
+"population_50x50"
+
+#' Hamilton Bike Share Service Area
+#'
+#' Boundary of the Hamilton Bike Share service area of Hamilton, in Ontario, Canada.
+#'
+#' @docType data
+#' @keywords datasets
+#' @keywords transportation
+#' @name sobi_service
+#' @usage data(sobi_service)
+#' @source Open Hamilton
+"sobi_service"
+
+#' Hamilton Bike Share Stations
+#'
+#' Location of the Hamilton Bike Share stations of Hamilton, in Ontario, Canada.
+#'
+#' @docType data
+#' @keywords datasets
+#' @keywords transportation
+#' @name sobi_hubs
+#' @usage data(sobi_hubs)
+#' @source Open Hamilton
+"sobi_hubs"
+
+#' Travel Time Matrix
+#'
+#' Travel time matrix from centroids of population cells to bicycle share
+#' stations within 10 km of cells in Hamilton, Ontario, Canada.
+#'
+#' @docType data
+#' @keywords datasets
+#' @keywords transportation
+#' @name ttm_walk
+#' @usage data(ttm_walk)
+#' @source BBBike
+"ttm_walk"

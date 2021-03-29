@@ -5,8 +5,7 @@
 \alias{sobiEquity}
 \title{sobiEquity}
 \description{
-sobiEquity is a companion package for the paper "Examining spatial equity and accessibility
- to a public bicycle share program using a balanced floating catchment area approach".
+sobiEquity is a companion package for the paper "Examining horizontal and vertical equity to a public bicycle share program using a balanced floating catchment area accessibility approach".
   The package includes the data used in the analysis.
 }
 \author{

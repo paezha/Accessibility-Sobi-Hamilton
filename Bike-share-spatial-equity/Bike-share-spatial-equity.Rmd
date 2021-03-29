@@ -55,7 +55,7 @@ library(r5r) # the r5r package requires Java Development Kit version 11, which c
 library(raster)
 library(rgdal)
 library(sf)
-library(sobiEquity)
+library(sobiEquity) # Data package
 library(tidyverse)
 library(tinytex)
 library(units)
@@ -336,7 +336,6 @@ In the present case, we found that congested accessibility calculated using the 
 For this reason, we experiment with various thresholds by conducting a sensitivity analysis to calculate accessibility at different walking times from population cell to bicycle share station: 3 minutes, 5 minutes, 10 minutes, and 15 minutes. We categorize these thresholds as minimum, average, maximum, and extreme, respectively. At each threshold, we compare accessibility between the current system and the original system to examine the contribution of the additional equity stations. When considering the results reported below, it is important to remember that accessibility is technically a form of smoothing [@okelly2003aggregate, pp. 7-8]: smaller thresholds produce less smoothing (which can result in "spiky" accessibility landscapes), while larger thresholds produce more smoothing and fewer spikes.
 
 ```{r join-population-to-travel-time-data, include=FALSE}
-# current system with equity stations
 ttm_walk <- left_join(ttm_walk, 
                       population_50x50 %>%
                         st_drop_geometry(),
@@ -344,7 +343,6 @@ ttm_walk <- left_join(ttm_walk,
 ```
 
 ```{r join-sobi-station-to-travel-time-data, include=FALSE}
-# current system with equity stations
 ttm_walk <- ttm_walk %>% 
   left_join(sobi_hubs %>%
               st_drop_geometry() %>%
@@ -354,7 +352,6 @@ ttm_walk <- ttm_walk %>%
 ```
 
 ```{r, include=FALSE}
-#data frames for current and original systems
 names(ttm_walk) <- c("UID", 
                      "hub", 
                      "travel_time",

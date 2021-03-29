@@ -1,2 +1,10 @@
+b2sfca                  Compute balanced floating catchment area
+                        accessibility
+community_downtown      Hamilton Community Downtown.
 hamilton_cma            Hamilton CMA.
+hamilton_da_2016        Hamilton Dissemination Areas.
+population_50x50        Hamilton Interpolated Population.
 sobiEquity              sobiEquity
+sobi_hubs               Hamilton Bike Share Stations
+sobi_service            Hamilton Bike Share Service Area
+ttm_walk                Travel Time Matrix

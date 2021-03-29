@@ -20,7 +20,7 @@
 * checking for future file timestamps ... OK
 * checking DESCRIPTION meta-information ... WARNING
 Non-standard license specification:
-  What license is it under?
+  CC-BY-SA
 Standardizable: FALSE
 * checking top-level files ... OK
 * checking for left-over files ... OK
@@ -34,44 +34,37 @@ Standardizable: FALSE
 * checking whether the namespace can be loaded with stated dependencies ... OK
 * checking whether the namespace can be unloaded cleanly ... OK
 * checking loading without being on the library search path ... OK
-* checking dependencies in R code ... OK
+* checking dependencies in R code ... WARNING
+'::' or ':::' import not declared from: 'dplyr'
 * checking S3 generic/method consistency ... OK
 * checking replacement functions ... OK
 * checking foreign function calls ... OK
-* checking R code for possible problems ... OK
+* checking R code for possible problems ... NOTE
+b2sfca: no visible binding for global variable 'travel_time'
+b2sfca: no visible binding for global variable 'UID'
+b2sfca: no visible binding for global variable 'impedance_binary'
+b2sfca: no visible binding for global variable 'hub'
+b2sfca: no visible binding for global variable 'racks'
+b2sfca: no visible binding for global variable 'population'
+b2sfca: no visible binding for global variable 'balanced_impedance_1'
+b2sfca: no visible binding for global variable 'balanced_impedance_2'
+Undefined global functions or variables:
+  UID balanced_impedance_1 balanced_impedance_2 hub impedance_binary
+  population racks travel_time
 * checking Rd files ... OK
 * checking Rd metadata ... OK
 * checking Rd line widths ... OK
 * checking Rd cross-references ... OK
-* checking for missing documentation entries ... WARNING
-Undocumented code objects:
-  'hamilton_da_2016' 'hamilton_da_sobi' 'mhi' 'population_50x50'
-  'sobi_hubs' 'sobi_service' 'ttm_walk'
-Undocumented data sets:
-  'hamilton_da_2016' 'hamilton_da_sobi' 'mhi' 'population_50x50'
-  'sobi_hubs' 'sobi_service' 'ttm_walk'
-All user-level objects in a package should have documentation entries.
-See chapter 'Writing R documentation files' in the 'Writing R
-Extensions' manual.
+* checking for missing documentation entries ... OK
 * checking for code/documentation mismatches ... OK
 * checking Rd \usage sections ... OK
 * checking Rd contents ... OK
 * checking for unstated dependencies in examples ... OK
 * checking contents of 'data' directory ... OK
 * checking data for non-ASCII characters ... OK
-* checking data for ASCII and uncompressed saves ... WARNING
-  
-  Note: significantly better compression could be obtained
-        by using R CMD build --resave-data
-                         old_size new_size compress
-  hamilton_cma.RData         51Kb     39Kb       xz
-  hamilton_da_2016.RData   1008Kb    695Kb       xz
-  hamilton_da_sobi.RData    303Kb    212Kb       xz
-  mhi.RData                  25Kb     16Kb       xz
-  population_50x50.RData    124Kb     95Kb       xz
-  ttm_walk.RData            257Kb    133Kb       xz
-* checking examples ... NONE
+* checking data for ASCII and uncompressed saves ... OK
+* checking examples ... OK
 * checking for non-standard things in the check directory ... OK
 * checking for detritus in the temp directory ... OK
 * DONE
-Status: 3 WARNINGs
+Status: 2 WARNINGs, 1 NOTE

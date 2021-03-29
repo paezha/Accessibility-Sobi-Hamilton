@@ -1,15 +1,22 @@
 Package: sobiEquity
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Data package for "Examining horizontal and vertical equity to a
+        public bicycle share program using a balanced floating
+        catchment area accessibility approach"
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Antonio Paez
+Maintainer: Antonio Paez <paezha@mcmaster.ca>
+Description: 
+    sobiEquity is a companion package for the paper "Examining horizontal and vertical equity 
+    to a public bicycle share program using a balanced floating catchment area accessibility 
+    approach". The package includes the data used in the analysis.
+    Contains information licensed under the Open Government Licence – Canada (https://open.canada.ca/en/open-government-licence-canada).
+    Contains public sector Data made available under the City of Hamilton’s Open Data Licence (https://www.hamilton.ca/city-initiatives/strategies-actions/open-data-licence-terms-and-conditions).
+License: CC-BY-SA
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
+Imports: magrittr
 NeedsCompilation: no
-Packaged: 2021-03-13 21:33:13 UTC; paezha
+Packaged: 2021-03-29 21:29:43 UTC; paezha
 Depends: R (>= 3.5.0)

@@ -5,8 +5,16 @@
 \alias{sobiEquity}
 \title{sobiEquity}
 \description{
-sobiEquity is a companion package for the paper "Examining horizontal and vertical equity to a public bicycle share program using a balanced floating catchment area accessibility approach".
-  The package includes the data used in the analysis.
+sobiEquity is a companion package for the paper "Examining horizontal and vertical
+equity to a public bicycle share program using a balanced floating catchment area
+accessibility approach".
+}
+\details{
+The package includes the data used in the analysis.
+
+Contains information licensed under the Open Government Licence – Canada (https://open.canada.ca/en/open-government-licence-canada).
+
+Contains public sector Data made available under the City of Hamilton’s Open Data Licence (https://www.hamilton.ca/city-initiatives/strategies-actions/open-data-licence-terms-and-conditions).
 }
 \author{
 Elise Desjardins, \email{desjae@mcmaster.ca}

@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Accessibility-Sobi-Hamilton
+# Examining spatial equity of bike share: A balanced floating catchment area approach
 
 <!-- badges: start -->
 
@@ -93,11 +93,11 @@ analysis using median total household income information from the
 census.
 
 This paper is an example of open and reproducible research that uses
-only open software for transportation and statistical analysis (Bivand
-2020; Lovelace 2021). All data were obtained from publicly available
-sources and organized in the form of a data package. Following best
-practices in spatial data science (Brunsdon and Comber 2020), the code
-and data needed to reproduce, modify or extend the analysis are
+only open software for transportation and statistical analysis (R. S.
+Bivand 2020; Lovelace 2021). All data were obtained from publicly
+available sources and organized in the form of a data package. Following
+best practices in spatial data science (Brunsdon and Comber 2020), the
+code and data needed to reproduce, modify or extend the analysis are
 available for download.\[1\]
 
 ## Literature Review
@@ -2617,10 +2617,10 @@ acknowledge the developers of the following `R` packages: `biscale`
 (Prener, Grossenbacher, and Zehr 2020), `cowplot` (Wilke 2020),
 `data.table` (Dowle and Srinivasan 2020), `disk.frame` (ZJ 2020),
 `gdistance` (van Etten 2020), `gridExtra` (Auguie 2017), `kableExtra`
-(Zhu 2020), `knitr` (Xie 2021a), `pycno` (Brunsdon 2014), `r5r` (Saraiva
-et al. 2021), `raster` (Hijmans 2020), `rgdal` (Bivand, Keitt, and
-Rowlingson 2021), `rticles` (Allaire et al. 2021), `sf` (Pebesma 2021),
-`tidyverse` (Wickham 2019), `tinytex` (Xie 2021b), `units` (Pebesma,
+(Zhu 2020), `knitr` (Xie 2020), `pycno` (Brunsdon 2014), `r5r` (Saraiva
+et al. 2020), `raster` (Hijmans 2020), `rgdal` (R. Bivand, Keitt, and
+Rowlingson 2020), `rticles` (Allaire et al. 2021), `sf` (Pebesma 2020),
+`tidyverse` (Wickham 2019), `tinytex` (Xie 2021), `units` (Pebesma,
 Mailund, and Kalinowski 2020).
 
 # References
@@ -2664,7 +2664,7 @@ of the New York City Bike Share System.” *Journal of Transport & Health*
 
 <div id="ref-R-rgdal">
 
-Bivand, Roger, Tim Keitt, and Barry Rowlingson. 2021. *Rgdal: Bindings
+Bivand, Roger, Tim Keitt, and Barry Rowlingson. 2020. *Rgdal: Bindings
 for the Geospatial Data Abstraction Library*.
 <https://CRAN.R-project.org/package=rgdal>.
 
@@ -3031,7 +3031,7 @@ and Empirical Aspects, 25 (November): 141–53.
 
 <div id="ref-R-sf">
 
-Pebesma, Edzer. 2021. *Sf: Simple Features for R*.
+Pebesma, Edzer. 2020. *Sf: Simple Features for R*.
 <https://CRAN.R-project.org/package=sf>.
 
 </div>
@@ -3119,7 +3119,7 @@ of Sustainable Transportation* 0 (0): 1–9.
 <div id="ref-R-r5r">
 
 Saraiva, Marcus, Rafael H. M. Pereira, Daniel Herszenhut, and Carlos
-Kaue Vieira Braga. 2021. *R5r: Rapid Realistic Routing with R5*.
+Kaue Vieira Braga. 2020. *R5r: Rapid Realistic Routing with R5*.
 <https://github.com/ipeaGIT/r5r>.
 
 </div>
@@ -3216,14 +3216,14 @@ Members in Vancouver, BC.” *Preventive Medicine Reports* 15 (September):
 
 <div id="ref-R-knitr">
 
-Xie, Yihui. 2021a. *Knitr: A General-Purpose Package for Dynamic Report
+Xie, Yihui. 2020. *Knitr: A General-Purpose Package for Dynamic Report
 Generation in R*. <https://yihui.org/knitr/>.
 
 </div>
 
 <div id="ref-R-tinytex">
 
-———. 2021b. *Tinytex: Helper Functions to Install and Maintain Tex Live,
+———. 2021. *Tinytex: Helper Functions to Install and Maintain Tex Live,
 and Compile Latex Documents*. <https://github.com/yihui/tinytex>.
 
 </div>

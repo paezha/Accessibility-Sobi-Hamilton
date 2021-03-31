@@ -1,5 +1,5 @@
 ---
-title: Examining spatial equity of bike share - a balanced floating catchment area approach 
+title: "Examining spatial equity of bike share: A balanced floating catchment area approach" 
 author:
   - name: Elise Desjardins
     email: desjae@mcmaster.ca

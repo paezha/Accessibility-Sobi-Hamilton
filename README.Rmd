@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Accessibility-Sobi-Hamilton
+# Examining spatial equity of bike share: A balanced floating catchment area approach
 
 <!-- badges: start -->
 <!-- badges: end -->

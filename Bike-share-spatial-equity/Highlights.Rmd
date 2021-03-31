@@ -7,9 +7,9 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 
 * Balanced floating catchment area methods are applied to measure accessibility to PBSP
 
-* Contribution of equity stations to accessibility assessed at different thresholds for walking time to stations
+* Contribution of equity stations to accessibility assessed at different thresholds
 
-* Equity stations increased both horizontal and vertical accessibility, albeit only modestly
+* Equity stations increased horizontal and vertical accessibility, albeit only modestly
 
 * Lowest income group has lowest levels of accessibility, even with equity stations
 

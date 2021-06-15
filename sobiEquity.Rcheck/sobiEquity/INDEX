@@ -1,5 +1,7 @@
 b2sfca                  Compute balanced floating catchment area
                         accessibility
+c2sfca                  Compute conventional floating catchment area
+                        accessibility
 community_downtown      Hamilton Community Downtown.
 hamilton_cma            Hamilton CMA.
 hamilton_da_2016        Hamilton Dissemination Areas.

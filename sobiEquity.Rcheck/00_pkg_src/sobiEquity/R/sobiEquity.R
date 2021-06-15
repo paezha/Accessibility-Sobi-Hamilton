@@ -1,9 +1,14 @@
 #' sobiEquity
 #'
-#' sobiEquity is a companion package for the paper "Examining horizontal and vertical 
-#' equity to a public bicycle share program using a balanced floating catchment area 
+#' sobiEquity is a companion package for the paper "Examining horizontal and vertical
+#' equity to a public bicycle share program using a balanced floating catchment area
 #' accessibility approach".
-#'   The package includes the data used in the analysis.
+#'
+#' The package includes the data used in the analysis.
+#'
+#' Contains information licensed under the Open Government Licence – Canada (https://open.canada.ca/en/open-government-licence-canada).
+#'
+#' Contains public sector Data made available under the City of Hamilton’s Open Data Licence (https://www.hamilton.ca/city-initiatives/strategies-actions/open-data-licence-terms-and-conditions).
 #'
 #' @author Elise Desjardins, \email{desjae@@mcmaster.ca}
 #' @author Antonio Paez, \email{paezha@@mcmaster.ca}
@@ -32,7 +37,7 @@ NULL
 #' @keywords transportation
 #' @name community_downtown
 #' @usage data(community_downtown)
-#' @source Open Hamilton
+#' @source Open Hamilton (https://open.hamilton.ca/)
 "community_downtown"
 
 #' Hamilton Dissemination Areas.
@@ -69,7 +74,7 @@ NULL
 #' @keywords transportation
 #' @name sobi_service
 #' @usage data(sobi_service)
-#' @source Open Hamilton
+#' @source Open Hamilton (https://open.hamilton.ca/)
 "sobi_service"
 
 #' Hamilton Bike Share Stations
@@ -81,7 +86,7 @@ NULL
 #' @keywords transportation
 #' @name sobi_hubs
 #' @usage data(sobi_hubs)
-#' @source Open Hamilton
+#' @source Open Hamilton (https://open.hamilton.ca/)
 "sobi_hubs"
 
 #' Travel Time Matrix
@@ -94,5 +99,4 @@ NULL
 #' @keywords transportation
 #' @name ttm_walk
 #' @usage data(ttm_walk)
-#' @source BBBike
 "ttm_walk"

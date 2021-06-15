@@ -2,4 +2,5 @@
 
 export("%>%")
 export(b2sfca)
+export(c2sfca)
 importFrom(magrittr,"%>%")

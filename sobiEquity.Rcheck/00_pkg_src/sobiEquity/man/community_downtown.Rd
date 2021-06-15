@@ -8,7 +8,7 @@
 An object of class \code{sf} (inherits from \code{data.frame}) with 6 rows and 3 columns.
 }
 \source{
-Open Hamilton
+Open Hamilton (https://open.hamilton.ca/)
 }
 \usage{
 data(community_downtown)

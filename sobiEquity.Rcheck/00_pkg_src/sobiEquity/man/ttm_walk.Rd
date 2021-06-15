@@ -7,9 +7,6 @@
 \format{
 An object of class \code{data.frame} with 211605 rows and 5 columns.
 }
-\source{
-BBBike
-}
 \usage{
 data(ttm_walk)
 }

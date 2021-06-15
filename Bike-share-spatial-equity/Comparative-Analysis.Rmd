@@ -1,0 +1,290 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r load-packages, include=FALSE}
+library(biscale)
+library(cowplot)
+library(data.table)
+library(disk.frame)
+library(dplyr)
+library(gdistance)
+library(gridExtra)
+library(kableExtra)
+library(pycno)
+library(r5r) # the r5r package requires Java Development Kit version 11, which can be downloaded from https://www.oracle.com/java/technologies/javase-jdk11-downloads.htmllibrary(readr)
+library(raster)
+library(rgdal)
+library(sf)
+library(sobiEquity) # Data package
+library(tidyverse)
+library(tinytex)
+library(units)
+```
+
+```{r invoke-data, include=FALSE}
+# The data is part of data package `sobiEquity` 
+data("community_downtown")
+data("hamilton_cma")
+data("hamilton_da_2016")
+data("population_50x50")
+data("sobi_service")
+data("sobi_hubs")
+data("ttm_walk")
+```
+
+```{r crop-das, include=FALSE}
+# Crop DAs using bounding box of service area
+sobi_service_bbox <- sobi_service %>% 
+  st_bbox() %>%
+  st_as_sfc()
+
+cropped_da <- hamilton_da_2016 %>%
+  st_crop(sobi_service_bbox) %>%
+  dplyr::select(DA, geometry)
+```
+
+```{r join-population-to-travel-time-data, include=FALSE}
+ttm_walk <- left_join(ttm_walk, 
+                      population_50x50 %>%
+                        st_drop_geometry(),
+                      by = "UID")
+```
+
+```{r join-sobi-station-to-travel-time-data, include=FALSE}
+ttm_walk <- ttm_walk %>% 
+  left_join(sobi_hubs %>%
+              st_drop_geometry() %>%
+              dplyr::select(OBJECTID, 
+                            RACKS_AMOU),
+            by = c("OBJECTID" = "OBJECTID"))
+```
+
+```{r, include=FALSE}
+names(ttm_walk) <- c("UID", 
+                     "hub", 
+                     "travel_time",
+                     "hub_type",
+                     "hub_status",
+                     "population",
+                     "racks")
+```
+
+# Conventional 2-stage floating catchment areas
+
+In this approach the impedance is not normalized to allocate population and level of service proportionally. It does not have the property of preserving these quantities. The function to calculate this is `c2sfca`.
+
+As an example, calculate the 2SFCA using a threshold of 3 minutes and the non-equity stations only:
+```{r conventional-3-min-non-equity, include=FALSE}
+conventional_3min_non_equity <- ttm_walk %>%
+  dplyr::filter(hub_type == "Conventional" &
+                  hub_status == "Active") %>%
+  c2sfca(threshold = 3)
+```
+
+Still a threshold of 3 minutes, but with all stations:
+```{r conventional-3-min-all, include=FALSE}
+conventional_3min_all <- ttm_walk %>%
+  dplyr::filter(hub_status == "Active") %>%
+  c2sfca(threshold = 3)
+```
+
+Plot the results (non-equity stations as an example). First add the geometry:
+```{r, add-geometry-to-results, include=FALSE}
+los <- conventional_3min_non_equity$los %>%
+  left_join(sobi_hubs %>%
+              dplyr::select(OBJECTID),
+            by = c("hub" = "OBJECTID")) %>%
+  st_as_sf()
+
+accessibility <- conventional_3min_non_equity$accessibility %>%
+  left_join(population_50x50 %>%
+              dplyr::select(UID),
+            by = c("UID" = "UID")) %>%
+  st_as_sf()
+```
+
+Then plot:
+```{r}
+ggplot() +
+  geom_sf(data = population_50x50,
+          color = "gray") +
+  geom_sf(data = los,
+            aes(size = los, color = los)) +
+  scale_color_distiller(palette = "PuRd", direction = 1) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank())
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = population_50x50,
+          color = "gray") +
+  geom_tile(data = cbind(st_drop_geometry(accessibility), st_coordinates(accessibility)),
+            aes(x = X, y = Y, fill = accessibility)) +
+  scale_fill_distiller(palette = "PuRd", direction = 1) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank())
+```
+
+We can verify that the los and accessibility are not identical, a consequence of the non-proportional allocation of population and los:
+```{r conventional-3-min-sum-non-equity}
+sum(conventional_3min_non_equity$los$los)
+sum(conventional_3min_non_equity$accessibility$accessibility)
+```
+
+```{r conventional-3-min-sum-all}
+sum(conventional_3min_non_equity$los$los)
+sum(conventional_3min_non_equity$accessibility$accessibility)
+```
+
+# Balanced 2 stage floating catchment areas
+
+The balanced 2-stage floating catchment areas approach 
+```{r balanced-3-min-non-equity, include=FALSE}
+balanced_3min_non_equity <- ttm_walk %>%
+  dplyr::filter(hub_type == "Conventional" &
+                  hub_status == "Active") %>%
+  b2sfca(threshold = 3)
+```
+
+```{r balanced-3-min-all, include=FALSE}
+balanced_3min_all <- ttm_walk %>%
+  dplyr::filter(hub_status == "Active") %>%
+  b2sfca(threshold = 3)
+```
+
+```{r balanced-3-min-sum-non-equity}
+sum(balanced_3min_non_equity$los$los)
+sum(balanced_3min_non_equity$accessibility$accessibility)
+```
+
+```{r balanced-3-min-sum-all}
+sum(conventional_3min_all$los$los)
+sum(conventional_3min_all$accessibility$accessibility)
+```
+
+Plot the results (non-equity stations as an example). First add the geometry:
+```{r, balanced-add-geometry-to-results, include=FALSE}
+los <- balanced_3min_non_equity$los %>%
+  left_join(sobi_hubs %>%
+              dplyr::select(OBJECTID),
+            by = c("hub" = "OBJECTID")) %>%
+  st_as_sf()
+
+accessibility <- balanced_3min_non_equity$accessibility %>%
+  left_join(population_50x50 %>%
+              dplyr::select(UID),
+            by = c("UID" = "UID")) %>%
+  st_as_sf()
+```
+
+Then plot:
+```{r}
+ggplot() +
+  geom_sf(data = population_50x50,
+          color = "gray") +
+  geom_sf(data = los,
+            aes(size = los, color = los)) +
+  scale_color_distiller(palette = "PuRd", direction = 1) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank())
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = population_50x50,
+          color = "gray") +
+  geom_tile(data = cbind(st_drop_geometry(accessibility), st_coordinates(accessibility)),
+            aes(x = X, y = Y, fill = accessibility)) +
+  scale_fill_distiller(palette = "PuRd", direction = 1) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank())
+```
+
+# Compare results
+
+There is an inflation/deflection effect in the conventional 2-stage floating catchment area method. By how much is it inflated? Compare:
+```{r}
+los_inflation <- data.frame(hub = conventional_3min_non_equity$los$hub, 
+                       los_inflation = conventional_3min_non_equity$los$los/balanced_3min_non_equity$los$los) %>% # Ratio of conventional los to balanced los
+  left_join(sobi_hubs %>%
+              dplyr::select(OBJECTID),
+            by = c("hub" = "OBJECTID")) %>%
+  st_as_sf()
+
+accessibility_inflation <- data.frame(UID = conventional_3min_non_equity$accessibility$UID,
+                            accessibility_inflation = conventional_3min_non_equity$accessibility$accessibility/balanced_3min_non_equity$accessibility$accessibility) %>%
+  left_join(population_50x50 %>%
+              dplyr::select(UID),
+            by = c("UID" = "UID")) %>%
+  st_as_sf()
+```
+
+Plot inflation and deflation:
+```{r}
+ggplot() +
+  geom_sf(data = population_50x50,
+          color = "gray") +
+  geom_sf(data = los_inflation,
+            aes(size = los_inflation, color = los_inflation)) +
+  scale_color_distiller(palette = "PuRd", direction = 1) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank())
+```
+
+```{r}
+ggplot() +
+  geom_sf(data = population_50x50,
+          color = "gray") +
+  geom_tile(data = cbind(st_drop_geometry(accessibility_inflation), st_coordinates(accessibility_inflation)),
+            aes(x = X, y = Y, fill = accessibility_inflation)) +
+  scale_fill_distiller(palette = "PuRd", direction = 1) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank())
+```
+
+

@@ -8,7 +8,7 @@
 An object of class \code{sf} (inherits from \code{data.frame}) with 133 rows and 14 columns.
 }
 \source{
-Open Hamilton
+Open Hamilton (https://open.hamilton.ca/)
 }
 \usage{
 data(sobi_hubs)

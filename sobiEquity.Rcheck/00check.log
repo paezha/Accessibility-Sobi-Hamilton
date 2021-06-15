@@ -1,5 +1,5 @@
 * using log directory 'C:/Antonio/Cases 2020/Accessibility-Sobi-Hamilton/sobiEquity.Rcheck'
-* using R version 4.0.3 (2020-10-10)
+* using R version 4.0.5 (2021-03-31)
 * using platform: x86_64-w64-mingw32 (64-bit)
 * using session charset: ISO8859-1
 * using options '--no-manual --as-cran'
@@ -48,6 +48,14 @@ b2sfca: no visible binding for global variable 'racks'
 b2sfca: no visible binding for global variable 'population'
 b2sfca: no visible binding for global variable 'balanced_impedance_1'
 b2sfca: no visible binding for global variable 'balanced_impedance_2'
+c2sfca: no visible binding for global variable 'travel_time'
+c2sfca: no visible binding for global variable 'impedance_binary'
+c2sfca: no visible binding for global variable 'hub'
+c2sfca: no visible binding for global variable 'racks'
+c2sfca: no visible binding for global variable 'population'
+c2sfca: no visible binding for global variable 'balanced_impedance_1'
+c2sfca: no visible binding for global variable 'UID'
+c2sfca: no visible binding for global variable 'balanced_impedance_2'
 Undefined global functions or variables:
   UID balanced_impedance_1 balanced_impedance_2 hub impedance_binary
   population racks travel_time

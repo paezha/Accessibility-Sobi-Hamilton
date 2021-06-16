@@ -22,7 +22,7 @@ footnote:
   - code: 1
     text: "Corresponding Author"
 abstract: 
-  
+
   Public bicycle share programs (PBSPs) can play a role in advancing transportation equity if they make bicycling more accessible to disadvantaged populations. In Ontario, the City of Hamilton expanded their PBSP in 2018 by adding twelve "equity" stations with the explicit objective of increasing access for under-serviced neighbourhoods. In this case study, we investigate differentials in accessibility to stations using a balanced floating catchment area approach and compare accessibility with and without the equity stations. We analyze micro zones to better reflect walking to a station and conduct a sensitivity analysis at several walking time thresholds. We then reaggregate the estimated accessibility for further analysis using census data. Our findings indicate that equity stations increased accessibility for the serviced population at every threshold examined, but the increase was relatively modest especially for population in the bottom 20% of median total household income.
 
 journal: "Transportation Research Part D: Transport and Environment"
@@ -201,6 +201,7 @@ ggplot() +
 The BFCA method was developed to address issues with demand and supply inflation that result from the overlapping catchment areas produced by earlier FCA methods [@paezDemandLevelService2019]. Paez et al. [-@paezDemandLevelService2019] adjusted the impedance weights so that both supply and demand are proportionally allocated. The result is a FCA method that balances the population and level of service by eliminating the over-counting of population and level of service that leads to distortions in demand and supply.
 
 The first step in the FCA method is to allocate the population to be serviced by each docking station:
+
 \begin{equation}
 \label{eq:population-allocation}
 P_j = {\sum_{i = 1}^{n} P_i{w_{ij}}}
@@ -677,6 +678,7 @@ conventional_5min_all <- ttm_walk %>%
   c2sfca(threshold = 5)
 ```
 
+<<<<<<< Updated upstream
 ```{r conventional-5-min-sum-non-equity}
 sum(conventional_5min_non_equity$los$los)
 sum(conventional_5min_non_equity$accessibility$accessibility)
@@ -1282,8 +1284,6 @@ kable(accessibility_income,
 
 6. Discussion
 ===================
-
-It does not have the property of preserving these quantities. This produces a There is an inflation/deflection effect
 
 Using disaggregated data, we examined spatial equity and accessibility to Hamilton Bike Share, with a particular focus on assessing the contribution of the program's equity stations. Use of a balanced floating catchment area approach, combined with pycnophylactic interpolation, enabled us to measure accessibility on a micro scale which is a sensible approach to avoid the "absorption of disparities", as articulated by Chen et al. [-@chenExploringEquityPerformance2019]. This differentiates our analysis from similar papers exploring equity in PBSPs that use larger geographical units of analysis or that focus on station location instead of level of service. In this way, our paper has made contributions in a positive way by applying an intuitive and useful approach to measure accessibility to a PBSP, and in a normative way by serving to inform future investments in cycle infrastructure for Hamilton Bike Share.
 

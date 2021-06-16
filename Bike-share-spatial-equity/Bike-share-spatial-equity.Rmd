@@ -54,6 +54,8 @@ library(data.table)
 library(disk.frame)
 library(dplyr)
 library(gdistance)
+library(ggmap)
+library(ggspatial)
 library(gridExtra)
 library(kableExtra)
 library(pycno)
@@ -153,16 +155,61 @@ Hamilton Bike Share's equity program, Everyone Rides Initiative (ERI), was launc
 ## 3.3. Current System
 
 As of June 2020, HBS has 900 bikes, 130 stations [see Figure \ref{fig:sobi-stations-in-hamilton}], and over 26,000 active memberships [@hamiltonHamiltonBikeShare2015]. The core service area remains 40 sq.km. The program has twelve "equity" stations and 118 "conventional" stations (i.e., that were not explicitly added to address inequities in the program). The City of Hamilton has positioned stations between 300 and 600 m apart [@scottRouteChoiceBike2021], but anticipates that they will service those living within a 250 m buffer [@hamiltonsobi2015]. The latter constitutes a normative statement: people ought to be able to access a station in less than 600 m if they live in the core service area, with most usage coming from 250 m around. However, it is not known how far people are actually willing to travel to reach a station. It would be reasonable to assume that people are willing to walk beyond this threshold to access other stations if the ones nearest them have no supply of bicycles.
+```{r}
 
-```{r hamilton-and-sobi-service-area, echo=FALSE, fig.align = 'center', out.width = "90%", fig.cap = "The core service area of Hamilton Bike Share is outlined in black. Hamilton Census Metropolitan Area is shown in grey."}
-ggplot() + 
+```
+
+```{r hamilton-and-sobi-service-area, echo=FALSE, fig.align = 'center', out.width = "90%", fig.cap = "The core service area of Hamilton Bike Share is outlined in blue. Hamilton Census Metropolitan Area is shown in grey."}
+geo_context <- ggplot() + 
   geom_sf(data = hamilton_da_2016,
           color = NA,
           fill = "gray") + 
   geom_sf(data = sobi_service,
           fill = NA,
-          colour = "black") + 
-  theme(panel.background = element_rect(fill = "white"))
+          colour = "blue") + 
+  theme(panel.background = element_rect(fill = "white"),
+        axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+  #annotate("text", x = -80, y = 43.5, label = "Lake Ontario") +
+  annotation_scale(location = "bl", width_hint = 0.4) +
+  annotation_north_arrow(location = "tl", which_north = "true", 
+        pad_x = unit(0.25, "in"), pad_y = unit(0.25, "in"),
+        style = north_arrow_fancy_orienteering)
+
+# Inset map
+geo_context_inset <- get_stamenmap(bbox = c(left = -79,
+                                    bottom = 43,
+                                    right = -81,
+                                    top = 44),
+          maptype = "toner-lite", 
+          crop = FALSE,
+          zoom = 8)
+# plot map
+geo_context_inset <- ggmap(geo_context_inset)  +
+    coord_sf(crs = st_crs(4326))  +
+    #xlab("Longitude") + ylab("Latitude") +
+  annotation_scale(location = "bl", width_hint = 0.4) +
+  theme_minimal() +
+  theme(axis.text = element_blank(),
+        panel.border = element_rect(color = "black",
+                                    fill = NA),
+        axis.title = element_blank())
+
+#geo_context + geo_context_inset
+ggdraw() + 
+  draw_plot(geo_context, 0.0, 0.0, 0.8, 1) + 
+  draw_plot(geo_context_inset, 0.5, 0.4, 0.6, 0.6) +
+  draw_plot_label(x = c(.25,.5), y = c(0.45,.6), 
+                  label =  c("Hamilton Bikeshare \nCore Service Area",  "Lake Ontario"),
+                  hjust = 0, 
+                  size = 8) +
+  draw_line(x = c(0.34, 0.4),
+    y = c(0.43, 0.5),
+    color = "blue", 
+    size = 1,
+    lineend = "round",
+    linejoin = "mitre",
+    arrow = arrow(length = unit(0.1, "inches")))
 ```
 
 ```{r sobi-stations-in-hamilton, echo=FALSE, fig.align = 'center', out.width = "100%", fig.cap = "The spatial distribution of bicycle share stations in Hamilton, Ontario. Conventional stations are in blue and equity stations are in green. The service area of Hamilton Bike Share is outlined in black and the city's downtown core is outlined in pink. Hamilton Census Metropolitan Area is shown in grey."}
@@ -179,18 +226,22 @@ ggplot() +
           size = 1,
           color = "pink") +
   geom_sf(data = sobi_hubs %>% 
-            dplyr::filter(hub_type == "Conventional" & 
-                            hub_status == "Active"), # Remove deactivated hubs
-          aes(size = RACKS_AMOU),
-          shape = 21,
-          fill = "blue") +
-  geom_sf(data =  sobi_hubs %>% 
-            dplyr::filter(hub_type == "ERI"), 
-          aes(size = RACKS_AMOU), 
-          shape = 21,
-          fill = "green") +
-  scale_size(name = "Number of racks", range = c(0.5, 4)) +
-  theme(panel.background = element_rect(fill = "white"))
+            dplyr::filter(hub_status == "Active"), # Remove deactivated hubs
+          aes(size = RACKS_AMOU, fill = hub_type),
+          shape = 21) +
+  scale_size(name = "Number of racks", 
+             range = c(0.5, 3.5)) +
+  scale_fill_manual(name = "Hub Type",
+                    values = c("Conventional" = "blue", "ERI" = "green")) +
+  theme(panel.background = element_rect(fill = "white"),
+        axis.text = element_blank(),
+        legend.position = "bottom",
+        axis.ticks = element_blank()) +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in"),) +
+  annotation_north_arrow(location = "tl", which_north = "true", 
+        pad_x = unit(0.25, "in"), pad_y = unit(0.20, "in"),
+        style = north_arrow_fancy_orienteering)
 ```
 
 4. Methods and Data {#sec:methods}
@@ -265,19 +316,6 @@ Since walking trips to a bicycle share station likely happen at a level lower th
 
 To obtain population at sub-census geography levels, we used pycnophylactic interpolation [@toblerSmoothPycnophylacticInterpolation1979]. We obtained population data from the 2016 Census of Canada for dissemination areas (DA), which is the smallest publicly available census geography in Canada. These zonal values of the population were interpolated to smaller polygons that are 50-by-50 m in size. Pycnophylactic interpolation involves smoothing out the population from each DA while preserving total volume [see Figure \ref{fig:da-population}]. When interpolating the population at this high level of resolution, it is important to ensure that population numbers were not allocated to areas where people do not live in Hamilton (for example, to parks or large institutional buildings, etc.). To do so, we retrieved shapefiles for various geographic features [see Table \ref{tab:data-features}] from Open Hamilton. Next, we removed these features from the PBSP core service area and used pycnophylactic interpolation to disaggregate and reallocate population within the remaining area [see Figure \ref{fig:interpolated-population}].
 
-```{r da-population, echo=FALSE, fig.align = 'center', out.width = "90%", fig.cap = "Population in all dissemination areas (outlined in white) that are inside or touch the bounding box of the Hamilton Bike Share core service area (outlined in black)."}
-ggplot() +
-  geom_sf(data = hamilton_da_2016 %>%
-            dplyr::filter(sobi_service == "Yes"),
-          aes(fill = population),
-          color = "white") +
-  geom_sf(data = sobi_service,
-          fill = NA) +
-  scale_fill_distiller(palette = "YlOrRd", 
-                       direction = 1) +
-  theme(panel.background = element_rect(fill = "white"))
-```
-
 ```{r interpolated-population, echo=FALSE, fig.align = 'center', out.width = "90%", fig.cap = "Interpolated population in the Hamilton Bike Share's core service area (outlined in black) and within 30 minutes of walking to the core service area. Each population cell is 50-by-50 m in size. The downtown area is outlined in dark green."}
 ggplot() + 
   geom_sf(data = cropped_da,
@@ -300,7 +338,15 @@ ggplot() +
             dplyr::filter(NAME == "Hamilton"),
           fill = NA,
           color = "dark green") +
-  theme(panel.background = element_rect(fill = "white"))
+  theme(panel.background = element_rect(fill = "white"),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank()) +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in"),) +
+  annotation_north_arrow(location = "tl", which_north = "true", 
+        pad_x = unit(0.25, "in"), pad_y = unit(0.20, "in"),
+        style = north_arrow_fancy_orienteering)
 ```
 
 ## 4.3. Travel Time Matrix
@@ -495,9 +541,9 @@ accessibility <- accessibility %>%
 
 ### 5.1.1. Minimum Threshold
 
-With a walking distance of three minutes, we found that there are 25.2 bicycle racks per person system-wide in the original system configuration (i.e., without equity stations). The addition of equity stations increases this ratio slightly to 25.4 bicycles per person. Figure \ref{fig:figure-6} presents a comparison of accessibility between the systems for the population cells. Accessibility is fairly uniform overall, with the exception of two small areas where accessibility is slightly higher. This high level of system-wide accessibility occurs because the population that can reach bicycle share stations when travel time is 3 minutes or less is very limited, and accessibility is strongly shaped by a few locations that concentrate population and stations.
+With a walking distance of three minutes, we found that there are 25.2 bicycle racks per person system-wide in the original system configuration (i.e., without equity stations). The addition of equity stations increases this ratio slightly to 25.4 bicycles per person. Accessibility is fairly uniform overall, with the exception of two small areas where accessibility is slightly higher. This high level of system-wide accessibility occurs because the population that can reach bicycle share stations when travel time is 3 minutes or less is very limited, and accessibility is strongly shaped by a few locations that concentrate population and stations. For this reason, accessibility is highly concentrated in small areas around the stations. The map is not shown but can be recreated using the source code and data.
 
-```{r figure-6, echo=FALSE, fig.align = 'center', out.width = "90%", fig.cap = "Accessibility at 3 minutes walk (minimum threshold) compared between current system with equity stations and the original system without equity stations."}
+```{r figure-6, eval = FALSE, echo=FALSE, fig.align = 'center', out.width = "90%", fig.cap = "Accessibility at 3 minutes walk (minimum threshold) compared between current system with equity stations and the original system without equity stations."}
 #accessibility plot for current system with equity stations at 3 minutes walk
 accessibility_3min <- accessibility %>% 
   dplyr::filter(threshold == "3 min")
@@ -526,7 +572,15 @@ ggplot() +
   #         fill = "green") +
   theme(panel.background = element_rect(fill = "white"),
         axis.title.x=element_blank(),
-        axis.title.y=element_blank())
+        axis.title.y=element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())  +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in"),) +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering)
+  
 ```
 
 ### 5.1.2. Average Threshold
@@ -548,7 +602,10 @@ ggplot() +
   #                      direction = 1) +
   geom_tile(data = cbind(st_drop_geometry(accessibility_5min), st_coordinates(accessibility_5min)),
             aes(x = X, y = Y, fill = accessibility)) +
-  scale_fill_distiller(palette = "PuRd", direction = 1) +
+  scale_fill_distiller(palette = "PuRd", 
+                       direction = 1,
+                       trans = "log",
+                       breaks = c(0.001, 0.02, 0.4, 8)) +
   geom_sf(data = sobi_service,
           fill = NA) +
   facet_grid(system ~ threshold)  +
@@ -562,7 +619,14 @@ ggplot() +
   #         fill = "green") +
   theme(panel.background = element_rect(fill = "white"),
         axis.title.x=element_blank(),
-        axis.title.y=element_blank())
+        axis.title.y=element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())  +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in"),) +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering)
 ```
 
 ### 5.1.3. Maximum Threshold
@@ -584,7 +648,10 @@ ggplot() +
   #                      direction = 1) +
   geom_tile(data = cbind(st_drop_geometry(accessibility_10min), st_coordinates(accessibility_10min)),
             aes(x = X, y = Y, fill = accessibility)) +
-  scale_fill_distiller(palette = "PuRd", direction = 1) +
+  scale_fill_distiller(palette = "PuRd",
+                       direction = 1,
+                       trans = "log",
+                       breaks = c(0.00004, 0.0003, 0.002)) +
   geom_sf(data = sobi_service,
           fill = NA) +
   facet_grid(system ~ threshold)  +
@@ -598,7 +665,14 @@ ggplot() +
   #         fill = "green") +
   theme(panel.background = element_rect(fill = "white"),
         axis.title.x=element_blank(),
-        axis.title.y=element_blank())
+        axis.title.y=element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())  +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in"),) +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering)
 ```
 
 ### 5.1.4. Extreme Threshold
@@ -620,7 +694,10 @@ ggplot() +
   #                      direction = 1) +
   geom_tile(data = cbind(st_drop_geometry(accessibility_15min), st_coordinates(accessibility_15min)),
             aes(x = X, y = Y, fill = accessibility)) +
-  scale_fill_distiller(palette = "PuRd", direction = 1) +
+  scale_fill_distiller(palette = "PuRd", 
+                       direction = 1,
+                       trans = "log",
+                       breaks = c(0.000006, 0.00005, 0.0003)) +
   geom_sf(data = sobi_service,
           fill = NA) +
   
@@ -635,12 +712,19 @@ ggplot() +
   #         fill = "green") +
   theme(panel.background = element_rect(fill = "white"),
         axis.title.x=element_blank(),
-        axis.title.y=element_blank())
+        axis.title.y=element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())  +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in"),) +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering)
 ```
 
 ## 5.2. Comparative Analysis
 
-To highlight the benefit of using the BFCA approach, we conducted a comparative analysis with the 2SFCA method. The latter method does not normalize the impedance to allocate population and level of service proportionally.
+To highlight the benefit of using the BFCA approach, we conducted a comparative analysis with the 2SFCA method. The latter method does not allocate population and level of service proportionally, which means that there are often substantial amounts of multiple counting each. Figure X shows for the 10-minute threshold the level of inflation/deflation that results when the balanced and the conventional approaches are compared. The inflation/deflation is defined as the ratio of the level of service and accessibility calculated using the conventional approach to the balanced approach. This effect has been documented in PAEZ-HIGGINS-VIVONA and Chen?. Inspection of Fig. REFERENCE TO FIGURE, shows that in some locations, the level of service is deflated by up to 40\% (or whatever) and accessibility is inflated by as much as 40\% (or whatever).
 
 ```{r conventional-3-min-non-equity, include=FALSE}
 conventional_3min_non_equity <- ttm_walk %>%
@@ -676,17 +760,6 @@ conventional_5min_non_equity <- ttm_walk %>%
 conventional_5min_all <- ttm_walk %>%
   dplyr::filter(hub_status == "Active") %>%
   c2sfca(threshold = 5)
-```
-
-<<<<<<< Updated upstream
-```{r conventional-5-min-sum-non-equity}
-sum(conventional_5min_non_equity$los$los)
-sum(conventional_5min_non_equity$accessibility$accessibility)
-```
-
-```{r conventional-5-min-sum-all}
-sum(conventional_5min_non_equity$los$los)
-sum(conventional_5min_non_equity$accessibility$accessibility)
 ```
 
 ```{r conventional-10-min-non-equity, include=FALSE}
@@ -737,7 +810,7 @@ sum(conventional_15min_non_equity$accessibility$accessibility)
 
 ## 5.3. Accessibility by Median Total Household Income
 
-A unique property of the balanced FCA method is that data can be reaggregated while preserving the total population in the core service area and the supply at each docking station. This avoids demand and supply inflation, and also enables us to present findings in a way that is perhaps more intuitive to interpret. Therefore, we reaggregated population and accessibility from the 50-by-50 m population cells to the dissemination area. We then can compared accessibility to median total household income statistics from the 2016 Canadian Census.
+Next, we wish to examine accessibility differences by income levels. To this end we take our micro-zones and impute the median household income of their corresponding DA. Use of bivariate maps helps us to visualize the level of accessibility by level of income. Median total household income statistics were drawn from the 2016 Canadian Census.
 
 Figures \ref{fig:figure-bi-map-threshold-3}, \ref{fig:figure-bi-map-threshold-5}, \ref{fig:figure-bi-map-threshold-10}, and \ref{fig:figure-bi-map-threshold-15} depict bivariate choropleth maps that combine the spatial distribution of accessibility and median total household income, using tertiles for the coloring scheme. In each figure, the top panel is the system without the equity stations (i.e., the original system configuration), and the bottom panel is accessibility in the current system with equity stations. As expected, the analysis indicates that the extreme threshold of fifteen minutes is associated with the largest number of people who are within the assumed service area of stations. We found that stations added to HBS did indeed expand the spatial coverage of the system, leading to more balance across the core service area. By implementing equity stations in areas with lower median total household income in Hamilton, the PBSP attained greater horizontal equity by extending the spatial distribution of bicycles across the city. This is particularly evident at the minimum and average thresholds of three and five minutes, respectively, where the equity stations fill a number of gaps in program coverage. 
 
@@ -1232,7 +1305,7 @@ conventional_hubs <- rbind(inc_stats_con_3,
 conventional_hubs
 ```
 
-To further explore this issue and examine vertical equity, we aggregated accessibility by median total household income across all geographies (see Table \ref{tab:accessibility-income}). Similar to Hosford and Winters  [-@hosfordWhoArePublic2018], we found that Hamilton's PBSP already serviced a large proportion of the population in the bottom and second quintiles of median total household income. This may well be an artifact of the spatial socioeconomic and demographic profile of Hamilton, where the most dense parts of the city (where a PBSP is most easily launched) are also those with relatively lower incomes. On the other hand, the levels of accessibility to Hamilton's PBSP are generally lower for populations in the bottom 20% of median total household income, compared to populations in the top 20%.
+To examine vertical equity we need to estimate what level of accessibility accrues to how many people in different income strata. A unique property of the balanced FCA method (which does not hold for the conventional approach because of the inflation/deflation issues discussed above) is that data can be re-aggregated accessibility and population using income as an aggregator criterion, while preserving the total population and the level of service. This avoids demand and supply inflation, and also enables us to present findings in a way that is perhaps more intuitive to interpret. Therefore, we aggregate the accessibility and population by the median household income as imputed from the DAs (see Table \ref{tab:accessibility-income}). Similar to Hosford and Winters  [-@hosfordWhoArePublic2018], we found that Hamilton's PBSP already serviced a large proportion of the population in the bottom and second quintiles of median total household income. This may well be an artifact of the spatial socioeconomic and demographic profile of Hamilton, where the most dense parts of the city (where a PBSP is most easily launched) are also those with relatively lower incomes. On the other hand, the levels of accessibility to Hamilton's PBSP are generally lower for populations in the bottom 20% of median total household income, compared to populations in the top 20%.
 
 The spatial mapping reveals that the addition of equity stations increased horizontal equity by growing the population serviced irrespective of the walking threshold. The largest gains were made for dissemination areas in the second 20%, where an additional 3,073 and 5,395 people could reach a bicycle share station within three and five minutes walk, respectively, after the addition of equity stations. However, we find that there were only small increases in the population in the bottom 20% of median total household income who are serviced by the equity stations, and the accessibility gains are also quite modest and smaller than for populations in the second and third quintiles of median total household income. This suggests that income disparities persist, albeit this depends on the walking time thresholds. With and without equity stations, people in the top 20% of income have the highest level of access at a threshold of ten and fifteen minutes. Although dissemination areas in the second 20% have the highest level of access by a significant amount at lower distance thresholds, the bottom 20%, who may benefit the most from Hamilton Bike Share's equity initiatives, have the lowest access at three minutes threshold and the second lowest access at all other thresholds.
 

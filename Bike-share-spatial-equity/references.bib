@@ -6,6 +6,13 @@
   url = {https://pub-hamilton.escribemeetings.com/filestream.ashx?DocumentId=118356}
 }
 
+@online{trec2019,
+  author = {McNeil, Nathan and MacArthur, John and Broach, Joseph and Cummings, Austin and Stark, Rae-Leigh},
+  title = {National Scan of Bik National Scan of Bike Share Equity Pr quity Programs: Approaches and Best Practices for Promoting Equity in Bike Share},
+  year = {2019},
+  url = {https://pdxscholar.library.pdx.edu/cgi/viewcontent.cgi?article=1191&context=trec_reports}
+}
+
 @online{hamiltonsobi2014,
   author = {City of Hamilton},
   title = {Hamilton Bike Share Public Engagement Report},
@@ -18,6 +25,83 @@
   title = {Walkable Station Spacing is Key to Successful, Equitable Bike Share},
   year = {2015},
   url = {https://nacto.org/wp-content/uploads/2015/09/NACTO_Walkable-Station-Spacing-Is-Key-For-Bike-Share_Sc.pdf}
+}
+
+@article{bivand2020progress,
+  title={Progress in the R ecosystem for representing and handling spatial data},
+  author={Bivand, Roger S},
+  journal={Journal of Geographical Systems},
+  pages={1--32},
+  year={2020},
+  doi = {10.1007/s10109-020-00336-0},
+  publisher={Springer}
+}
+
+@article{brunsdon2020opening,
+  title={Opening practice: supporting reproducibility and critical spatial data science},
+  author={Brunsdon, Chris and Comber, Alexis},
+  journal={Journal of Geographical Systems},
+  pages={1--20},
+  year={2020},
+  doi = {10.1007/s10109-020-00334-2},
+  publisher={Springer}
+}
+
+@article{lovelace2021open,
+  title={Open source tools for geographic analysis in transport planning},
+  author={Lovelace, Robin},
+  journal={Journal of Geographical Systems},
+  pages={1--32},
+  year={2021},
+  doi = {doi.org/10.1007/s10109-020-00342-2},
+  publisher={Springer}
+}
+
+@article{okelly2003aggregate,
+   author = {O'Kelly, M. E. and Horner, M. W.},
+   title = {Aggregate accessibility to population at the county level: U.S. 1940-2000},
+   journal = {Journal of Geographical Systems},
+   volume = {5},
+   number = {1},
+   pages = {5-23},
+   url = {C:/Papers/Journal of Geographical Systems/Journal of Geographical Systems (2003) 5 (1) 5-23.pdf},
+   year = {2003},
+   type = {Journal Article}
+}
+
+@article{scottRouteChoiceBike2021,
+  title = {Route Choice of Bike Share Users: Leveraging GPS Data to Derive Choice Sets},
+  shorttitle = {Route Choice of Bike Share Users},
+  author = {Scott, Darren M. and Lu, Wei and Brown, Matthew J.},
+  year = {2021},
+  month = jan,
+  volume = {90},
+  pages = {102903},
+  issn = {0966-6923},
+  doi = {10.1016/j.jtrangeo.2020.102903},
+  abstract = {To identify the determinants of bike share users' route choices, this research collects 132,397 hub-to-hub global positioning system (GPS) trajectories over a 12-month period between April 1, 2015 and March 31, 2016 from 750 bicycles provided by Hamilton Bike Share (HBS). A GIS-based map-matching algorithm is used to derive users' routes along the cycling network within Hamilton, Ontario and generate multiple attributes for each route, such as route distance, route directness, average distance between intersections, and the number of turns, intersections, and unique road segments. Concerning route choice analysis, the origin and destination pair should be the same for all routes within a choice set, thus HBS users' trips are grouped by origin-destination hub pairs. Since trips taken by different users between a hub pair can follow the same route, unique routes are extracted using a link signature extraction tool. Following this, a normalized Gini (Gn) coefficient is calculated for each hub pair to evaluate users' preferences among all the unique hub-to-hub route choices. A Gn closer to 0 indicates that routes between a hub pair are more evenly used, while a value closer to 1 implies a higher preference toward one dominant route. Three route choice models, a global model, a medium Gn model, and a high Gn model, are estimated using Path-Size Logit to determine how route choice is affected by the presence of dominant routes. These models suggest that HBS users are willing to detour for some attributes, such as bicycle facilities, but tend to avoid circuitous routes, turns, steep slopes, and roads with high traffic volume.},
+  journal = {Journal of Transport Geography},
+  keywords = {Active travel,Bike share,Cycling,Path-size logit,Route choice},
+  language = {en}
+}
+
+@article{Pereira2021r5r,
+	journal={Findings},
+	doi={10.32866/001c.21262},
+	publisher={Network Design Lab},
+	title={r5r: Rapid Realistic Routing on Multimodal Transport Networks with R\textsuperscript{5} in R},
+	author={Pereira, Rafael H. M. and Saraiva, Marcus and Herszenhut, Daniel and Braga, Carlos Kaue Vieira and Conway, Matthew Wigginton},
+	date={2021-03-04},
+	year=2021,
+	month=3,
+	day=4,
+}
+
+@techreport{smith2015exploring,
+  title={Exploring the equity dimensions of US bicycle sharing systems.},
+  author={Smith, C Scott and Oh, Jun-Seok and Lei, Cheyenne},
+  year={2015},
+  institution={Western Michigan University. Transportation Research Center for Livable~.}
 }
 
 @article{ApproachModelingBikesharing2020,
@@ -120,16 +204,6 @@
   number = {2}
 }
 
-@article{bivand2020progress,
-  title={Progress in the R ecosystem for representing and handling spatial data},
-  author={Bivand, Roger S},
-  journal={Journal of Geographical Systems},
-  pages={1--32},
-  year={2020},
-  doi = {10.1007/s10109-020-00336-0},
-  publisher={Springer}
-}
-
 @article{bradshawChartingDesignImplementation2021,
   title = {Charting the Design and Implementation of the Smart City: The Case of Citizen-Centric Bikeshare in {{Hamilton}}, {{Ontario}}},
   shorttitle = {Charting the Design and Implementation of the Smart City},
@@ -166,16 +240,6 @@
   journal = {Applied Economics Letters},
   keywords = {bicycle ownership,discrete choice models,public bicycles,R40,R42,Trip purpose},
   number = {8}
-}
-
-@article{brunsdon2020opening,
-  title={Opening practice: supporting reproducibility and critical spatial data science},
-  author={Brunsdon, Chris and Comber, Alexis},
-  journal={Journal of Geographical Systems},
-  pages={1--20},
-  year={2020},
-  doi = {10.1007/s10109-020-00334-2},
-  publisher={Springer}
 }
 
 @article{buckAreBikeshareUsers2013,
@@ -261,6 +325,23 @@
   language = {en}
 }
 
+@article{chenMeasuringAccessibilityHealth2021,
+  title = {Measuring Accessibility to Health Care Services for Older Bus Passengers: {{A}} Finer Spatial Resolution},
+  shorttitle = {Measuring Accessibility to Health Care Services for Older Bus Passengers},
+  author = {Chen, Wendong and Cheng, Long and Chen, Xuewu and Chen, Jingxu and Cao, Mengqiu},
+  year = {2021},
+  month = may,
+  volume = {93},
+  pages = {103068},
+  issn = {0966-6923},
+  doi = {10.1016/j.jtrangeo.2021.103068},
+  abstract = {Health care accessibility is a vital indicator for evaluating areas where there are medical shortages. However, due to the lack of population data with a satisfactory spatial resolution, efforts to accurately measure health care accessibility among older individuals have been hampered to some extent. To address this issue, we attempt to measure accessibility to health care services for older bus passengers in Nanjing, China, using a finer spatial resolution. More specifically, based on one month's worth of bus smart card data, a framework for identifying the home stations (i.e., a passenger's preferred station near their residence) of older passengers is developed to measure the aggregate demand at the bus stop scale. On this basis, a measurement that integrates the Gaussian two-step floating catchment area (2SFCA) and the adjusted 2SFCA methods (referred to as the adjusted Gaussian 2SFCA method) is proposed to measure accessibility to health care services for older people. The results show that: (1) almost all home stations experience inflated demand, especially those located in the suburbs; (2) despite abundant health care resources, home stations in urban districts are rarely identified as high accessibility stations, due to high demand densities among the older population; and (3) more attention should be paid to two types of home stations \textendash{} those with a medical institution and those with bed shortages, respectively. The first type is predominantly distributed in the periphery of the city, in the suburbs where the travel time required to access the nearest health care service by bus is longer. The second type is mostly located in the outskirts of urban districts and in the central area of one suburb. These findings could help policy makers to implement more appropriate measures to design and reallocate health care resources.},
+  file = {C\:\\Users\\desjae\\Zotero\\storage\\XDYUDQ3H\\Chen et al. - 2021 - Measuring accessibility to health care services fo.pdf;C\:\\Users\\desjae\\Zotero\\storage\\NJWCKGI9\\S0966692321001216.html},
+  journal = {Journal of Transport Geography},
+  keywords = {Adjusted Gaussian 2SFCA method,Bus smart card data,Demand inflation,Health care accessibility,Older people},
+  language = {en}
+}
+
 @article{chenUnobservedHeterogeneityTransportation2021,
   title = {Unobserved Heterogeneity in Transportation Equity Analysis: {{Evidence}} from a Bike-Sharing System in Southern {{Tampa}}},
   shorttitle = {Unobserved Heterogeneity in Transportation Equity Analysis},
@@ -306,6 +387,24 @@
   language = {en}
 }
 
+@article{delboscUsingLorenzCurves2011,
+  title = {Using {{Lorenz}} Curves to Assess Public Transport Equity},
+  author = {Delbosc, Alexa and Currie, Graham},
+  year = {2011},
+  month = nov,
+  volume = {19},
+  pages = {1252--1259},
+  issn = {0966-6923},
+  doi = {10.1016/j.jtrangeo.2011.02.008},
+  abstract = {Equity has been a major concern of public transport provision and is required by legislation in many countries. Several approaches measure equity in transit supply however none produce a simple system-wide measure of equity performance. A new approach is presented using Lorenz curves to measure the relative supply of transit to the population. Gini coefficients provide a single measure of overall equity using this method. A system-wide assessment of overall transit supply to the population in Melbourne, Australia shows that 70\% of the population shares only 19\% of the supply (Gini coefficient=.68). When employment is also taken into account, the situation is not much different; 70\% of jobs and population share 23\% of service (G=.62). In order to gain some understanding of vertical equity, the transit supply was compared between different age, income and vehicle ownership groups. There is some evidence of higher supply for youth and low-income groups in inner Melbourne, and in all parts of Melbourne no-vehicle households lived in areas of higher transit supply. Overall it is unclear how ``fair'' these distributions are compared to equity in other cities since this is the first time this method has been undertaken. Projects using similar approaches should provide a good basis for establishing comparative equity between cities.},
+  file = {C\:\\Users\\desjae\\Zotero\\storage\\IQV8EE8K\\Delbosc and Currie - 2011 - Using Lorenz curves to assess public transport equ.pdf;C\:\\Users\\desjae\\Zotero\\storage\\5W8XJUCZ\\S0966692311000202.html},
+  journal = {Journal of Transport Geography},
+  keywords = {Equity,Lorenz curve,Public transport},
+  language = {en},
+  number = {6},
+  series = {Special Section on {{Alternative Travel}} Futures}
+}
+
 @article{duran-rodasHowFairAllocation2020,
   title = {How Fair Is the Allocation of Bike-Sharing Infrastructure? {{Framework}} for a Qualitative and Quantitative Spatial Fairness Assessment},
   shorttitle = {How Fair Is the Allocation of Bike-Sharing Infrastructure?},
@@ -321,6 +420,13 @@
   journal = {Transportation Research Part A: Policy and Practice},
   keywords = {Accessibility,Bike-sharing,Equity,Justice,Spatial fairness},
   language = {en}
+}
+
+@misc{EveryoneRides,
+  title = {Everyone {{Rides}}},
+  file = {C\:\\Users\\desjae\\Zotero\\storage\\PQLUEM39\\www.everyonerides.org.html},
+  howpublished = {https://www.everyonerides.org/},
+  journal = {Everyone Rides}
 }
 
 @article{faghih-imaniAnalysingBicyclesharingSystem2015,
@@ -518,6 +624,24 @@
   journal = {Sustainable Cities and Society},
   keywords = {Bikeshare program,Winter bikeshare best practices,Winter bikeshare challenges,Winter bikesharing,Year round bikesharing},
   language = {en}
+}
+
+@article{goodmanRoleBicycleSharing2014,
+  title = {The Role of Bicycle Sharing Systems in Normalising the Image of Cycling: {{An}} Observational Study of {{London}} Cyclists},
+  shorttitle = {The Role of Bicycle Sharing Systems in Normalising the Image of Cycling},
+  author = {Goodman, Anna and Green, Judith and Woodcock, James},
+  year = {2014},
+  month = mar,
+  volume = {1},
+  pages = {5--8},
+  issn = {2214-1405},
+  doi = {10.1016/j.jth.2013.07.001},
+  abstract = {Bicycle sharing systems are increasingly popular around the world and have the potential to increase the visibility of people cycling in everyday clothing. This may in turn help normalise the image of cycling, and reduce perceptions that cycling is `risky' or `only for sporty people'. This paper sought to compare the use of specialist cycling clothing between users of the London bicycle sharing system (LBSS) and cyclists using personal bicycles. To do this, we observed 3594 people on bicycles at 35 randomly-selected locations across central and inner London. The 592 LBSS users were much less likely to wear helmets (16\% vs. 64\% among personal-bicycle cyclists), high-visibility clothes (11\% vs. 35\%) and sports clothes (2\% vs. 25\%). In total, 79\% of LBSS users wore none of these types of specialist cycling clothing, as compared to only 30\% of personal-bicycle cyclists. This was true of male and female LBSS cyclists alike (all p{$>$}0.25 for interaction). We conclude that bicycle sharing systems may not only encourage cycling directly, by providing bicycles to rent, but also indirectly, by increasing the number and diversity of cycling `role models' visible.},
+  file = {C\:\\Users\\desjae\\Zotero\\storage\\ZY4REUA4\\Goodman et al. - 2014 - The role of bicycle sharing systems in normalising.pdf;C\:\\Users\\desjae\\Zotero\\storage\\RF8S4WL6\\S2214140513000030.html},
+  journal = {Journal of Transport \& Health},
+  keywords = {Bicycle sharing systems,Cycling,Gender,Helmets,Perceptions},
+  language = {en},
+  number = {1}
 }
 
 @misc{hamiltonHamiltonBikeShare2015,
@@ -783,16 +907,6 @@
   number = {2}
 }
 
-@article{lovelace2021open,
-  title={Open source tools for geographic analysis in transport planning},
-  author={Lovelace, Robin},
-  journal={Journal of Geographical Systems},
-  pages={1--32},
-  year={2021},
-  doi = {doi.org/10.1007/s10109-020-00342-2},
-  publisher={Springer}
-}
-
 @article{luoEnhancedTwostepFloating2009,
   title = {An Enhanced Two-Step Floating Catchment Area ({{E2SFCA}}) Method for Measuring Spatial Accessibility to Primary Care Physicians},
   author = {Luo, Wei and Qi, Yi},
@@ -1002,21 +1116,6 @@
   number = {1}
 }
 
-@article{okelly2003aggregate,
-   author = {O'Kelly, M. E. and Horner, M. W.},
-   title = {Aggregate accessibility to population at the county level: U.S. 1940-2000},
-   journal = {Journal of Geographical Systems},
-   volume = {5},
-   number = {1},
-   pages = {5-23},
-   url = {C:/Papers/Journal of Geographical Systems/Journal of Geographical Systems (2003) 5 (1) 5-23.pdf},
-   year = {2003},
-   type = {Journal Article}
-}
-
-
-
-
 @article{paezAccessibilityHealthCare2010,
   title = {Accessibility to Health Care Facilities in {{Montreal Island}}: An Application of Relative Accessibility Indicators from the Perspective of Senior and Non-Senior Residents},
   shorttitle = {Accessibility to Health Care Facilities in {{Montreal Island}}},
@@ -1079,18 +1178,6 @@
   keywords = {Accessibility,Day care,Montreal,Normative,Positive,Travel behavior},
   language = {en},
   series = {Special {{Section}} on {{Accessibility}} and {{Socio}}-{{Economic Activities}}: {{Methodological}} and {{Empirical Aspects}}}
-}
-
-@article{Pereira2021r5r,
-	journal={Findings},
-	doi={10.32866/001c.21262},
-	publisher={Network Design Lab},
-	title={r5r: Rapid Realistic Routing on Multimodal Transport Networks with R\textsuperscript{5} in R},
-	author={Pereira, Rafael H. M. and Saraiva, Marcus and Herszenhut, Daniel and Braga, Carlos Kaue Vieira and Conway, Matthew Wigginton},
-	date={2021-03-04},
-	year=2021,
-	month=3,
-	day=4,
 }
 
 @article{pereiraGeographicAccessCOVID192021,
@@ -1276,7 +1363,23 @@
   language = {en}
 }
 
-@article{scottRouteChoiceBike2021,
+@article{rowangouldIdentifyingEnvironmentalJustice2016,
+  title = {Identifying Environmental Justice Communities for Transportation Analysis},
+  author = {Rowangould, Dana and Karner, Alex and London, Jonathan},
+  year = {2016},
+  month = jun,
+  volume = {88},
+  pages = {151--162},
+  issn = {0965-8564},
+  doi = {10.1016/j.tra.2016.04.002},
+  abstract = {Environmental justice (EJ) refers to policy and advocacy intended to achieve equitable protection from environmental harms and access to benefits across demographic groups. Research has shown that low-income communities and communities of color are often exposed to greater harms and enjoy fewer benefits from transportation systems than the general population. However, federally-mandated EJ analyses rarely conclude that projects could result in disproportionate impacts to these communities. This paper investigates the methods used to define EJ communities\textemdash a key analytical step for which there is little specific guidance\textemdash as a potential driver of variation in observed EJ outcomes. Using a case study of transit accessibility in Fresno County, California, the paper contrasts three methods for the identification of EJ communities: (1) a commonly used threshold-based approach that groups geographic areas using demographics, (2) a population-weighted approach that calculates weighted means of performance measures, and (3) community-based identification of EJ areas. The analysis indicates that the first method is appropriate for targeting transportation investments but not for assessing EJ outcomes, while the second two methods are appropriate for assessing EJ outcomes. Importantly, the method used to define EJ communities can substantially affect the analytical outcome, potentially shifting a finding of inequity from null to positive or vice versa. These results have important implications for transportation planning agencies and transportation service providers that conduct EJ and equity analyses, as a finding of inequity may lead to design changes or mitigations.},
+  file = {C\:\\Users\\desjae\\Zotero\\storage\\VK4EE6S9\\Rowangould et al. - 2016 - Identifying environmental justice communities for .pdf;C\:\\Users\\desjae\\Zotero\\storage\\7UJKRWAW\\S0965856416302920.html},
+  journal = {Transportation Research Part A: Policy and Practice},
+  keywords = {Accessibility,Disadvantaged communities,Equity,Planning,Rural},
+  language = {en}
+}
+
+@article{scottRouteChoiceBike2021a,
   title = {Route Choice of Bike Share Users: {{Leveraging GPS}} Data to Derive Choice Sets},
   shorttitle = {Route Choice of Bike Share Users},
   author = {Scott, Darren M. and Lu, Wei and Brown, Matthew J.},
@@ -1341,13 +1444,6 @@
   keywords = {Behavior,Decision making,Electricity,Human mobility,Land use,Schools,Transportation,Walking},
   language = {en},
   number = {2}
-}
-
-@techreport{smith2015exploring,
-  title={Exploring the equity dimensions of US bicycle sharing systems.},
-  author={Smith, C Scott and Oh, Jun-Seok and Lei, Cheyenne},
-  year={2015},
-  institution={Western Michigan University. Transportation Research Center for Livable~…}
 }
 
 @misc{SoBi2018Results,

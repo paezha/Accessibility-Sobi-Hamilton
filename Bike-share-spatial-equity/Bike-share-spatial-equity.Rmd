@@ -36,7 +36,7 @@ header-includes:
     - \usepackage{setspace}\doublespacing
 ---
 
-```{r}
+```{r echo=FALSE}
 rm(list = ls())
 ```
 
@@ -159,7 +159,7 @@ As of June 2020, HBS has 900 bikes, 130 stations [see Figure \ref{fig:sobi-stati
 
 ```
 
-```{r hamilton-and-sobi-service-area, echo=FALSE, fig.align = 'center', out.width = "90%", fig.cap = "The core service area of Hamilton Bike Share is outlined in blue. Hamilton Census Metropolitan Area is shown in grey."}
+```{r hamilton-and-sobi-service-area, echo=FALSE, message=FALSE, fig.align = 'center', out.width = "90%", fig.cap = "The core service area of Hamilton Bike Share is outlined in blue. Hamilton Census Metropolitan Area is shown in grey."}
 geo_context <- ggplot() + 
   geom_sf(data = hamilton_da_2016,
           color = NA,
@@ -302,10 +302,10 @@ With these weights, accessibility can be calculated without risk of demand or su
 A_i = {\sum_{j = 1}^{J} \frac {S_j{w^j_{ij}}}{\sum_{i = 1}^{n} P_i{w^i_{ij}}}}
 \end{equation}
 
-By allocating the population and level of service proportionally, this method preserves the values of the population and level of service and provides a regional provider-to-population ratio since:
+By allocating the population and level of service proportionally, this method preserves the values of the population and level of service since:
 \begin{equation}
 \label{eq:proportionality}
-\sum_{i=1}^n A_i = \sum_{j=1}^J L_j = \frac{\sum_{j=1}^JS_j}{\sum_{i=1}^n P_i}
+\sum_{i=1}^n A_i = \sum_{j=1}^J L_j
 \end{equation}
 
 In fact, since the proportional allocation procedure means that any proportion of the population allocated to a station is never allocated to other stations, and conversely any level of service allocated to a population is never re-allocated elsewhere, this property is replicated for any level of aggregation. 
@@ -541,7 +541,7 @@ accessibility <- accessibility %>%
 
 ### 5.1.1. Minimum Threshold
 
-With a walking distance of three minutes, we found that there are 25.2 bicycle racks per person system-wide in the original system configuration (i.e., without equity stations). The addition of equity stations increases this ratio slightly to 25.4 bicycles per person. Accessibility is fairly uniform overall, with the exception of two small areas where accessibility is slightly higher. This high level of system-wide accessibility occurs because the population that can reach a docking station when travel time is three minutes or less is very limited, and accessibility is strongly shaped by a few locations that concentrate population and stations. For this reason, accessibility is highly concentrated in small areas around those stations. The map is not shown, since it is less informative, but can be recreated using the source code and data.
+With a walking distance of three minutes, we found that the total level of service is 25.2 bicycle racks per person system-wide in the original system configuration (i.e., without equity stations). The addition of equity stations increases this slightly to 25.4 bicycles per person. This total level of service is allocated to the population to obtain the levels of accessibility, which turn out to be relatively uniform overall, with the exception of two small areas where accessibility is slightly higher. This high level of system-wide accessibility occurs because the population that can reach a docking station when travel time is three minutes or less is very limited, and accessibility is strongly shaped by a few locations that concentrate population and stations. For this reason, accessibility is highly concentrated in small areas around those stations. The map is not shown, since it is less informative, but can be recreated using the source code and data.
 
 ```{r figure-6, eval = FALSE, echo=FALSE, fig.align = 'center', out.width = "90%", fig.cap = "Accessibility at 3 minutes walk (minimum threshold) compared between current system with equity stations and the original system without equity stations."}
 #accessibility plot for current system with equity stations at 3 minutes walk
@@ -889,12 +889,19 @@ bi_map_3_all <- ggplot() +
   geom_sf(data = cropped_da,
           fill = NA,
           color = "lightgrey") +
+  ggtitle("All stations") +
   bi_scale_fill(pal = "GrPink", 
                 dim = 3) +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in")) +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering) +
   theme(panel.background = element_rect(fill = "white"),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0), "cm"))
+        plot.margin = unit(c(0, 0, 0, 0), "cm"),
+        plot.title = element_text(hjust=0.5))
 
 legend <- bi_legend(pal = "GrPink",
                     dim = 3,
@@ -923,24 +930,26 @@ bi_map_3_conv <- ggplot() +
   geom_sf(data = cropped_da,
           fill = NA,
           color = "lightgrey") +
+  ggtitle("Conventional") +
   bi_scale_fill(pal = "GrPink", 
                 dim = 3) +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in")) +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering) +
   theme(panel.background = element_rect(fill = "white"),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0), "cm"))
+        plot.margin = unit(c(0, 0, 0, 0), "cm"),
+        plot.title = element_text(hjust=0.5))
 ```
 
-```{r figure-bi-map-threshold-3, echo = FALSE, out.width="1\\linewidth", fig.cap="\\label{fig-bivariate-map-threshold-3}Bivariate map of accessibility and income (threshold: 3 min): with equity stations (top panel) and without equity stations (bottom panel)"}
-ggdraw() + draw_plot(bi_map_3_all, 0.00, 0.5, 1, 0.5) + 
+```{r figure-bi-map-threshold-3, echo = FALSE, out.width="1.2\\linewidth", fig.cap="\\label{fig-bivariate-map-threshold-3}Bivariate map of accessibility and income (threshold: 3 min): with equity stations (top panel) and without equity stations (bottom panel)"}
+ggdraw() + 
+  draw_plot(bi_map_3_all, 0.00, 0.5, 1, 0.5) + 
   draw_plot(bi_map_3_conv, 0.00, 0.0, 1, 0.5) + 
-  draw_plot(legend, 0.06, 0.4, 0.2, 0.2) +
-
-  annotation_scale(location = "bl", width_hint = 0.4,
-                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in"),) +
-  annotation_north_arrow(location = "t", which_north = "true", 
-        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
-        style = north_arrow_fancy_orienteering)
+  draw_plot(legend, 0.06, 0.4, 0.2, 0.2)
 ```
 
 ```{r figure-14, echo=FALSE, fig.align = 'center', out.width = "90%"}
@@ -962,12 +971,19 @@ bi_map_5_all <- ggplot() +
   geom_sf(data = cropped_da,
           fill = NA,
           color = "lightgrey") +
+  ggtitle("All stations") +
   bi_scale_fill(pal = "GrPink", 
                 dim = 3) +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in")) +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering) +
   theme(panel.background = element_rect(fill = "white"),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0), "cm"))
+        plot.margin = unit(c(0, 0, 0, 0), "cm"),
+        plot.title = element_text(hjust=0.5))
 ```
 
 ```{r figure-15, echo=FALSE, fig.align = 'center', out.width = "90%"}
@@ -989,24 +1005,25 @@ bi_map_5_conv <- ggplot() +
   geom_sf(data = cropped_da,
           fill = NA,
           color = "lightgrey") +
+  ggtitle("Conventional") +
   bi_scale_fill(pal = "GrPink", 
                 dim = 3) +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in")) +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering) +
   theme(panel.background = element_rect(fill = "white"),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0), "cm"))
+        plot.margin = unit(c(0, 0, 0, 0), "cm"),
+        plot.title = element_text(hjust=0.5))
 ```
 
-```{r figure-bi-map-threshold-5, echo = FALSE, out.width="1\\linewidth", fig.cap="\\label{fig-bivariate-map-threshold-5}Bivariate map of accessibility and income (threshold: 5 min): with equity stations (top panel) and without equity stations (bottom panel)"}
+```{r figure-bi-map-threshold-5, echo = FALSE, out.width="1.2\\linewidth", fig.cap="\\label{fig-bivariate-map-threshold-5}Bivariate map of accessibility and income (threshold: 5 min): with equity stations (top panel) and without equity stations (bottom panel)"}
 ggdraw() + draw_plot(bi_map_5_all, 0.00, 0.5, 1, 0.5) + 
   draw_plot(bi_map_5_conv, 0.00, 0.0, 1, 0.5) + 
-  draw_plot(legend, 0.06, 0.4, 0.2, 0.2) +
-
-annotation_scale(location = "bl", width_hint = 0.4,
-                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in"),) +
-  annotation_north_arrow(location = "t", which_north = "true", 
-        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
-        style = north_arrow_fancy_orienteering)
+  draw_plot(legend, 0.06, 0.4, 0.2, 0.2)
 ```
 
 ```{r figure-16, echo=FALSE, fig.align = 'center', out.width = "90%"}
@@ -1027,12 +1044,20 @@ bi_map_10_all <- ggplot() +
           show.legend = FALSE) +
   geom_sf(data = cropped_da,
           fill = NA,
-          color = "lightgrey") +  bi_scale_fill(pal = "GrPink", 
+          color = "lightgrey") +
+  ggtitle("All stations") +
+  bi_scale_fill(pal = "GrPink", 
                 dim = 3) +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in")) +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering) +
   theme(panel.background = element_rect(fill = "white"),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0), "cm"))
+        plot.margin = unit(c(0, 0, 0, 0), "cm"),
+        plot.title = element_text(hjust=0.5))
 ```
 
 ```{r figure-17, echo=FALSE, fig.align = 'center', out.width = "90%"}
@@ -1054,24 +1079,25 @@ bi_map_10_conv <- ggplot() +
   geom_sf(data = cropped_da,
           fill = NA,
           color = "lightgrey") +
+  ggtitle("Conventional") +
   bi_scale_fill(pal = "GrPink", 
                 dim = 3) +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in")) +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering) +
   theme(panel.background = element_rect(fill = "white"),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0), "cm"))
+        plot.margin = unit(c(0, 0, 0, 0), "cm"),
+        plot.title = element_text(hjust=0.5))
 ```
 
-```{r figure-bi-map-threshold-10, echo = FALSE, out.width="1\\linewidth", fig.cap="\\label{fig-bivariate-map-threshold-10}Bivariate map of accessibility and income (threshold: 10 min): with equity stations (top panel) and without equity stations (bottom panel)"}
+```{r figure-bi-map-threshold-10, echo = FALSE, out.width="1.2\\linewidth", fig.cap="\\label{fig-bivariate-map-threshold-10}Bivariate map of accessibility and income (threshold: 10 min): with equity stations (top panel) and without equity stations (bottom panel)"}
 ggdraw() + draw_plot(bi_map_10_all, 0.00, 0.5, 1, 0.5) + 
   draw_plot(bi_map_10_conv, 0.00, 0.0, 1, 0.5) + 
-  draw_plot(legend, 0.06, 0.4, 0.2, 0.2) +
-
-annotation_scale(location = "bl", width_hint = 0.4,
-                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in"),) +
-  annotation_north_arrow(location = "t", which_north = "true", 
-        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
-        style = north_arrow_fancy_orienteering)
+  draw_plot(legend, 0.06, 0.4, 0.2, 0.2)
 ```
 
 ```{r figure-18, echo=FALSE, fig.align = 'center', out.width = "90%"}
@@ -1094,12 +1120,19 @@ bi_map_15_all <- ggplot() +
   geom_sf(data = cropped_da,
           fill = NA,
           color = "lightgrey") +
+  ggtitle("All stations") +
   bi_scale_fill(pal = "GrPink", 
                 dim = 3) +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in")) +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering) +
   theme(panel.background = element_rect(fill = "white"),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0), "cm"))
+        plot.margin = unit(c(0, 0, 0, 0), "cm"),
+        plot.title = element_text(hjust=0.5))
 ```
 
 ```{r figure-19, echo=FALSE, fig.align = 'center', out.width = "90%"}
@@ -1122,24 +1155,25 @@ bi_map_15_conv <- ggplot() +
   geom_sf(data = cropped_da,
           fill = NA,
           color = "lightgrey") +
+  ggtitle("Conventional") +
   bi_scale_fill(pal = "GrPink", 
                 dim = 3) +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in")) +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering) +
   theme(panel.background = element_rect(fill = "white"),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        plot.margin = unit(c(0, 0, 0, 0), "cm"))
+        plot.margin = unit(c(0, 0, 0, 0), "cm"),
+        plot.title = element_text(hjust=0.5))
 ```
 
-```{r figure-bi-map-threshold-15, echo = FALSE, out.width="1\\linewidth", fig.cap="\\label{fig-bivariate-map-threshold-15}Bivariate map of accessibility and income (threshold: 15 min): with equity stations (top panel) and without equity stations (bottom panel)"}
+```{r figure-bi-map-threshold-15, echo = FALSE, out.width="1.2\\linewidth", fig.cap="\\label{fig-bivariate-map-threshold-15}Bivariate map of accessibility and income (threshold: 15 min): with equity stations (top panel) and without equity stations (bottom panel)"}
 ggdraw() + draw_plot(bi_map_15_all, 0.00, 0.5, 1, 0.5) + 
   draw_plot(bi_map_15_conv, 0.00, 0.0, 1, 0.5) + 
-  draw_plot(legend, 0.06, 0.4, 0.2, 0.2) +
-
-annotation_scale(location = "bl", width_hint = 0.4,
-                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in"),) +
-  annotation_north_arrow(location = "t", which_north = "true", 
-        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
-        style = north_arrow_fancy_orienteering)
+  draw_plot(legend, 0.06, 0.4, 0.2, 0.2)
 ```
 
 ```{r, include=FALSE}
@@ -1414,7 +1448,7 @@ kable(accessibility_income,
 6. Discussion
 ===================
 
-Using disaggregated population data, we examined equity in accessibility to Hamilton Bike Share, with a particular focus on assessing the contribution of the program's equity stations. Using a BFCA approach, combined with pycnophylactic interpolation, enabled us to measure accessibility on a micro scale which better reflects the friction [*is this the right word?*] of walking thresholds and avoids the "absorption of disparities", as articulated by Chen et al. [-@chenExploringEquityPerformance2019] and elsewhere in the transportation literature [@rowangouldIdentifyingEnvironmentalJustice2016]. The BFCA method also considers demand and supply in the calculation of accessibility, which is important for services like PBSPs but not accounted for in other common accessibility models. Unlike the 2SFCA method, there was no inflation or deflation in our accessibility estimates because population and level of service were preserved (see Figure \ref{fig:figure-10} and Figure \ref{fig:figure-11}). This differentiates our analysis from similar papers exploring equity in PBSPs that use larger geographical units of analysis or that focus on station location instead of level of service. In this way, our paper has made an important contribution by applying an intuitive and useful approach to measure accessibility to a PBSP. This open and reproducible research could be replicated for additional transportation and statistical analysis using other individual-level data in Hamilton or revised for PBSPs in other North American cities.
+Using disaggregated population data, we examined equity in accessibility to Hamilton Bike Share, with a particular focus on assessing the contribution of the program's equity stations. Using a BFCA approach, combined with pycnophylactic interpolation, enabled us to measure accessibility on a micro scale which better scale at which walking takes place and avoids the "absorption of disparities", as articulated by Chen et al. [-@chenExploringEquityPerformance2019] and elsewhere in the transportation literature [@rowangouldIdentifyingEnvironmentalJustice2016]. The BFCA method also considers demand and supply in the calculation of accessibility, which is important for services like PBSPs but not accounted for in other common accessibility models. Unlike the 2SFCA method, there was no inflation or deflation in our accessibility estimates because population and level of service were preserved (see Figure \ref{fig:figure-10} and Figure \ref{fig:figure-11}). This differentiates our analysis from similar papers exploring equity in PBSPs that use larger geographical units of analysis or that focus on station location instead of level of service. In this way, our paper has made an important contribution by applying an intuitive and useful approach to measure accessibility to a PBSP. This open and reproducible research could be replicated for additional transportation and statistical analysis using other individual-level data in Hamilton or revised for PBSPs in other North American cities.
 
 The sensitivity analysis revealed that accessibility to docking stations is maximized at five minutes and decreases significantly by eight minutes [see Table \ref{tab:accessibility-income}]. This reflects the normative guide advertised on some docking stations in Hamilton showing other stations within a five minute walk, as well as the directive of NACTO [@nactowalkingstation2015]. We find that over 118,000 people can access a bicycle share station within a 15 minute walk, which represents roughly 85% of the total population in the core service area [see Table \ref{tab:accessibility-income}]. At a minimum threshold of three minutes, too few people can reach stations which leads to relatively high levels of service since there is little crowding for the stations. However, accessibility is at its lowest after eight minutes whereby congestion effects due to increased potential demand kick in. Chen et al. [-@chenExploringEquityPerformance2019] also found that accessibility decreases as larger geographical units are used in the estimation, since more people can access the service.
 

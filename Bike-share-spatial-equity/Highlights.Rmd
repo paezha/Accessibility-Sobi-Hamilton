@@ -5,12 +5,12 @@ output:
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
-* Balanced floating catchment area methods are applied to measure accessibility to PBSP
+* Balanced floating catchment area method applied to measure accessibility to bikeshare
 
-* Contribution of equity stations to accessibility assessed at different thresholds
+* Contribution of stations added to increase equity assessed at different thresholds
 
-* Equity stations increased horizontal and vertical accessibility, albeit only modestly
+* Added stations increased accessibility and reduced inequities, albeit only modestly
 
-* Lowest income group has lowest levels of accessibility, even with equity stations
+* Lowest income group has lowest levels of accessibility, even with "equity" stations
 
-* Locations for new stations are identified to increase equitable access to PBSP
+* Location and size of docking stations matters for increasing equity in accessibility

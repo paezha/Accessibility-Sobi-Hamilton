@@ -21,9 +21,9 @@ address:
 footnote:
   - code: 1
     text: "Corresponding Author"
-abstract: 
+abstract: |
 
-  Public bicycle share programs (PBSPs) can play a role in advancing transportation equity if they make bicycling more accessible to disadvantaged populations. In Ontario, the City of Hamilton expanded their PBSP in 2018 by adding twelve "equity" stations with the explicit objective of increasing access for under-serviced neighbourhoods. In this case study, we investigate differentials in accessibility to stations using a balanced floating catchment area approach and compare accessibility with and without the equity stations. We analyze micro zones to better reflect walking to a station and conduct a sensitivity analysis at several walking time thresholds. We then reaggregate the estimated accessibility for further analysis using census data. Our findings indicate that equity stations increased accessibility for the serviced population at every threshold examined, but the increase was relatively modest especially for population in the bottom 20% of median total household income.
+  Public bicycle share programs (PBSPs) can play a role in advancing transportation equity if they make bicycling more accessible to disadvantaged populations. In Ontario, the City of Hamilton expanded their PBSP in 2018 by adding twelve "equity" stations with the explicit objective of increasing access for under-serviced neighbourhoods. In this case study, we investigate differentials in accessibility to stations using a balanced floating catchment area approach and compare accessibility with and without the equity stations. We analyze population interpolated to small cells to better reflect walking to a station and conduct a sensitivity analysis at several walking time thresholds. We then reaggregate the estimated accessibility by income groups for further analysis. Our findings indicate that equity stations increased accessibility for the serviced population at every threshold examined, but the increase was relatively modest especially for population in the bottom 20% of median total household income.
 
 journal: "Transportation Research Part D: Transport and Environment"
 date: "`r Sys.Date()`"
@@ -106,7 +106,7 @@ Many PBSPs in North America now offer specific programs to address equity that p
 
 This paper examines accessibility to Hamilton Bike Share using a balanced floating catchment area (BFCA) approach. We also conduct a comparative analysis to the conventional two-step floating catchment area (2SFCA) approach to highlight the benefits of this method which, to our knowledge, has not yet been used in the cycling literature. The paper also assesses the contribution of the equity stations to reducing inequities in accessibility for different groups according to median total household income, and provides policy recommendations to further improve equity.
 
-This paper is an example of open and reproducible research that uses only open software for transportation and statistical analysis [@bivand2020progress; @lovelace2021open]. All data were obtained from publicly available sources and organized in the form of a data package. Following best practices in spatial data science [@brunsdon2020opening], the code and data needed to reproduce, modify or extend the analysis are available for download.^[https://github.com/paezha/Accessibility-Sobi-Hamilton]
+This paper is an example of open and reproducible research that uses only open software for transportation and statistical analysis [@bivand2020progress; @lovelace2021open]. All data were obtained from publicly available sources and organized in the form of a data package. Following best practices in spatial data science [@brunsdon2020opening], an open data product [@arribas2021open] along with the code needed to reproduce, modify or extend the analysis are available for download.^[https://github.com/paezha/Accessibility-Sobi-Hamilton] 
 
 2. Literature Review
 ===================
@@ -255,42 +255,40 @@ The first step in the FCA method is to allocate the population to be serviced by
 P_j = {\sum_{i = 1}^{n} P_i{w_{ij}}}
 \end{equation}
 
-As seen in the equation above, the population allocated to station $j$ is the weighted sum of the population in the region; a spatial weight $w_{ij}$ represents the friction that the population at $i$ faces when reaching station $j$, and is usually given by a distance-decay function, so that each station is assumed to service only a segment of the population within a limited geographical range.
-
-Next, the supply at each station (i.e., the maximum number of bicycle racks) is divided by its estimated service population within the established catchment area; this gives the level of service of station $j$ in bicycle racks per person:
+As seen in the equation above, the population allocated to station $j$ is the weighted sum of the population in the region; a spatial weight $w_{ij}$ represents the friction that the population at $i$ faces when reaching station $j$, and is usually given by a distance-decay function, so that each station is assumed to service only a segment of the population within a limited geographical range. The level of service of station $j$ in bicycle racks per person is the supply at each station (i.e., the maximum number of bicycle racks) divided by the population within the established catchment area:
 \begin{equation}
 \label{eq:level-of-service}
 L_j = \frac {S_j}{P_j} = \frac {S_j}{{\sum_{i = 1}^{n} P_i{w_{ij}}}}
 \end{equation}
 
-Finally, the accessibility of population cell $i$ is calculated as the weighted sum of the level of service of all stations that can be reached from there according to the spatial weights:
+In the second step, the accessibility of population unit $i$ is calculated as the weighted sum of the level of service of all stations that can be reached from there according to the spatial weights:
 \begin{equation}
 \label{eq:FCA-accessibility}
-A_i = {\sum_{j = 1}^{J} L_j{w_{ji}}} = {\sum_{j = 1}^{J} \frac {S_j{w_{ji}}}{\sum_{i = 1}^{n} P_i{w_{ij}}}}
+A_i = {\sum_{j = 1}^{J} L_j{w_{ij}}} = {\sum_{j = 1}^{J} \frac {S_j{w_{ij}}}{\sum_{i = 1}^{n} P_i{w_{ij}}}}
 \end{equation}
 
-The balanced approach of Paez et al [-@paezDemandLevelService2019] replaces the spatial weights with normalized versions as follows:
+The balanced approach of Paez et al. [-@paezDemandLevelService2019] replaces the spatial weights with normalized versions as follows. In the first step, the population is weighted with:
 \begin{equation}
 \label{eq:spatial-weights}
-{w_{ij}^{i} = \frac {w_{ij}}{\sum_{j = 1}^{J} {w_{ji}}}}
+{w_{ij}^{i} = \frac {w_{ij}}{\sum_{j = 1}^{J} {w_{ij}}}}
 \end{equation}
 
-\noindent and:
+\noindent and in the second step, the level of service is weighted using:
 \begin{equation}
 \label{eq:spatial-weights-2}
-{w_{ij}^{j} = \frac {w_{ij}}{\sum_{j = 1}^{J} {w_{ji}}}}
+{w_{ij}^{j} = \frac {w_{ij}}{\sum_{i = 1}^{n} {w_{ij}}}}
 \end{equation}
 
 These weights satisfy the following properties:
 \begin{equation}
 \label{eq:weights}
-\sum_{j = 1}^{J} {w^i_{ji}} = 1
+\sum_{j = 1}^{J} {w^i_{ij}} = 1
 \end{equation}
 
 \noindent and:
 \begin{equation}
 \label{eq:weights-2}
-\sum_{i = 1}^{n} {w^j_{ji}} = 1
+\sum_{i = 1}^{n} {w^j_{ij}} = 1
 \end{equation}
 
 With these weights, accessibility can be calculated without risk of demand or supply inflation:
@@ -309,7 +307,7 @@ In fact, since the proportional allocation procedure means that any proportion o
 
 ## 4.2. Pycnophylactic Interpolation
 
-Since walking trips to a docking station likely happen at a level lower than even the smallest census geography, this requires a more disaggregated approach than the use of census geographies. For this reason, we implemented our analysis parting from micro population zones to better reflect the friction of walking to a docking station, which is an important component of a bike share trip [@chenExploringEquityPerformance2019].
+Since walking trips to a docking station likely happen at a level lower than even the smallest census geography, this requires a more disaggregated approach than the use of census geographies. For this reason, we implemented our analysis parting from small population cells to better reflect the friction of walking to a docking station, which is an important component of a bike share trip [@chenExploringEquityPerformance2019].
 
 To obtain population at sub-census geography levels, we used pycnophylactic interpolation [@toblerSmoothPycnophylacticInterpolation1979]. We obtained population data from the 2016 Census of Canada for dissemination areas (DA), which is the smallest publicly available census geography in Canada. These zonal values of the population were interpolated to smaller polygons that are 50-by-50 m in size. Pycnophylactic interpolation involves smoothing out the population from each DA while preserving total volume [see Figure \ref{fig:da-population}]. When interpolating the population at this high level of resolution, it is important to ensure that population numbers were not allocated to areas where people do not live in Hamilton (for example, to parks or large institutional buildings, etc.). To do so, we retrieved shapefiles for various geographic features from Open Hamilton. Next, we removed these features from the PBSP core service area and used pycnophylactic interpolation to disaggregate and reallocate population within the remaining area [see Figure \ref{fig:interpolated-population}].
 
@@ -348,7 +346,7 @@ ggplot() +
 
 ## 4.3. Travel Time Matrix
 
-To calculate walking times from the centroid of the micro population cells to docking stations, we extracted OpenStreetMap data for HBS's service area from [BBBike](https://download.bbbike.org/osm/bbbike/), an online cycle route planner that interfaces with OpenStreetMap. OpenStreetMap data provides the networks for calculating walking times from each population cell to nearby docking stations, using a maximum walking distance of 10 km and walking time of 30 minutes as thresholds. A travel time matrix was created with the origins as the coordinates of the population cells and the destinations as the coordinates of the docking stations within the maximum threshold. This process provides a more realistic measure of the friction of reaching stations by taking infrastructure into account network travel times, rather than using the Euclidean distance from population cell to station. Routing and travel time calculations were completed using the `R` package `r5r`, used for rapid realistic routing operations [@Pereira2021r5r].
+To calculate walking times from the centroid of the population cells to docking stations, we extracted OpenStreetMap data for HBS's service area from [BBBike](https://download.bbbike.org/osm/bbbike/), an online cycle route planner that interfaces with OpenStreetMap. OpenStreetMap data provides the networks for calculating walking times from each population cell to nearby docking stations, using a maximum walking distance of 10 km and walking time of 30 minutes as thresholds. A travel time matrix was created with the origins as the coordinates of the population cells and the destinations as the coordinates of the docking stations within the maximum threshold. This process provides a more realistic measure of the friction of reaching stations by taking infrastructure into account network travel times, rather than using the Euclidean distance from population cell to station. Routing and travel time calculations were completed using the `R` package `r5r`, used for rapid realistic routing operations [@Pereira2021r5r].
 
 ## 4.4. Data
 
@@ -364,6 +362,15 @@ Consensus regarding the distance that individuals are willing to walk to access 
 In the present case, we found that accessibility calculated using the BFCA method increased with a threshold between two and four minutes, but was then maximized at five minutes. Accessibility decreased substantially after eight minutes, which is intuitive given that demand on a limited supply increases as more people can reach each station.
 
 We experimented with various thresholds by conducting a sensitivity analysis to calculate accessibility at different walking times from population cell to docking stations: three minutes, five minutes, ten minutes, and fifteen minutes. We categorized these thresholds as minimum, average, maximum, and extreme, respectively. At each threshold, we compared accessibility between the current system and the original system to examine the contribution of the twelve equity stations. When considering the results reported below, it is important to remember that accessibility is technically a form of smoothing [@okelly2003aggregate, pp. 7-8]: smaller thresholds produce less smoothing (which can result in "spiky" accessibility landscapes), while larger thresholds produce more smoothing and fewer spikes.
+
+In the analysis we use the following distance decay function: 
+$$
+{w_{ij} = \begin{cases} 
+      1 & \text{when } t_{ij}\leq \gamma \\
+      0 & \text{otherwise} 
+   \end{cases}}
+$$
+\noindent where $\gamma$ is the relevant threshold. The weights are standardized as discussed above.
 
 ```{r join-population-to-travel-time-data, include=FALSE}
 ttm_walk <- left_join(ttm_walk, 
@@ -837,7 +844,7 @@ ggplot() +
 
 ## 5.3. Accessibility by Median Total Household Income
 
-To examine whether accessibility to HBS was increased for groups with lower income, we estimated what level of accessibility accrues to how many people in different income strata. To this end, we took our micro population zones and aggregated the accessibility and population by the median total household income as imputed from the dissemination areas. A unique property of the BFCA method, which does not hold for the 2SFCA approach because of the inflation/deflation issues discussed above, is that accessibility and population data can be re-aggregated using income as an aggregator criterion, while preserving the total population and the level of service. This avoids demand and supply inflation, and also enables us to present findings in a way that is more intuitive to interpret. Figures \ref{fig:figure-bi-map-threshold-3}, \ref{fig:figure-bi-map-threshold-5}, \ref{fig:figure-bi-map-threshold-10}, and \ref{fig:figure-bi-map-threshold-15} depict bivariate choropleth maps that combine the spatial distribution of accessibility and median total household income, using tertiles for the coloring scheme.  
+To examine whether accessibility to HBS was increased for groups with lower income, we estimated what level of accessibility accrues to how many people in different income strata. To this end, we took our small population cells and aggregated the accessibility and population by the median total household income as imputed from the dissemination areas. A unique property of the BFCA method, which does not hold for the 2SFCA approach because of the inflation/deflation issues discussed above, is that accessibility and population data can be re-aggregated using income as an aggregator criterion, while preserving the total population and the level of service. This avoids demand and supply inflation, and also enables us to present findings in a way that is more intuitive to interpret. Figures \ref{fig:figure-bi-map-threshold-3}, \ref{fig:figure-bi-map-threshold-5}, \ref{fig:figure-bi-map-threshold-10}, and \ref{fig:figure-bi-map-threshold-15} depict bivariate choropleth maps that combine the spatial distribution of accessibility and median total household income, using tertiles for the coloring scheme.  
 
 ```{r, include=FALSE}
 # drop geometry

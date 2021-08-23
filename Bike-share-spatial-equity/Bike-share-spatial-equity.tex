@@ -2,8 +2,7 @@
 %%% Begin My package additions %%%%%%%%%%%%%%%%%%%
 \usepackage[hyphens]{url}
 
-  \journal{Transportation Research Part D: Transport and
-Environment} % Sets Journal name
+  \journal{Transportation Research Part D: Transport and Environment} % Sets Journal name
 
 
 \usepackage{lineno} % add
@@ -44,7 +43,7 @@ Environment} % Sets Journal name
 \hypersetup{breaklinks=true,
             bookmarks=true,
             pdfauthor={},
-            pdftitle={Examining equity in accessibility to bike share - a balanced floating catchment area approach},
+            pdftitle={Examining equity in accessibility to bike share: a balanced floating catchment area approach},
             colorlinks=false,
             urlcolor=blue,
             linkcolor=magenta,
@@ -56,31 +55,6 @@ Environment} % Sets Journal name
 \setcounter{secnumdepth}{0}
 
 % Pandoc citation processing
-\newlength{\csllabelwidth}
-\setlength{\csllabelwidth}{3em}
-\newlength{\cslhangindent}
-\setlength{\cslhangindent}{1.5em}
-% for Pandoc 2.8 to 2.10.1
-\newenvironment{cslreferences}%
-  {}%
-  {\par}
-% For Pandoc 2.11+
-\newenvironment{CSLReferences}[3] % #1 hanging-ident, #2 entry spacing
- {% don't indent paragraphs
-  \setlength{\parindent}{0pt}
-  % turn on hanging indent if param 1 is 1
-  \ifodd #1 \everypar{\setlength{\hangindent}{\cslhangindent}}\ignorespaces\fi
-  % set entry spacing
-  \ifnum #2 > 0
-  \setlength{\parskip}{#2\baselineskip}
-  \fi
- }%
- {}
-\usepackage{calc} % for calculating minipage widths
-\newcommand{\CSLBlock}[1]{#1\hfill\break}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}}
-\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 % Pandoc header
 \usepackage{setspace}\doublespacing
@@ -104,20 +78,18 @@ Environment} % Sets Journal name
 \begin{document}
 \begin{frontmatter}
 
-  \title{Examining equity in accessibility to bike share - a balanced
-floating catchment area approach}
+  \title{Examining equity in accessibility to bike share: a balanced floating
+catchment area approach}
     \author[McMaster University]{Elise Desjardins\corref{1}}
    \ead{desjae@mcmaster.ca} 
     \author[University of Toronto Scarborough]{Christopher D. Higgins}
    \ead{cd.higgins@utoronto.ca} 
     \author[McMaster University]{Antonio Paez}
    \ead{paezha@mcmaster.ca} 
-      \address[McMaster University]{School of Earth, Environment \&
-Society, McMaster University, 1280 Main Street West, Hamilton, ON
-L8S4L8}
-    \address[University of Toronto Scarborough]{Department of Geography
-\& Planning, University of Toronto Scarborough, 1265 Military Trail,
-Toronto, ON M1C1A4}
+      \address[McMaster University]{School of Earth, Environment \& Society, McMaster University, 1280 Main
+Street West, Hamilton, ON L8S4L8}
+    \address[University of Toronto Scarborough]{Department of Geography \& Planning, University of Toronto Scarborough,
+1265 Military Trail, Toronto, ON M1C1A4}
       \cortext[1]{Corresponding Author}
   
   \begin{abstract}
@@ -128,14 +100,14 @@ Toronto, ON M1C1A4}
   explicit objective of increasing access for under-serviced
   neighbourhoods. In this case study, we investigate differentials in
   accessibility to stations using a balanced floating catchment area
-  approach and compare accessibility with and without the equity
-  stations. We analyze micro zones to better reflect walking to a
-  station and conduct a sensitivity analysis at several walking time
-  thresholds. We then reaggregate the estimated accessibility for
-  further analysis using census data. Our findings indicate that equity
-  stations increased accessibility for the serviced population at every
-  threshold examined, but the increase was relatively modest especially
-  for population in the bottom 20\% of median total household income.
+  approach and compare accessibility with and without the equity stations.
+  We analyze micro zones to better reflect walking to a station and
+  conduct a sensitivity analysis at several walking time thresholds. We
+  then reaggregate the estimated accessibility for further analysis using
+  census data. Our findings indicate that equity stations increased
+  accessibility for the serviced population at every threshold examined,
+  but the increase was relatively modest especially for population in the
+  bottom 20\% of median total household income.
   \end{abstract}
   
  \end{frontmatter}
@@ -147,7 +119,7 @@ Toronto, ON M1C1A4}
 
 The potential of public bicycle share programs (PBSPs) to increase
 bicycling levels is but one of many reasons for implementing such
-programs in urban areas (Hosford et al., 2019, see 2018). As a healthy,
+programs in urban areas (see Hosford et al., 2018, 2019). As a healthy,
 inexpensive, and convenient form of public transportation, shared
 bicycles can encourage individuals to take up bicycling for short local
 trips or first and last mile trips to other public transportation
@@ -169,16 +141,15 @@ PBSP included in a North American scan of bike share equity programs
 (see McNeil et al., 2019). HBS was launched in 2015 and currently has
 over 900 operational bicycles and 130 docking stations. An equity
 program, Everyone Rides Initiative, was implemented in 2018 which
-expanded the program by introducing twelve ``equity'' stations which
-expanded HBS to more disadvantaged neighbourhoods in the core service
-area.
+expanded the program by introducing twelve ``equity'' stations to more
+disadvantaged neighbourhoods in the core service area.
 
 This paper examines accessibility to Hamilton Bike Share using a
 balanced floating catchment area (BFCA) approach. We also conduct a
 comparative analysis to the conventional two-step floating catchment
-area approach to highlight the benefits of this method which, to our
-knowledge, has not yet been used in the cycling literature. The paper
-also assesses the contribution of HBS's equity stations to reducing
+area (2SFCA) approach to highlight the benefits of this method which, to
+our knowledge, has not yet been used in the cycling literature. The
+paper also assesses the contribution of the equity stations to reducing
 inequities in accessibility for different groups according to median
 total household income, and provides policy recommendations to further
 improve equity.
@@ -192,37 +163,37 @@ and data needed to reproduce, modify or extend the analysis are
 available for download.\footnote{https://github.com/paezha/Accessibility-Sobi-Hamilton}
 
 \hypertarget{literature-review}{%
-\section{2.1. Literature Review}\label{literature-review}}
+\section{2. Literature Review}\label{literature-review}}
 
 \hypertarget{public-bicycle-share-programs}{%
-\subsection{1.1. Public Bicycle Share
+\subsection{2.1. Public Bicycle Share
 Programs}\label{public-bicycle-share-programs}}
 
 Public bicycle share programs have been implemented in over 800 cities
 worldwide and a great deal has been learned about their typical users
 (Fishman, 2016). In many cities, males use bike share more than females
 (Brey et al., 2017; Nickkar et al., 2019; Ogilvie and Goodman, 2012;
-Reilly et al., 2020b; Winters et al., 2019) as do younger age cohorts
-(Brey et al., 2017; Buck et al., 2013; Fuller et al., 2011). However,
-one study found that bike share users in Washington, DC were more likely
-to be female (Buck et al., 2013), which suggests that the gender gap
-among bicyclists who use PBSPs is less disparate than the gap for
-personal bicycle use (Fishman, 2016). There is some evidence that bike
-share users are less likely to own a car (Buck et al., 2013; Reilly et
-al., 2020a). However, the relationship between income or education and
-bike share use is less clear-cut. Stations in disadvantaged communities
-in Chicago have been found to generate most of the average annual trips
-(Qian and Jaller, 2020) and individuals from minority or lower
-socioeconomic status neighborhoods in Minneapolis-St.~Paul also used the
-city's PBSP more (Wang and Lindsey, 2019a). Similar findings were
-reported in London (Ogilvie and Goodman, 2012). Being university
-educated was a significant correlate of bike share use in Montreal,
-Canada (Fuller et al., 2011). Not coincidentally, financial savings have
-been found to motivate those on a low income to use bike share (Fishman,
-2016).
+Reilly, S. M. Wang, et al., 2020; Winters et al., 2019) as do younger
+age cohorts (Brey et al., 2017; Buck et al., 2013; Fuller et al., 2011).
+However, one study found that bike share users in Washington, DC were
+more likely to be female (Buck et al., 2013), which suggests that the
+gender gap among bicyclists who use PBSPs is less disparate than the gap
+for personal bicycle use (Fishman, 2016). There is some evidence that
+bike share users are less likely to own a car (Buck et al., 2013;
+Reilly, Noyes, et al., 2020). However, the relationship between income
+or education and bike share use is less clear-cut. Stations in
+disadvantaged communities in Chicago have been found to generate most of
+the average annual trips (Qian and Jaller, 2020) and individuals from
+minority or lower socioeconomic status neighborhoods in
+Minneapolis-St.~Paul also used the city's PBSP more (J. Wang and
+Lindsey, 2019a). Similar findings were reported in London (Ogilvie and
+Goodman, 2012). Being university educated was a significant correlate of
+bike share use in Montreal, Canada (Fuller et al., 2011). Not
+coincidentally, financial savings have been found to motivate those on a
+low income to use bike share (Fishman, 2016).
 
 \hypertarget{equity-of-pbsps}{%
-\subsection{1.2. Equity of PBSPs}\label{equity-of-pbsps}}
+\subsection{2.2. Equity of PBSPs}\label{equity-of-pbsps}}
 
 The introduction of PBSPs has been accompanied by a flurry of research
 focusing on benefits from them. Many studies have examined differences
@@ -242,11 +213,11 @@ commuting to work), which points to the importance of ensuring equitable
 access (Caspi and Noland, 2019). In the case of Seattle, all
 neighborhoods had some level of access to dockless bicycles but those
 with higher incomes and more residents of higher education had more
-bikes (Mooney et al., 2019). Babagoli et al. (2019) also found that
+bikes (Mooney et al., 2019). Babagoli et al.~(2019) also found that
 neighborhoods in New York City with higher affluence had the greatest
 proportion of Citi Bike stations.
 
-Chen et al. (2019) distinguish two types of equity related to bike
+Chen et al.~(2019) distinguish two types of equity related to bike
 share, horizontal and vertical, based on the work of Delbosc and Currie
 (Delbosc and Currie, 2011). Horizontal equity leads to balanced or equal
 distribution of accessibility and costs for all similar groups, while
@@ -255,7 +226,7 @@ under-represented or disadvantaged populations (see Chen et al., 2019).
 Both are of interest to researchers and transportation planners since
 they are often linked in that advantage, or conversely disadvantage, has
 spatial patterns. Bike share equity programs, as identified by McNeil et
-al. (2019), can be considered efforts to improve vertical equity since
+al.~(2019), can be considered efforts to improve vertical equity since
 they favour groups that have benefited less from PBSPs.
 
 On the whole, existing studies highlight the need for PBSPs to be more
@@ -266,7 +237,7 @@ MacArthur et al., 2020). Offering more people the option of using
 sustainable and active transportation, particularly those who have lower
 socioeconomic status and might benefit the most, is a worthy policy goal
 for cities with PBSPs. However, exploring transportation equity by
-investigating where bicycle share stations are located, often using
+investigating where bike share stations are located, often using
 neighborhoods or census tracts as the geographical unit of analysis, can
 ignore or miss the benefits that may be derived from adjacent zones.
 Meaning that, stations may be lacking in certain neighborhoods but there
@@ -290,15 +261,15 @@ which are spread spatially in a given area, can affect use of the PBSP.
 The location and size of docking stations are two factors that are
 relevant to accessibility. Since the time or distance needed to reach a
 docking station decreases the potential of accessing the program, the
-location of stations matters. Kabra et al. (2020) found that the
-majority of bike share usage in Paris comes from areas within 300 m of
-stations, which amounts to 2-4 minutes walking by an adult who does not
-have a disability. Similar to other public amenities affected by
-crowding, the utility of stations is also limited by the \emph{maximum}
-number of bicycles that they can hold (e.g., their size). Accessibility
+location matters. Kabra et al.~(2020) found that the majority of bike
+share usage in Paris, France comes from areas within 300 m of stations,
+which amounts to 2-4 minutes walking by an adult who does not have a
+disability. Similar to other public amenities affected by crowding, the
+utility of docking stations is also limited by the \emph{maximum} number
+of bicycles that they can hold (e.g., their size). Accessibility
 analyses for PBSPs constitute a positive and evaluation-based approach
 that also has the potential to inform equity efforts. For instance, Wang
-and Lindsey (2019b) investigated whether new or relocated bicycle share
+and Lindsey (2019b) investigated whether new or relocated bike share
 stations increased accessibility and use, which offered important
 insights to improve the performance of the program.
 
@@ -306,13 +277,12 @@ Several approaches have been commonly used for measuring place-based
 accessibility, including cumulative opportunities, gravity, and
 utility-based measures (Handy and Niemeier, 1997). The gravity-based
 approach involves weighting destination opportunities, such as the
-quantity of bicycle share stations, by the time required to reach them
-from an origin using an impedance function (Handy and Niemeier, 1997;
-Kwan, 1998). While such measures are suitable for capturing the
-potential for reaching destinations from a given location, they do not
-take demand or congestion effects into account which is an important
-consideration when calculating accessibility for amenities such as bike
-share stations.
+quantity of bike share stations, by the time required to reach them from
+an origin using an impedance function (Handy and Niemeier, 1997; Kwan,
+1998). While such measures are suitable for capturing the potential for
+reaching destinations from a given location, they do not take demand or
+congestion effects into account which is an important consideration when
+calculating accessibility for amenities such as bike share stations.
 
 In contrast, floating catchment area (FCA) methods have been widely
 employed in health care accessibility research. The benefit of this
@@ -347,19 +317,19 @@ limited to service within pre-defined boundaries (Paez et al., 2019).
 When measuring accessibility, researchers have also taken different
 approaches when it comes to the aggregation of data, either by using the
 individual or household as the smallest unit of analysis or larger
-spatial zones. Previous research on bicycle share equity has typically
-used a meso- or macro-level approach with aggregated data from entire
+spatial zones. Previous research on bike share equity has typically used
+a meso- or macro-level approach with aggregated data from entire
 neighborhoods or census tracts (Babagoli et al., 2019; Mooney et al.,
-2019; Qian and Jaller, 2020; Wang and Lindsey, 2019a), although there
+2019; Qian and Jaller, 2020; J. Wang and Lindsey, 2019a), although there
 are recent exceptions (Chen et al., 2019; Chen and Li, 2021). This is
-also true for studies examining correlates of bicycle share demand (Wang
+also true for studies examining correlates of bike share demand (J. Wang
 and Lindsey, 2019b). Handy and Niemeier (1997) note that using
 disaggregated data in accessibility analyses provides a more accurate
-estimate for individuals. Chen et al. (2019, p. 530) are in favour of
+estimate for individuals. Chen et al.~(2019, p. 530) are in favour of
 using disaggregated data, which they did in their recent analysis of
 Tampa's PBSP, because they note ``the use of aggregated data might
 hinder our understanding of the equity impacts since individual
-disparities are absorbed after aggregation.''
+disparities are absorbed after aggregation''.
 
 \hypertarget{previous-research}{%
 \subsection{2.4 Previous Research}\label{previous-research}}
@@ -368,23 +338,23 @@ Our analysis builds upon a previous study (Hosford and Winters, 2018),
 which found that areas in Hamilton with less advantage are better served
 by the city's PBSP compared to other Canadian cities (i.e., Toronto,
 Vancouver, Montreal, and Ottawa-Gatineau) where areas that are less
-deprived have greater access. Hosford and Winters (2018, pp.~)
+deprived have greater access. Hosford and Winters (2018, p. 47)
 acknowledge that ``Hamilton stands out in that the lower income
 neighborhoods are located near the city center and wealthier
-neighborhoods are in the surrounding suburban areas.'' Therefore, the
+neighborhoods are in the surrounding suburban areas''. Therefore, the
 core service area for the PBSP in Hamilton by default covers more of the
-less advantaged areas in the city. However, there is also a great deal
-of variation in income in the city center because of the local
+disadvantaged areas in the city. However, there is also a great deal of
+variation in income in the core service area because of the local
 university and increasing gentrification. Hosford and Winters (2018)
 took a macro-level approach in their analysis by using dissemination
 areas \emph{across} the city as the unit of analysis. They did not focus
 specifically on the core service area and did not differentiate between
 conventional and equity stations.
 
-Therefore, this paper contributes to the cycling literature by expanding
-the analysis of Hosford and Winters (2018) to assess equity in
-accessibility to HBS and explore the contribution of the ``equity''
-stations added to Hamilton's PBSP.
+Therefore, this paper also contributes to the cycling literature by
+expanding the analysis of Hosford and Winters (2018) to assess equity in
+accessibility to HBS and explore the contribution of the equity stations
+added to Hamilton's PBSP.
 
 \hypertarget{sec:study}{%
 \section{3. Case Study}\label{sec:study}}
@@ -403,23 +373,25 @@ fifth of the total population of the Hamilton Census Metropolitan Area
 according to the 2016 Canadian Census. The City of Hamilton undertook a
 large public engagement campaign to validate the locations of stations
 that had been selected and to crowdsource potential locations for
-additional locations (Hamilton, 2014). Most of the suggested locations
-were in the east end of the core service area that lack stations or in
-neighborhoods not serviced by the PBSP. The program was enthusiastically
-welcomed in the city in 2015 - within three weeks of launching, 10,000
-trips had been made (Hamilton, 2015b), however inadequate coverage given
-the size of Hamilton Bike Share's service area was identified as a
-problem early on, and transportation planners noted that the small size
-(i.e., supply of bicycle racks) and low quantity of stations would lead
-to challenges in balancing the system (Hamilton, 2015a).
+additional locations (Hamilton, 2014). Most of the potential locations
+that were suggested were in the east end of the core service area that
+lack stations or in neighborhoods not serviced by the PBSP. The program
+was enthusiastically welcomed in the city in 2015 - within three weeks
+of launching, 10,000 trips had been made (Hamilton, 2015b), however
+inadequate coverage given the size of the program's service area was
+identified as a problem early on, and transportation planners noted that
+the small size (i.e., supply of bicycle racks) and low quantity of
+stations would lead to challenges in balancing the system (Hamilton,
+2015a).
 
 \hypertarget{equity-initiative}{%
 \subsection{3.2. Equity Initiative}\label{equity-initiative}}
 
-Hamilton Bike Share's equity program, Everyone Rides Initiative (ERI),
-was launched in 2018 with the objective of reducing barriers that may
-prevent individuals from accessing the program. Additional bicycles and
-twelve ``equity'' stations were added to the core service area. The
+Hamilton Bike Share Inc., the non-profit operator, launched an equity
+program, Everyone Rides Initiative (ERI), in 2018 with the objective of
+reducing barriers that may prevent individuals from accessing the
+program. Additional bicycles and twelve ``equity'' stations were added
+to the core service area in more disadvantaged neighbourhoods. The
 equity program also offers subsidized memberships to individuals who
 identify as low income, and complements this service with cycle skills
 education. A comparable program can be found in Philadelphia (see Caspi
@@ -459,7 +431,7 @@ supply of bicycles.
 
 }
 
-\caption{The spatial distribution of bicycle share stations in Hamilton, Ontario. Conventional stations are in blue and equity (ERI) stations are in orange. The service area of Hamilton Bike Share is outlined in black and the city's downtown core is outlined in dark green. Hamilton Census Metropolitan Area is shown in grey.}\label{fig:sobi-stations-in-hamilton}
+\caption{The spatial distribution of bike share docking stations in Hamilton, Ontario. Conventional stations are in purple and equity (ERI) stations are in orange. The service area of Hamilton Bike Share is outlined in blue and the city's downtown core is outlined in dark green. Hamilton Census Metropolitan Area is shown in grey.}\label{fig:sobi-stations-in-hamilton}
 \end{figure}
 
 \hypertarget{sec:methods}{%
@@ -471,7 +443,7 @@ Area}\label{balanced-floating-catchment-area}}
 
 The BFCA method was developed to address issues with demand and supply
 inflation that result from the overlapping catchment areas produced by
-earlier FCA methods (Paez et al., 2019). Paez et al. (2019) adjusted the
+earlier FCA methods (Paez et al., 2019). Paez et al.~(2019) adjusted the
 impedance weights so that both supply and demand are proportionally
 allocated. The result is a FCA method that balances the population and
 level of service by eliminating the over-counting of population and
@@ -551,8 +523,8 @@ for any level of aggregation.
 \subsection{4.2. Pycnophylactic
 Interpolation}\label{pycnophylactic-interpolation}}
 
-Since walking trips to a bicycle share station likely happen at a level
-lower than even the smallest census geography, this requires a more
+Since walking trips to a docking station likely happen at a level lower
+than even the smallest census geography, this requires a more
 disaggregated approach than the use of census geographies. For this
 reason, we implemented our analysis parting from micro population zones
 to better reflect the friction of walking to a docking station, which is
@@ -569,11 +541,11 @@ the population from each DA while preserving total volume {[}see Figure
 high level of resolution, it is important to ensure that population
 numbers were not allocated to areas where people do not live in Hamilton
 (for example, to parks or large institutional buildings, etc.). To do
-so, we retrieved shapefiles for various geographic features {[}see Table
-\ref{tab:data-features}{]} from Open Hamilton. Next, we removed these
-features from the PBSP core service area and used pycnophylactic
-interpolation to disaggregate and reallocate population within the
-remaining area {[}see Figure \ref{fig:interpolated-population}{]}.
+so, we retrieved shapefiles for various geographic features from Open
+Hamilton. Next, we removed these features from the PBSP core service
+area and used pycnophylactic interpolation to disaggregate and
+reallocate population within the remaining area {[}see Figure
+\ref{fig:interpolated-population}{]}.
 
 \begin{figure}
 
@@ -581,37 +553,37 @@ remaining area {[}see Figure \ref{fig:interpolated-population}{]}.
 
 }
 
-\caption{Interpolated population in the Hamilton Bike Share's core service area (outlined in black) and within 30 minutes of walking to the core service area. Each population cell is 50-by-50 m in size. The downtown area is outlined in dark green.}\label{fig:interpolated-population}
+\caption{Interpolated population in Hamilton Bike Share's core service area (outlined in blue) and within 30 minutes of walking to the core service area. Each population cell is 50-by-50 m in size. The downtown area is outlined in dark green.}\label{fig:interpolated-population}
 \end{figure}
 
 \hypertarget{travel-time-matrix}{%
 \subsection{4.3. Travel Time Matrix}\label{travel-time-matrix}}
 
 To calculate walking times from the centroid of the micro population
-cells to docking stations, we extracted OpenStreetMap data for Hamilton
-Bike Share's service area from
+cells to docking stations, we extracted OpenStreetMap data for HBS's
+service area from
 \href{https://download.bbbike.org/osm/bbbike/}{BBBike}, an online cycle
 route planner that interfaces with OpenStreetMap. OpenStreetMap data
 provides the networks for calculating walking times from each population
-cell to nearby bicycle share stations, using a maximum walking distance
-of 10 km and walking time of 30 minutes as thresholds. A travel time
-matrix was created with the origins as the coordinates of the population
-cells and the destinations as the coordinates of the bicycle share
-stations within the maximum threshold. This process provides a more
-realistic measure of the friction of reaching stations by taking
-infrastructure into account network travel times, rather than using the
-Euclidean distance from population cell to station. Routing and travel
-time calculations were completed using the \texttt{R} package
-\texttt{r5r}, used for rapid realistic routing operations (Pereira et
-al., 2021).
+cell to nearby docking stations, using a maximum walking distance of 10
+km and walking time of 30 minutes as thresholds. A travel time matrix
+was created with the origins as the coordinates of the population cells
+and the destinations as the coordinates of the docking stations within
+the maximum threshold. This process provides a more realistic measure of
+the friction of reaching stations by taking infrastructure into account
+network travel times, rather than using the Euclidean distance from
+population cell to station. Routing and travel time calculations were
+completed using the \texttt{R} package \texttt{r5r}, used for rapid
+realistic routing operations (Pereira et al., 2021).
 
 \hypertarget{data}{%
 \subsection{4.4. Data}\label{data}}
 
 All data for this research were accessed from publicly available Census
-of Canada sources, from OpenStreetMaps, and from Open
-Hamilton\footnote{https://open.hamilton.ca/}, a public online repository
-of data curated by the City of Hamilton.
+of Canada sources, from OpenStreetMaps, and from Open Hamilton\footnote{https://open.hamilton.ca/},
+a public online repository of data curated by the City of Hamilton.
+Median total household income statistics were drawn from the 2016
+Canadian Census.
 
 \hypertarget{results}{%
 \section{5. Results}\label{results}}
@@ -621,38 +593,37 @@ of data curated by the City of Hamilton.
 Thresholds}\label{accessibility-by-distance-thresholds}}
 
 Consensus regarding the distance that individuals are willing to walk to
-access a bike share station is lacking, but the literature on walking
-behaviour can provide some guidelines to determine the thresholds for
-our sensitivity analysis. Previous studies have found that living within
-250 m (Fuller et al., 2011) and 300 m (Kabra et al., 2020) of a docking
-station is correlated with bicycle share use, while other research has
+access a docking station is lacking, but the literature on walking
+behaviour provided some guidelines to determine the thresholds for our
+sensitivity analysis. Previous studies have found that living within 250
+m (Fuller et al., 2011) and 300 m (Kabra et al., 2020) of a docking
+station is correlated with bike share use, while other research has
 found that walking trips are less than 600 m and rarely more than 1200 m
 (Millward et al., 2013) or a median distance of 650 m (Larsen et al.,
-2010). Hamilton Bike Share will often depict a map at some docking
-stations to show the locations of the other nearest stations within a
-five minute walk, which suggests that this is an average distance that
-people are expected to walk. National Association of City Transportation
-Officials (NACTO) has a similar normative guide (City Transportation
-Officials, 2015).
+2010). HBS will often depict a map at some docking stations to show the
+locations of the other nearest stations within a five minute walk, which
+suggests that this is an average distance that people are expected to
+walk. The National Association of City Transportation Officials (NACTO)
+has a similar normative guide (City Transportation Officials, 2015).
 
 In the present case, we found that accessibility calculated using the
-balanced FCA approach increases with a threshold between two and four
-minutes, but is then maximized at five minutes. Accessibility decreases
+BFCA method increased with a threshold between two and four minutes, but
+was then maximized at five minutes. Accessibility decreased
 substantially after eight minutes, which is intuitive given that demand
 on a limited supply increases as more people can reach each station.
 
-For this reason, we experimented with various thresholds by conducting a
-sensitivity analysis to calculate accessibility at different walking
-times from population cell to bike share stations: three minutes, five
-minutes, ten minutes, and fifteen minutes. We categorized these
-thresholds as minimum, average, maximum, and extreme, respectively. At
-each threshold, we compared accessibility between the current system and
-the original system to examine the contribution of the twelve equity
-stations. When considering the results reported below, it is important
-to remember that accessibility is technically a form of smoothing
-(O'Kelly and Horner, 2003, pp. 7--8): smaller thresholds produce less
-smoothing (which can result in ``spiky'' accessibility landscapes),
-while larger thresholds produce more smoothing and fewer spikes.
+We experimented with various thresholds by conducting a sensitivity
+analysis to calculate accessibility at different walking times from
+population cell to docking stations: three minutes, five minutes, ten
+minutes, and fifteen minutes. We categorized these thresholds as
+minimum, average, maximum, and extreme, respectively. At each threshold,
+we compared accessibility between the current system and the original
+system to examine the contribution of the twelve equity stations. When
+considering the results reported below, it is important to remember that
+accessibility is technically a form of smoothing (O'Kelly and Horner,
+2003, pp. 7--8): smaller thresholds produce less smoothing (which can
+result in ``spiky'' accessibility landscapes), while larger thresholds
+produce more smoothing and fewer spikes.
 
 \hypertarget{minimum-threshold}{%
 \subsubsection{5.1.1. Minimum Threshold}\label{minimum-threshold}}
@@ -685,7 +656,9 @@ population that can reach the stations has grown, but not to the the
 point that congestion effects begin to take place. Figure
 \ref{fig:figure-7} presents a comparison of accessibility between the
 systems. Again, accessibility is fairly uniform, with the exception of
-one very small area.
+one very small area. The equity stations noticeably increase
+accessibility in the east end of the core service area by filling gaps
+in PBSP coverage.
 
 \begin{figure}
 
@@ -709,7 +682,9 @@ apparent, with users near the university and its adjacent neighborhoods,
 as well as neighborhoods north of the downtown area (the latter is
 outlined in green), having slightly higher accessibility. While the
 differences are modest, they are more apparent at this threshold than at
-shorter walking distances.
+shorter walking distances, especially in the more disadvantaged
+neighbourhoods in the east end of the core service area where equity
+stations were added.
 
 \begin{figure}
 
@@ -732,7 +707,7 @@ systems. Users near the university and the neighborhoods north of the
 downtown area (the latter is outlined in green) have the highest
 accessibility, followed by those who live in the city's downtown area.
 Accessibility in the east end, where equity stations were implemented,
-of the core service area remains low.
+of the core service area remains lower than other areas.
 
 \begin{figure}
 
@@ -751,8 +726,8 @@ comparative analysis with the 2SFCA method. The latter method does not
 allocate population and level of service proportionally, which means
 that there are often substantial amounts of multiple counting each.
 Figure \ref{fig:figure-10} shows the level of inflation and deflation at
-five minutes that results when the balanced and the conventional
-approaches are compared. The inflation and deflation is defined as the
+five minutes that results when the balanced and the conventional FCA
+methods are compared. The inflation and deflation is defined as the
 ratio of the level of service and accessibility calculated using the
 conventional approach to the balanced approach. This effect has been
 documented in other studies (Chen et al., 2021; Paez et al., 2019).
@@ -760,8 +735,9 @@ Figure \ref{fig:figure-10} shows that in some locations the level of
 service is deflated by up to 80\%. This is evident for the equity
 stations in the east end of the core service area. Noticeably, the level
 of service is least deflated in the downtown area, likely due to the
-density of stations. Figure \ref{fig:figure-11} shows that accessibility
-is inflated by as much as 50\% in many areas across the city.
+density of docking stations. Figure \ref{fig:figure-11} shows that
+accessibility is inflated by as much as 50\% in many areas across the
+city.
 
 \begin{figure}
 
@@ -785,90 +761,80 @@ is inflated by as much as 50\% in many areas across the city.
 \subsection{5.3. Accessibility by Median Total Household
 Income}\label{accessibility-by-median-total-household-income}}
 
-Next, we wish to examine accessibility differences by income level. To
-this end, we took our micro-zones and imputed the median household
-income of their corresponding DA. Use of bivariate maps helps us to
-visualize the level of accessibility by level of income. Median total
-household income statistics were drawn from the 2016 Canadian Census.
-
-Figures \ref{fig:figure-bi-map-threshold-3},
+To examine whether accessibility to HBS was increased for groups with
+lower income, we estimated what level of accessibility accrues to how
+many people in different income strata. To this end, we took our micro
+population zones and aggregated the accessibility and population by the
+median total household income as imputed from the dissemination areas. A
+unique property of the BFCA method, which does not hold for the 2SFCA
+approach because of the inflation/deflation issues discussed above, is
+that accessibility and population data can be re-aggregated using income
+as an aggregator criterion, while preserving the total population and
+the level of service. This avoids demand and supply inflation, and also
+enables us to present findings in a way that is more intuitive to
+interpret. Figures \ref{fig:figure-bi-map-threshold-3},
 \ref{fig:figure-bi-map-threshold-5},
 \ref{fig:figure-bi-map-threshold-10}, and
 \ref{fig:figure-bi-map-threshold-15} depict bivariate choropleth maps
 that combine the spatial distribution of accessibility and median total
-household income, using tertiles for the coloring scheme. In each
-figure, the top panel is the system without the equity stations (i.e.,
-the original system configuration), and the bottom panel is
-accessibility in the current system with equity stations. As expected,
-the analysis indicates that the extreme threshold of fifteen minutes is
+household income, using tertiles for the coloring scheme.
+
+\begin{figure}
+\includegraphics[width=1.2\linewidth]{Bike-share-spatial-equity_files/figure-latex/figure-bi-map-threshold-3-1} \caption{\label{fig-bivariate-map-threshold-3}Bivariate map of accessibility and income at the minimum threshold of three minutes with equity stations (top panel) and without equity stations (bottom panel).}\label{fig:figure-bi-map-threshold-3}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=1.2\linewidth]{Bike-share-spatial-equity_files/figure-latex/figure-bi-map-threshold-5-1} \caption{\label{fig-bivariate-map-threshold-5}Bivariate map of accessibility and income at the average threshold of five minutes with equity stations (top panel) and without equity stations (bottom panel).}\label{fig:figure-bi-map-threshold-5}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=1.2\linewidth]{Bike-share-spatial-equity_files/figure-latex/figure-bi-map-threshold-10-1} \caption{\label{fig-bivariate-map-threshold-10}Bivariate map of accessibility and income at the maximum threshold of ten minutes with equity stations (top panel) and without equity stations (bottom panel).}\label{fig:figure-bi-map-threshold-10}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=1.2\linewidth]{Bike-share-spatial-equity_files/figure-latex/figure-bi-map-threshold-15-1} \caption{\label{fig-bivariate-map-threshold-15}Bivariate map of accessibility and income at the extreme threshold of fifteen with equity stations (top panel) and without equity stations (bottom panel).}\label{fig:figure-bi-map-threshold-15}
+\end{figure}
+
+Table \ref{tab:accessibility-income} presents accessibility levels by
+income strata. As expected, the extreme threshold of fifteen minutes is
 associated with the largest number of people who are within the assumed
-service area of stations. We found that stations added to HBS did indeed
-expand the spatial coverage of the system, leading to more balance
-across the core service area. By implementing equity stations in areas
-with lower median total household income in Hamilton, the PBSP attained
-greater horizontal equity by extending the spatial distribution of
-bicycles across the city. This is particularly evident at the minimum
-and average thresholds of three and five minutes, respectively, where
-the equity stations fill a number of gaps in program coverage.
+service area of docking stations. We found that stations added to HBS
+expanded the spatial coverage of HBS, leading to more balance across the
+core service area. This is particularly evident at the minimum and
+average thresholds of three and five minutes, respectively, where the
+equity stations fill a number of gaps in program coverage.
 
-\begin{figure}
-\includegraphics[width=1.2\linewidth]{Bike-share-spatial-equity_files/figure-latex/figure-bi-map-threshold-3-1} \caption{\label{fig-bivariate-map-threshold-3}Bivariate map of accessibility and income (threshold: 3 min): with equity stations (top panel) and without equity stations (bottom panel)}\label{fig:figure-bi-map-threshold-3}
-\end{figure}
+In line with Hosford and Winters' (2018) findings, we found that
+accessibility to HBS was high for individuals in the bottom and second
+quintiles of median total household income who live in the centre of the
+core service area. This may well be an artifact of the spatial
+socioeconomic and demographic profile of Hamilton, where the most dense
+parts of the city (where a PBSP is most easily launched) are also those
+with relatively lower incomes (Hosford and Winters, 2018). On the other
+hand, we found the levels of accessibility to Hamilton's PBSP are
+generally lower for populations in the bottom 20\% of median total
+household income, compared to populations in the top 20\%.
 
-\begin{figure}
-\includegraphics[width=1.2\linewidth]{Bike-share-spatial-equity_files/figure-latex/figure-bi-map-threshold-5-1} \caption{\label{fig-bivariate-map-threshold-5}Bivariate map of accessibility and income (threshold: 5 min): with equity stations (top panel) and without equity stations (bottom panel)}\label{fig:figure-bi-map-threshold-5}
-\end{figure}
-
-\begin{figure}
-\includegraphics[width=1.2\linewidth]{Bike-share-spatial-equity_files/figure-latex/figure-bi-map-threshold-10-1} \caption{\label{fig-bivariate-map-threshold-10}Bivariate map of accessibility and income (threshold: 10 min): with equity stations (top panel) and without equity stations (bottom panel)}\label{fig:figure-bi-map-threshold-10}
-\end{figure}
-
-\begin{figure}
-\includegraphics[width=1.2\linewidth]{Bike-share-spatial-equity_files/figure-latex/figure-bi-map-threshold-15-1} \caption{\label{fig-bivariate-map-threshold-15}Bivariate map of accessibility and income (threshold: 15 min): with equity stations (top panel) and without equity stations (bottom panel)}\label{fig:figure-bi-map-threshold-15}
-\end{figure}
-
-To examine whether equity was increased for groups with lower income, we
-need to estimate what level of accessibility accrues to how many people
-in different income strata. A unique property of the BFCA method, which
-does not hold for the conventional 2SFCA approach because of the
-inflation/deflation issues discussed above, is that accessibility and
-population data can be re-aggregated using income as an aggregator
-criterion, while preserving the total population and the level of
-service. This avoids demand and supply inflation, and also enables us to
-present findings in a way that is perhaps more intuitive to interpret.
-
-Therefore, we aggregated the accessibility and population by the median
-household income as imputed from the DAs (see Table
-\ref{tab:accessibility-income}). Similar to Hosford and Winters (2018),
-we found that Hamilton's PBSP already serviced a large proportion of the
-population in the bottom and second quintiles of median total household
-income. This may well be an artifact of the spatial socioeconomic and
-demographic profile of Hamilton, where the most dense parts of the city
-(where a PBSP is most easily launched) are also those with relatively
-lower incomes. On the other hand, we found the levels of accessibility
-to Hamilton's PBSP are generally lower for populations in the bottom
-20\% of median total household income, compared to populations in the
-top 20\%.
-
-The spatial mapping revealed that the addition of equity stations
-increased accessibility to HBS by growing the population serviced
-irrespective of the walking threshold. The largest gains were made for
-dissemination areas in the second 20\%, where an additional 3,073 and
-5,395 people could reach a bicycle share station within three and five
-minutes walk, respectively, after the addition of equity stations.
-However, we find that there were only small increases in the population
-in the bottom 20\% of median total household income who are serviced by
-the equity stations, and the accessibility gains are also quite modest
-and smaller than for populations in the second and third quintiles of
-median total household income. This suggests that inequities in
-accessibility to HBS persist according to income, albeit this depends on
-the walking time thresholds. With and without equity stations, people in
-the top 20\% of income have the highest level of access at a threshold
-of ten and fifteen minutes. Although dissemination areas in the second
-20\% have the highest level of access by a significant amount at lower
-distance thresholds, the bottom 20\%, who may benefit the most from the
-equity stations, have the lowest access at three minutes threshold and
-the second lowest access at all other thresholds.
+Our analysis revealed that the addition of equity stations increased
+accessibility to HBS by growing the population serviced irrespective of
+the walking threshold. The largest gains were made for dissemination
+areas in the second 20\% median total household income, where an
+additional 3,073 and 5,395 people could reach a docking station within
+three and five minutes walk, respectively, after the addition of equity
+stations. However, we found that there were only small increases in the
+population in the bottom 20\% of median total household income who are
+serviced by the equity stations, and the accessibility gains are also
+quite modest and smaller than for populations in the second and third
+quintiles of median total household income. This suggests that
+inequities in accessibility to HBS persist according to income, albeit
+this depends on the walking time thresholds. With and without equity
+stations, people in the top 20\% of income have the highest level of
+access at a threshold of ten and fifteen minutes. Although dissemination
+areas in the second 20\% have the highest level of access by a
+significant amount at lower distance thresholds, the bottom 20\%, who
+may benefit more from increased access to HBS, have the lowest
+accessibility at three minutes threshold and the second lowest access at
+all other thresholds.
 
 \begin{table}
 
@@ -922,25 +888,26 @@ Income Quintile & Total Population & Population & Accessibility & Population & A
 
 Using disaggregated population data, we examined equity in accessibility
 to Hamilton Bike Share, with a particular focus on assessing the
-contribution of the program's equity stations. Using a BFCA approach,
+contribution of the program's equity stations. The BFCA approach,
 combined with pycnophylactic interpolation, enabled us to measure
-accessibility on a micro scale which better scale at which walking takes
-place and avoids the ``absorption of disparities,'' as articulated by
-Chen et al. (2019) and elsewhere in the transportation literature
-(Rowangould et al., 2016). The BFCA method also considers demand and
-supply in the calculation of accessibility, which is important for
-services like PBSPs but not accounted for in other common accessibility
-models. Unlike the 2SFCA method, there was no inflation or deflation in
-our accessibility estimates because population and level of service were
-preserved (see Figure \ref{fig:figure-10} and Figure
-\ref{fig:figure-11}). This differentiates our analysis from similar
-papers exploring equity in PBSPs that use larger geographical units of
-analysis or that focus on station location instead of level of service.
-In this way, our paper has made an important contribution by applying an
-intuitive and useful approach to measure accessibility to a PBSP. This
-open and reproducible research could be replicated for additional
-transportation and statistical analysis using other individual-level
-data in Hamilton or revised for PBSPs in other North American cities.
+accessibility on a micro scale which better reflects the scale at which
+walking takes place and avoids the ``absorption of disparities'', as
+articulated by Chen et al.~(2019) and elsewhere in the transportation
+literature (National Academies of Sciences, 2004; Rowangould et al.,
+2016). Our method also considers demand and supply in the calculation of
+accessibility, which is important for services like PBSPs but not
+accounted for in other common accessibility models. Unlike the 2SFCA
+method, there was no inflation or deflation in our accessibility
+estimates because population and level of service were preserved (see
+Figure \ref{fig:figure-10} and Figure \ref{fig:figure-11}). This
+differentiates our analysis from similar papers exploring equity in
+PBSPs that use larger geographical units of analysis or that focus on
+station location instead of level of service. In this way, our paper has
+made an important contribution by applying an intuitive and useful
+approach to measure accessibility to a PBSP. This open and reproducible
+research could be expanded for additional analysis using other
+individual-level data in Hamilton (e.g., age, gender, household size,
+education, etc.) or applied to PBSPs in other North American cities.
 
 The sensitivity analysis revealed that accessibility to docking stations
 is maximized at five minutes and decreases significantly by eight
@@ -948,18 +915,18 @@ minutes {[}see Table \ref{tab:accessibility-income}{]}. This reflects
 the normative guide advertised on some docking stations in Hamilton
 showing other stations within a five minute walk, as well as the
 directive of NACTO (City Transportation Officials, 2015). We find that
-over 118,000 people can access a bicycle share station within a 15
-minute walk, which represents roughly 85\% of the total population in
-the core service area {[}see Table \ref{tab:accessibility-income}{]}. At
-a minimum threshold of three minutes, too few people can reach stations
+over 118,000 people can access a bike share station within a 15 minute
+walk, which represents roughly 85\% of the total population in the core
+service area {[}see Table \ref{tab:accessibility-income}{]}. At a
+minimum threshold of three minutes, too few people can reach stations
 which leads to relatively high levels of service since there is little
 crowding for the stations. However, accessibility is at its lowest after
 eight minutes whereby congestion effects due to increased potential
-demand kick in. Chen et al. (2019) also found that accessibility
+demand kick in. Chen et al.~(2019) also found that accessibility
 decreases as larger geographical units are used in the estimation, since
 more people can access the service.
 
-The City of Hamilton has recognized from the launch of the PBSP that
+The City of Hamilton has recognized from the launch of HBS that
 substantially more stations and bicycles are needed to service the area
 (Hamilton, 2015a). With a service area of 40 sq.km, it is estimated that
 Hamilton should have between 380 and 440 stations instead of 130, and
@@ -973,9 +940,9 @@ stations or 10 stations per square km'' (Hamilton, 2015a). Figures
 \ref{fig:figure-bi-map-threshold-15} demonstrate how gaps in service
 were filled by the additional equity stations. The improvement in
 accessibility is most noticeable at the average and maximum thresholds
-in the east end of the city, which corresponds to the neighbourhoods
-where stations were added. However, the contribution of equity stations
-to reducing inequities in accessibility was modest.
+in the east end of the core service area, which corresponds to the
+neighbourhoods where stations were added. However, the contribution of
+equity stations to reducing inequities in accessibility was modest.
 
 The equity stations were added to HBS as a targeted initiative to
 increase access for disadvantaged communities. However, we found that
@@ -993,15 +960,16 @@ vertical equity. While previous research found that neighborhoods with
 more disadvantage are better serviced by HBS, the authors used the
 Pampalon Deprivation Index to determine the level of disadvantage for
 dissemination areas \emph{across} the city not just within the core
-service area (Hosford and Winters, 2018). Instead, we use median total
+service area (Hosford and Winters, 2018). Instead, we used median total
 household income for each dissemination area \emph{within} the core
 service area. We conclude that Hamilton's PBSP, while by default located
-in areas with more deprivation compared to other cities, has disparities
-in accessibility between income groups. With equity stations, many areas
-with low median total household income in the east end of the service
-area continue to have low accessibility. At the maximum and extreme
+in areas with more deprivation compared to other cities, continues to
+have disparities in accessibility between income groups. With equity
+stations, many areas with low median total household income in the east
+end of the service area continue to have zero or low accessibility at
+the average threshold of five minutes. At the maximum and extreme
 thresholds, the top 20\% have the highest level of access to Hamilton
-Bike Share. These findings aligns with other studies from Tampa (Chen et
+Bike Share. These findings align with other studies from Tampa (Chen et
 al., 2019), Philadelphia (Caspi and Noland, 2019) and Seattle (Mooney et
 al., 2019), which have found disparities in station location, annual
 trips, or access to bicycles, respectively, between levels of income and
@@ -1013,25 +981,25 @@ with only 326 more people who are able to access a HBS station.
 This paper highlights the importance of both the location and size of
 docking stations for increasing equity in accessibility to PBSPs.
 Several studies have examined who can access PBSPs based on the location
-of stations (Babagoli et al., 2019; Qian et al., 2020; Qian and Jaller,
-2020; Wang and Lindsey, 2019b), but the potential supply of bicycles at
-stations in disadvantaged communities is not considered in the
-literature. The size of stations (i.e., potential supply of bicycles)
+of stations (among others, see Babagoli et al., 2019; Qian and Jaller,
+2020; Qian et al., 2020; J. Wang and Lindsey, 2019b), but the size of
+docking stations in disadvantaged communities is not considered in the
+literature. Station size (i.e., potential maximum supply of bicycles)
 was also not identified by PBSP owners and operators as a factor that
-needed to be considered in equity efforts (Howland et al., 2017). PBSPs
+needed to be addressed in equity efforts (Howland et al., 2017). PBSPs
 may not necessarily reduce inequities in access if stations are easy to
 reach for disadvantaged groups but offer only a small number of
 bicycles. Likewise, more people may not opt to use the program if the
 supply of bicycles available at nearby stations is insufficient to meet
-demand. Babgoli et al. (2019) found a slight but not statistically
+demand. Babgoli et al.~(2019) found a slight but not statistically
 significant increase in the proportion of neighborhoods with the highest
-levels of poverty with stations after the Citi Bike expansion in 2015.
-Although the Citi Bike expansion was not specifically driven by a desire
-to reduce inequity in access, 16\% of neighborhoods with the highest
-levels of poverty had stations compared to 12\% before. This leaves open
-the question as to whether the stations held enough bicycles to meet
-demand, and whether congestion effects in neighbourhoods with more
-poverty are reducing the potential of bike share trips.
+levels of poverty that had stations after the Citi Bike expansion in
+2015. Although the Citi Bike expansion was not specifically driven by a
+desire to reduce inequity in access, 16\% of neighborhoods with the
+highest levels of poverty had stations compared to 12\% before. This
+leaves open the question as to whether the stations held enough bicycles
+to meet demand, and whether congestion effects in neighbourhoods with
+more poverty are reducing the potential of bike share trips.
 
 The following policy and planning implications can inform efforts for
 increasing equity in Hamilton Bike Share, and potentially other PBSPs in
@@ -1041,22 +1009,22 @@ low accessibility and low median total household income. Figures
 \ref{fig:figure-bi-map-threshold-5},
 \ref{fig:figure-bi-map-threshold-10}, and
 \ref{fig:figure-bi-map-threshold-15} highlight potential locations for
-new equity stations to better accommodate groups with lower
-socioeconomic status. Additional stations are needed to further reduce
-inequities in accessibility. This information will be useful to
-transportation planners in Hamilton and HBS operators. Our findings also
-suggest that PBSPs should consider increasing the size of stations in
-disadvantaged communities. Docking stations added to target vertical
-equity should have an adequate supply of public bicycles, particularly
-more in areas that have a strong interest in adopting bike share.
-Finally, distance to stations is associated with bike share use (Fuller
-et al., 2011; Wang and Lindsey, 2019b), especially when the trip starts
-at the residence (Fishman et al., 2013), and can be a barrier to using
-PBSPs (Fishman et al., 2014). To address this issue, transportation
-planners and PBSP operators should consult with groups and communities
-who are under-represented among bike share users to determine how far
-they are willing to walk to reach a docking station and to get their
-input on the location of new docking stations.
+new equity stations to better accommodate low income groups. Additional
+stations are needed to further reduce inequities in accessibility. This
+information will be useful to transportation planners in Hamilton and
+HBS operators. Our findings also suggest that PBSPs should consider
+increasing the size of stations in disadvantaged communities. Docking
+stations added to target vertical equity should have an adequate supply
+of public bicycles, particularly more in areas that have a strong
+interest in adopting bike share. Finally, distance to stations is
+associated with bike share use (Fuller et al., 2011; J. Wang and
+Lindsey, 2019b), especially when the trip starts at the residence
+(Fishman et al., 2013). Distance can also be a barrier to using PBSPs
+(Fishman et al., 2014). To address this issue, transportation planners
+and PBSP operators should consult with groups and communities who are
+under-represented among bike share users to determine how far they are
+willing to walk to reach a docking station and to get their input on the
+location of new docking stations.
 
 \hypertarget{study-limitations}{%
 \section{7. Study Limitations}\label{study-limitations}}
@@ -1067,20 +1035,20 @@ to determine whether the addition of equity stations encouraged more
 bicycling for disadvantaged groups living near them. Other studies have
 specifically looked at differences in trip type, frequency, or length
 among users from disadvantaged neighborhoods (Caspi and Noland, 2019;
-Qian and Jaller, 2020; Wang and Lindsey, 2019a), but our analysis is
+Qian and Jaller, 2020; J. Wang and Lindsey, 2019a), but our analysis is
 limited by the lack of publicly available route and individual user data
 to conduct similar analyses for HBS.
 
 An additional limitation is the lack of publicly available information
 about the average number of bicycles at each station on a daily basis.
-HBS works to balance the number of bicycles across stations, but it is
-reasonable to expect that the number of bicycles will not match exactly
-the number of racks at every station. Ideally, instead of number of
-bicycle racks as our measure of supply, we would have liked to use the
-average number of bicycles at stations, perhaps at different times
-during the day across many seasons. Should this data become available,
-it would be worthwhile to revisit the question to examine how well
-operation of the system (including balancing of bicycles across
+HBS works to balance the number of bicycles across the core service
+area, but it is reasonable to expect that the number of bicycles will
+not match exactly the number of racks at every station. Ideally, instead
+of number of bicycle racks as our measure of supply, we would have liked
+to use the average number of bicycles at stations, perhaps at different
+times during the day across many seasons. Should this data become
+available, it would be worthwhile to revisit the question to examine how
+well the operation of the system (including balancing of bicycles across
 stations) works to maintain the nominal levels of accessibility examined
 in this paper.
 
@@ -1088,32 +1056,33 @@ in this paper.
 \section{8. Conclusion}\label{conclusion}}
 
 The addition of specific stations to improve equity within the PBSP in
-Hamilton had the net effect of increasing accessibility and reducing to
-some extent vertical inequities. In particular, accessibility improved
-the most for those in the second 20\% median total household income at
-all thresholds, but the gains were only modest for all income groups.
-Dissemination areas with the bottom 20\% had the lowest accessibility at
-three minutes, and second lowest levels of accessibility at five, ten,
-and fifteen minutes. Congestion effects were observed at higher
-thresholds, with accessibility decreasing significantly once the
-catchment area is increased to ten minutes walking.
+Hamilton had the net effect of increasing accessibility and reducing
+vertical inequities to some extent. In particular, accessibility
+improved the most for those in the second 20\% median total household
+income at all thresholds, but the gains were only modest for all income
+groups. Dissemination areas in the bottom 20\% had the lowest
+accessibility at three minutes, and second lowest levels of
+accessibility at five, ten, and fifteen minutes. Congestion effects were
+observed at higher thresholds, with accessibility decreasing
+significantly once the catchment area is increased to ten minutes
+walking.
 
 Wang and Lindsey (2019b) have noted that there is a lack of research
 that examines how bike share users' behaviour changes as a result of
 program changes to station locations or improvements in accessibility.
-As such, a logical next step to this research is to examine whether
-Hamilton Bike Share's equity stations increased ridership or resulted in
-new memberships in areas that were previously under-serviced. An
-examination of the types of trips undertaken by residents in these areas
-would also be informative, such as the study undertaken by Caspi and
-Norland (2019) after bike share stations were implemented in low-income
-Philadelphia neighborhoods. The bulk of cycling facilities that have
-been built in Hamilton to date are located in the core service area near
-the conventional stations. It would be worthwhile to explore the route
+As such, a logical next step to this research is to examine whether the
+equity stations increased ridership or resulted in new memberships in
+areas that were previously under-serviced. An examination of the types
+of trips undertaken by residents in these areas would also be
+informative, such as the study undertaken by Caspi and Norland (2019)
+after bike share stations were implemented in low-income Philadelphia
+neighborhoods. The bulk of cycling facilities that have been built in
+Hamilton to date are located in the core service area near the
+conventional stations. It would be worthwhile to explore the route
 choice of bike share trips departing or ending at the equity stations
 and to identify factors that specifically influence trips from these
 stations, which would extend existing studies conducted by Scott and
-colleagues (Lu et al., 2018; Scott et al., 2021; Scott and Ciuro, 2019).
+colleagues (Lu et al., 2018; Scott and Ciuro, 2019; Scott et al., 2021).
 This paper, combined with additional studies such as those
 conceptualized above, would serve as a valuable case study for Hamilton
 and other cities with PBSPs that wish to evaluate and address inequities
@@ -1122,16 +1091,18 @@ in accessibility and transportation options in urban areas.
 \hypertarget{acknowledgments}{%
 \section{Acknowledgments}\label{acknowledgments}}
 
-This research was completed using open software, and the authors wish to
-acknowledge the developers of the following \texttt{R} packages:
-\texttt{biscale} (Prener et al., 2020), \texttt{cowplot} (Wilke, 2020),
+We wish to thank the anonymous reviewers who provided constructive
+feedback to improve the quality of our paper. This research was
+completed using open software, and we also wish to acknowledge the
+developers of the following \texttt{R} packages: \texttt{biscale}
+(Prener et al., 2020), \texttt{cowplot} (Wilke, 2020),
 \texttt{data.table} (Dowle and Srinivasan, 2021), \texttt{disk.frame}
 (ZJ, 2021), \texttt{gdistance} (van Etten, 2020), \texttt{gridExtra}
 (Auguie, 2017), \texttt{kableExtra} (Zhu, 2021), \texttt{knitr} (Xie,
 2021a), \texttt{pycno} (Brunsdon, 2014), \texttt{r5r} (Saraiva et al.,
 2021), \texttt{raster} (Hijmans, 2020), \texttt{rgdal} (Bivand et al.,
 2021), \texttt{rticles} (Allaire et al., 2021), \texttt{sf} (Pebesma,
-2021), \texttt{tidyverse} (Wickham, 2019), \texttt{tinytex} (Xie,
+2021), \texttt{tidyverse} (Wickham, 2021), \texttt{tinytex} (Xie,
 2021b), \texttt{units} (Pebesma et al., 2021).
 
 \hypertarget{references}{%
@@ -1139,7 +1110,6 @@ acknowledge the developers of the following \texttt{R} packages:
 \addcontentsline{toc}{section}{References}
 
 \hypertarget{refs}{}
-\begin{CSLReferences}{1}{0}
 \leavevmode\hypertarget{ref-R-rticles}{}%
 Allaire, J., Xie, Y., R Foundation, Wickham, H., Journal of Statistical
 Software, Vaidyanathan, R., Association for Computing Machinery,
@@ -1154,18 +1124,18 @@ D., Kaplan, D.M., Kreutzer, S., Wang, S., Hesselberth, J., Dervieux, C.,
 \leavevmode\hypertarget{ref-auchinclossDesignBaselineDescription2020}{}%
 Auchincloss, A.H., Michael, Y.L., Fuller, D., Li, S., Niamatullah, S.,
 Fillmore, C.E., Setubal, C., Bettigole, C., 2020. Design and baseline
-description of a cohort of bikeshare users in the city of
-{Philadelphia}. Journal of Transport \& Health 16, 100836.
+description of a cohort of bikeshare users in the city of Philadelphia.
+Journal of Transport \& Health 16, 100836.
 doi:\href{https://doi.org/10.1016/j.jth.2020.100836}{10.1016/j.jth.2020.100836}
 
 \leavevmode\hypertarget{ref-R-gridExtra}{}%
-Auguie, B., 2017. gridExtra: Miscellaneous functions for "grid"
+Auguie, B., 2017. GridExtra: Miscellaneous functions for "grid"
 graphics.
 
 \leavevmode\hypertarget{ref-babagoliExploringHealthSpatial2019}{}%
 Babagoli, M.A., Kaufman, T.K., Noyes, P., Sheffield, P.E., 2019.
-Exploring the health and spatial equity implications of the {New York
-City Bike} share system. Journal of Transport \& Health 13, 200--209.
+Exploring the health and spatial equity implications of the New York
+City Bike share system. Journal of Transport \& Health 13, 200--209.
 doi:\href{https://doi.org/10.1016/j.jth.2019.04.003}{10.1016/j.jth.2019.04.003}
 
 \leavevmode\hypertarget{ref-R-rgdal}{}%
@@ -1178,8 +1148,8 @@ handling spatial data. Journal of Geographical Systems 1--32.
 doi:\href{https://doi.org/10.1007/s10109-020-00336-0}{10.1007/s10109-020-00336-0}
 
 \leavevmode\hypertarget{ref-breyWantRideMy2017}{}%
-Brey, R., Castillo-Manzano, J.I., Castro-Nuño, M., 2017. {`{I} want to
-ride my bicycle'}: Delimiting cyclist typologies. Applied Economics
+Brey, R., Castillo-Manzano, J.I., Castro-Nuño, M., 2017. ``I want to
+ride my bicycle'': Delimiting cyclist typologies. Applied Economics
 Letters 24, 549--552.
 doi:\href{https://doi.org/10.1080/13504851.2016.1210760}{10.1080/13504851.2016.1210760}
 
@@ -1194,35 +1164,34 @@ doi:\href{https://doi.org/10.1007/s10109-020-00334-2}{10.1007/s10109-020-00334-2
 
 \leavevmode\hypertarget{ref-buckAreBikeshareUsers2013}{}%
 Buck, D., Buehler, R., Happ, P., Rawls, B., Chung, P., Borecki, N.,
-2013. Are {Bikeshare Users Different} from {Regular Cyclists}?: {A First
-Look} at {Short}-{Term Users}, {Annual Members}, and {Area Cyclists} in
-the {Washington}, {D}.{C}., {Region}. Transportation Research Record
-2387, 112--119.
+2013. Are Bikeshare Users Different from Regular Cyclists?: A First Look
+at Short-Term Users, Annual Members, and Area Cyclists in the
+Washington, D.C., Region. Transportation Research Record 2387, 112--119.
 doi:\href{https://doi.org/10.3141/2387-13}{10.3141/2387-13}
 
 \leavevmode\hypertarget{ref-caspiBikesharingPhiladelphiaLowerincome2019}{}%
-Caspi, O., Noland, R.B., 2019. Bikesharing in {Philadelphia}: {Do}
+Caspi, O., Noland, R.B., 2019. Bikesharing in Philadelphia: Do
 lower-income areas generate trips? Travel Behaviour and Society 16,
 143--152.
 doi:\href{https://doi.org/10.1016/j.tbs.2019.05.004}{10.1016/j.tbs.2019.05.004}
 
 \leavevmode\hypertarget{ref-chenMeasuringAccessibilityHealth2021}{}%
 Chen, W., Cheng, L., Chen, X., Chen, J., Cao, M., 2021. Measuring
-accessibility to health care services for older bus passengers: {A}
-finer spatial resolution. Journal of Transport Geography 93, 103068.
+accessibility to health care services for older bus passengers: A finer
+spatial resolution. Journal of Transport Geography 93, 103068.
 doi:\href{https://doi.org/10.1016/j.jtrangeo.2021.103068}{10.1016/j.jtrangeo.2021.103068}
 
 \leavevmode\hypertarget{ref-chenExploringEquityPerformance2019}{}%
 Chen, Z., Guo, Y., Stuart, A.L., Zhang, Y., Li, X., 2019. Exploring the
-equity performance of bike-sharing systems with disaggregated data: {A}
-story of southern {Tampa}. Transportation Research Part A: Policy and
+equity performance of bike-sharing systems with disaggregated data: A
+story of southern Tampa. Transportation Research Part A: Policy and
 Practice 130, 529--545.
 doi:\href{https://doi.org/10.1016/j.tra.2019.09.048}{10.1016/j.tra.2019.09.048}
 
 \leavevmode\hypertarget{ref-chenUnobservedHeterogeneityTransportation2021}{}%
 Chen, Z., Li, X., 2021. Unobserved heterogeneity in transportation
-equity analysis: {Evidence} from a bike-sharing system in southern
-{Tampa}. Journal of Transport Geography 91, 102956.
+equity analysis: Evidence from a bike-sharing system in southern Tampa.
+Journal of Transport Geography 91, 102956.
 doi:\href{https://doi.org/10.1016/j.jtrangeo.2021.102956}{10.1016/j.jtrangeo.2021.102956}
 
 \leavevmode\hypertarget{ref-nactowalkingstation2015}{}%
@@ -1232,40 +1201,39 @@ is key to successful, equitable bike share {[}WWW Document{]}. URL
 
 \leavevmode\hypertarget{ref-delamaterSpatialAccessibilitySuboptimally2013}{}%
 Delamater, P.L., 2013. Spatial accessibility in suboptimally configured
-health care systems: {A} modified two-step floating catchment area
-({M2SFCA}) metric. Health \& Place 24, 30--43.
+health care systems: A modified two-step floating catchment area
+(M2SFCA) metric. Health \& Place 24, 30--43.
 doi:\href{https://doi.org/10.1016/j.healthplace.2013.07.012}{10.1016/j.healthplace.2013.07.012}
 
 \leavevmode\hypertarget{ref-delboscUsingLorenzCurves2011}{}%
-Delbosc, A., Currie, G., 2011. Using {Lorenz} curves to assess public
+Delbosc, A., Currie, G., 2011. Using Lorenz curves to assess public
 transport equity. Journal of Transport Geography, Special section on
-{Alternative Travel} futures 19, 1252--1259.
+Alternative Travel futures 19, 1252--1259.
 doi:\href{https://doi.org/10.1016/j.jtrangeo.2011.02.008}{10.1016/j.jtrangeo.2011.02.008}
 
 \leavevmode\hypertarget{ref-R-data.table}{}%
 Dowle, M., Srinivasan, A., 2021. Data.table: Extension of `data.frame`.
 
 \leavevmode\hypertarget{ref-fishmanBikeshareReviewRecent2016}{}%
-Fishman, E., 2016. Bikeshare: {A Review} of {Recent Literature}.
-Transport Reviews 36, 92--113.
+Fishman, E., 2016. Bikeshare: A Review of Recent Literature. Transport
+Reviews 36, 92--113.
 doi:\href{https://doi.org/10.1080/01441647.2015.1033036}{10.1080/01441647.2015.1033036}
 
 \leavevmode\hypertarget{ref-fishmanBikeShareSynthesis2013}{}%
-Fishman, E., Washington, S., Haworth, N., 2013. Bike {Share}: {A
-Synthesis} of the {Literature}. Transport Reviews 33, 148--165.
+Fishman, E., Washington, S., Haworth, N., 2013. Bike Share: A Synthesis
+of the Literature. Transport Reviews 33, 148--165.
 doi:\href{https://doi.org/10.1080/01441647.2013.775612}{10.1080/01441647.2013.775612}
 
 \leavevmode\hypertarget{ref-fishmanBarriersBikesharingAnalysis2014}{}%
 Fishman, E., Washington, S., Haworth, N., Mazzei, A., 2014. Barriers to
-bikesharing: An analysis from {Melbourne} and {Brisbane}. Journal of
+bikesharing: An analysis from Melbourne and Brisbane. Journal of
 Transport Geography 41, 325--337.
 doi:\href{https://doi.org/10.1016/j.jtrangeo.2014.08.005}{10.1016/j.jtrangeo.2014.08.005}
 
 \leavevmode\hypertarget{ref-fullerUseNewPublic2011}{}%
 Fuller, D., Gauvin, L., Kestens, Y., Daniel, M., Fournier, M., Morency,
-P., Drouin, L., 2011. Use of a {New Public Bicycle Share Program} in
-{Montreal}, {Canada}. American Journal of Preventive Medicine 41,
-80--83.
+P., Drouin, L., 2011. Use of a New Public Bicycle Share Program in
+Montreal, Canada. American Journal of Preventive Medicine 41, 80--83.
 doi:\href{https://doi.org/10.1016/j.amepre.2011.03.002}{10.1016/j.amepre.2011.03.002}
 
 \leavevmode\hypertarget{ref-hamiltonsobi2014}{}%
@@ -1275,15 +1243,15 @@ Hamilton, C. of, 2014. Hamilton bike share public engagement report
 
 \leavevmode\hypertarget{ref-hamiltonsobi2015}{}%
 Hamilton, C. of, 2015a. Public bike share transit system implementation
-plan (PW13015c) - (city wide) {[}WWW Document{]}. URL
+plan (pw13015c) - (city wide) {[}WWW Document{]}. URL
 \url{https://pub-hamilton.escribemeetings.com/filestream.ashx?DocumentId=118356}
 
 \leavevmode\hypertarget{ref-hamiltonHamiltonBikeShare2015}{}%
-Hamilton, C. of, 2015b. Hamilton {Bike Share}.
+Hamilton, C. of, 2015b. Hamilton Bike Share.
 
 \leavevmode\hypertarget{ref-handyMeasuringAccessibilityExploration1997}{}%
-Handy, S.L., Niemeier, D.A., 1997. Measuring {Accessibility}: {An
-Exploration} of {Issues} and {Alternatives}. Environment and Planning A:
+Handy, S.L., Niemeier, D.A., 1997. Measuring Accessibility: An
+Exploration of Issues and Alternatives. Environment and Planning A:
 Economy and Space 29, 1175--1194.
 doi:\href{https://doi.org/10.1068/a291175}{10.1068/a291175}
 
@@ -1293,52 +1261,52 @@ Hijmans, R.J., 2020. Raster: Geographic data analysis and modeling.
 \leavevmode\hypertarget{ref-hosfordEvaluationImpactPublic2018}{}%
 Hosford, K., Fuller, D., Lear, S.A., Teschke, K., Gauvin, L., Brauer,
 M., Winters, M., 2018. Evaluation of the impact of a public bicycle
-share program on population bicycling in {Vancouver}, {BC}. Preventive
+share program on population bicycling in Vancouver, BC. Preventive
 Medicine Reports 12, 176--181.
 doi:\href{https://doi.org/10.1016/j.pmedr.2018.09.014}{10.1016/j.pmedr.2018.09.014}
 
 \leavevmode\hypertarget{ref-hosfordWhoArePublic2018}{}%
-Hosford, K., Winters, M., 2018. Who {Are Public Bicycle Share Programs
-Serving}? {An Evaluation} of the {Equity} of {Spatial Access} to
-{Bicycle Share Service Areas} in {Canadian Cities}. Transportation
-Research Record 2672, 42--50.
+Hosford, K., Winters, M., 2018. Who Are Public Bicycle Share Programs
+Serving? An Evaluation of the Equity of Spatial Access to Bicycle Share
+Service Areas in Canadian Cities. Transportation Research Record 2672,
+42--50.
 doi:\href{https://doi.org/10.1177/0361198118783107}{10.1177/0361198118783107}
 
 \leavevmode\hypertarget{ref-hosfordEvaluatingImpactImplementing2019}{}%
 Hosford, K., Winters, M., Gauvin, L., Camden, A., Dubé, A.-S., Friedman,
 S.M., Fuller, D., 2019. Evaluating the impact of implementing public
-bicycle share programs on cycling: The {International Bikeshare Impacts}
-on {Cycling} and {Collisions Study} ({IBICCS}). International Journal of
+bicycle share programs on cycling: The International Bikeshare Impacts
+on Cycling and Collisions Study (IBICCS). International Journal of
 Behavioral Nutrition and Physical Activity 16, 107.
 doi:\href{https://doi.org/10.1186/s12966-019-0871-9}{10.1186/s12966-019-0871-9}
 
 \leavevmode\hypertarget{ref-howlandCurrentEffortsMake2017}{}%
 Howland, S., McNeil, N., Broach, J., Rankins, K., MacArthur, J., Dill,
-J., 2017. Current {Efforts} to {Make Bikeshare More Equitable}: {Survey}
-of {System Owners} and {Operators}. Transportation Research Record 2662,
+J., 2017. Current Efforts to Make Bikeshare More Equitable: Survey of
+System Owners and Operators. Transportation Research Record 2662,
 160--167. doi:\href{https://doi.org/10.3141/2662-18}{10.3141/2662-18}
 
 \leavevmode\hypertarget{ref-hullgrassoBikeShareEquity2020}{}%
-Hull Grasso, S., Barnes, P., Chavis, C., 2020. Bike {Share Equity} for
-{Underrepresented Groups}: {Analyzing Barriers} to {System Usage} in
-{Baltimore}, {Maryland}. Sustainability 12, 7600.
+Hull Grasso, S., Barnes, P., Chavis, C., 2020. Bike Share Equity for
+Underrepresented Groups: Analyzing Barriers to System Usage in
+Baltimore, Maryland. Sustainability 12, 7600.
 doi:\href{https://doi.org/10.3390/su12187600}{10.3390/su12187600}
 
 \leavevmode\hypertarget{ref-kabraBikeShareSystemsAccessibility2020}{}%
-Kabra, A., Belavina, E., Girotra, K., 2020. Bike-{Share Systems}:
-{Accessibility} and {Availability}. Management Science 66, 3803--3824.
+Kabra, A., Belavina, E., Girotra, K., 2020. Bike-Share Systems:
+Accessibility and Availability. Management Science 66, 3803--3824.
 doi:\href{https://doi.org/10.1287/mnsc.2019.3407}{10.1287/mnsc.2019.3407}
 
 \leavevmode\hypertarget{ref-kwanSpaceTimeIntegral1998}{}%
-Kwan, M.-P., 1998. Space-{Time} and {Integral Measures} of {Individual
-Accessibility}: {A Comparative Analysis Using} a {Point}-based
-{Framework}. Geographical Analysis 30, 191--216.
+Kwan, M.-P., 1998. Space-Time and Integral Measures of Individual
+Accessibility: A Comparative Analysis Using a Point-based Framework.
+Geographical Analysis 30, 191--216.
 doi:\href{https://doi.org/10.1111/j.1538-4632.1998.tb00396.x}{10.1111/j.1538-4632.1998.tb00396.x}
 
 \leavevmode\hypertarget{ref-larsenQuarterMileReexamining2010}{}%
-Larsen, J., El-Geneidy, A., Yasmin, F., 2010. Beyond the {Quarter Mile}:
-{Re}-examining {Travel Distances} by {Active Transportation}. Canadian
-Journal of Urban Research 19, 70--88.
+Larsen, J., El-Geneidy, A., Yasmin, F., 2010. Beyond the Quarter Mile:
+Re-examining Travel Distances by Active Transportation. Canadian Journal
+of Urban Research 19, 70--88.
 
 \leavevmode\hypertarget{ref-levineCenturyEvolutionAccessibility2020}{}%
 Levine, J., 2020. A century of evolution of the accessibility concept.
@@ -1352,26 +1320,26 @@ doi:\href{https://doi.org/doi.org/10.1007/s10109-020-00342-2}{doi.org/10.1007/s1
 
 \leavevmode\hypertarget{ref-luUnderstandingBikeShare2018}{}%
 Lu, W., Scott, D.M., Dalumpines, R., 2018. Understanding bike share
-cyclist route choice using {GPS} data: {Comparing} dominant routes and
+cyclist route choice using GPS data: Comparing dominant routes and
 shortest paths. Journal of Transport Geography 71, 172--181.
 doi:\href{https://doi.org/10.1016/j.jtrangeo.2018.07.012}{10.1016/j.jtrangeo.2018.07.012}
 
 \leavevmode\hypertarget{ref-luoEnhancedTwostepFloating2009}{}%
 Luo, W., Qi, Y., 2009. An enhanced two-step floating catchment area
-({E2SFCA}) method for measuring spatial accessibility to primary care
+(E2SFCA) method for measuring spatial accessibility to primary care
 physicians. Health \& Place 15, 1100--1107.
 doi:\href{https://doi.org/10.1016/j.healthplace.2009.06.002}{10.1016/j.healthplace.2009.06.002}
 
 \leavevmode\hypertarget{ref-luoMeasuresSpatialAccessibility2003}{}%
-Luo, W., Wang, F., 2003. Measures of {Spatial Accessibility} to {Health
-Care} in a {GIS Environment}: {Synthesis} and a {Case Study} in the
-{Chicago Region}. Environment and Planning B: Planning and Design 30,
-865--884. doi:\href{https://doi.org/10.1068/b29120}{10.1068/b29120}
+Luo, W., Wang, F., 2003. Measures of Spatial Accessibility to Health
+Care in a GIS Environment: Synthesis and a Case Study in the Chicago
+Region. Environment and Planning B: Planning and Design 30, 865--884.
+doi:\href{https://doi.org/10.1068/b29120}{10.1068/b29120}
 
 \leavevmode\hypertarget{ref-macarthurAdaptiveBikeShare2020}{}%
-MacArthur, J., McNeil, N., Cummings, A., Broach, J., 2020. Adaptive
-{Bike Share}: {Expanding Bike Share} to {People} with {Disabilities} and
-{Older Adults}. Transportation Research Record 2674, 556--565.
+MacArthur, J., McNeil, N., Cummings, A., Broach, J., 2020. Adaptive Bike
+Share: Expanding Bike Share to People with Disabilities and Older
+Adults. Transportation Research Record 2674, 556--565.
 doi:\href{https://doi.org/10.1177/0361198120925079}{10.1177/0361198120925079}
 
 \leavevmode\hypertarget{ref-trec2019}{}%
@@ -1389,40 +1357,43 @@ doi:\href{https://doi.org/10.1016/j.jtrangeo.2012.11.012}{10.1016/j.jtrangeo.201
 
 \leavevmode\hypertarget{ref-mooneyFreedomStationSpatial2019}{}%
 Mooney, S.J., Hosford, K., Howe, B., Yan, A., Winters, M., Bassok, A.,
-Hirsch, J.A., 2019. Freedom from the station: {Spatial} equity in access
+Hirsch, J.A., 2019. Freedom from the station: Spatial equity in access
 to dockless bike share. Journal of Transport Geography 74, 91--96.
 doi:\href{https://doi.org/10.1016/j.jtrangeo.2018.11.009}{10.1016/j.jtrangeo.2018.11.009}
+
+\leavevmode\hypertarget{ref-nationalacademiesofsciencesEffectiveMethodsEnvironmental2004}{}%
+National Academies of Sciences, E., 2004. Effective Methods for
+Environmental Justice Assessment.
+doi:\href{https://doi.org/10.17226/13694}{10.17226/13694}
 
 \leavevmode\hypertarget{ref-nickkarSpatialtemporalGenderLand2019}{}%
 Nickkar, A., Banerjee, S., Chavis, C., Bhuyan, I.A., Barnes, P., 2019. A
 spatial-temporal gender and land use analysis of bikeshare ridership:
-{The} case study of {Baltimore City}. City, Culture and Society 18,
-100291.
+The case study of Baltimore City. City, Culture and Society 18, 100291.
 doi:\href{https://doi.org/10.1016/j.ccs.2019.100291}{10.1016/j.ccs.2019.100291}
-
-\leavevmode\hypertarget{ref-okelly2003aggregate}{}%
-O'Kelly, M.E., Horner, M.W., 2003. Aggregate accessibility to population
-at the county level: U.s. 1940-2000. Journal of Geographical Systems 5,
-5--23.
 
 \leavevmode\hypertarget{ref-ogilvieInequalitiesUsagePublic2012}{}%
 Ogilvie, F., Goodman, A., 2012. Inequalities in usage of a public
-bicycle sharing scheme: {Socio}-demographic predictors of uptake and
-usage of the {London} ({UK}) cycle hire scheme. Preventive Medicine 55,
-40--45.
+bicycle sharing scheme: Socio-demographic predictors of uptake and usage
+of the London (UK) cycle hire scheme. Preventive Medicine 55, 40--45.
 doi:\href{https://doi.org/10.1016/j.ypmed.2012.05.002}{10.1016/j.ypmed.2012.05.002}
+
+\leavevmode\hypertarget{ref-okelly2003aggregate}{}%
+O'Kelly, M.E., Horner, M.W., 2003. Aggregate accessibility to population
+at the county level: U.S. 1940-2000. Journal of Geographical Systems 5,
+5--23.
 
 \leavevmode\hypertarget{ref-paezDemandLevelService2019}{}%
 Paez, A., Higgins, C.D., Vivona, S.F., 2019. Demand and level of service
-inflation in {Floating Catchment Area} ({FCA}) methods. PLoS ONE 14.
+inflation in Floating Catchment Area (FCA) methods. PLoS ONE 14.
 doi:\href{https://doi.org/10.1371/journal.pone.0218773}{10.1371/journal.pone.0218773}
 
 \leavevmode\hypertarget{ref-paezMeasuringAccessibilityPositive2012}{}%
 Páez, A., Scott, D.M., Morency, C., 2012. Measuring accessibility:
 Positive and normative implementations of various accessibility
-indicators. Journal of Transport Geography, Special {section} on
-{Accessibility} and {Socio}-{Economic Activities}: {Methodological} and
-{Empirical Aspects} 25, 141--153.
+indicators. Journal of Transport Geography, Special Section on
+Accessibility and Socio-Economic Activities: Methodological and
+Empirical Aspects 25, 141--153.
 doi:\href{https://doi.org/10.1016/j.jtrangeo.2012.03.016}{10.1016/j.jtrangeo.2012.03.016}
 
 \leavevmode\hypertarget{ref-R-sf}{}%
@@ -1434,7 +1405,7 @@ Measurement units for r vectors.
 
 \leavevmode\hypertarget{ref-Pereira2021r5r}{}%
 Pereira, R.H.M., Saraiva, M., Herszenhut, D., Braga, C.K.V., Conway,
-M.W., 2021. r5r: Rapid realistic routing on multimodal transport
+M.W., 2021. R5r: Rapid realistic routing on multimodal transport
 networks with r\textsuperscript{5} in r. Findings.
 doi:\href{https://doi.org/10.32866/001c.21262}{10.32866/001c.21262}
 
@@ -1444,8 +1415,8 @@ palettes for bivariate thematic mapping.
 
 \leavevmode\hypertarget{ref-qianBikesharingEquityDisadvantaged2020}{}%
 Qian, X., Jaller, M., 2020. Bikesharing, equity, and disadvantaged
-communities: {A} case study in {Chicago}. Transportation Research Part
-A: Policy and Practice 140, 354--371.
+communities: A case study in Chicago. Transportation Research Part A:
+Policy and Practice 140, 354--371.
 doi:\href{https://doi.org/10.1016/j.tra.2020.07.004}{10.1016/j.tra.2020.07.004}
 
 \leavevmode\hypertarget{ref-qianBikeshareDestinationChoices2021}{}%
@@ -1456,25 +1427,25 @@ doi:\href{https://doi.org/10.1016/j.trd.2020.102686}{10.1016/j.trd.2020.102686}
 
 \leavevmode\hypertarget{ref-qianEnhancingEquitableService2020}{}%
 Qian, X., Jaller, M., Niemeier, D., 2020. Enhancing equitable service
-level: {Which} can address better, dockless or dock-based {Bikeshare}
+level: Which can address better, dockless or dock-based Bikeshare
 systems? Journal of Transport Geography 86, 102784.
 doi:\href{https://doi.org/10.1016/j.jtrangeo.2020.102784}{10.1016/j.jtrangeo.2020.102784}
 
 \leavevmode\hypertarget{ref-radkeSpatialDecompositionsModeling2000}{}%
-Radke, J., Mu, L., 2000. Spatial {Decompositions}, {Modeling} and
-{Mapping Service Regions} to {Predict Access} to {Social Programs}.
-Geographic Information Sciences 6, 105--112.
+Radke, J., Mu, L., 2000. Spatial Decompositions, Modeling and Mapping
+Service Regions to Predict Access to Social Programs. Geographic
+Information Sciences 6, 105--112.
 doi:\href{https://doi.org/10.1080/10824000009480538}{10.1080/10824000009480538}
 
 \leavevmode\hypertarget{ref-reillyNoncyclistsFrequentCyclists2020}{}%
-Reilly, K.H., Noyes, P., Crossa, A., 2020a. From non-cyclists to
-frequent cyclists: {Factors} associated with frequent bike share use in
-{New York City}. Journal of Transport \& Health 16, 100790.
+Reilly, K.H., Noyes, P., Crossa, A., 2020. From non-cyclists to frequent
+cyclists: Factors associated with frequent bike share use in New York
+City. Journal of Transport \& Health 16, 100790.
 doi:\href{https://doi.org/10.1016/j.jth.2019.100790}{10.1016/j.jth.2019.100790}
 
 \leavevmode\hypertarget{ref-reillyGenderDisparitiesNew2020}{}%
-Reilly, K.H., Wang, S.M., Crossa, A., 2020b. Gender disparities in {New
-York City} bike share usage. International Journal of Sustainable
+Reilly, K.H., Wang, S.M., Crossa, A., 2020. Gender disparities in New
+York City bike share usage. International Journal of Sustainable
 Transportation 0, 1--9.
 doi:\href{https://doi.org/10.1080/15568318.2020.1861393}{10.1080/15568318.2020.1861393}
 
@@ -1486,29 +1457,28 @@ doi:\href{https://doi.org/10.1016/j.tra.2016.04.002}{10.1016/j.tra.2016.04.002}
 
 \leavevmode\hypertarget{ref-R-r5r}{}%
 Saraiva, M., Pereira, R.H.M., Herszenhut, D., Braga, C.K.V., Conway,
-M.W., 2021. r5r: Rapid realistic routing with R5.
+M.W., 2021. R5r: Rapid realistic routing with r5.
 
 \leavevmode\hypertarget{ref-scottWhatFactorsInfluence2019}{}%
 Scott, D.M., Ciuro, C., 2019. What factors influence bike share
-ridership? {An} investigation of {Hamilton}, {Ontario}'s bike share
-hubs. Travel Behaviour and Society 16, 50--58.
+ridership? An investigation of Hamilton, Ontario's bike share hubs.
+Travel Behaviour and Society 16, 50--58.
 doi:\href{https://doi.org/10.1016/j.tbs.2019.04.003}{10.1016/j.tbs.2019.04.003}
 
 \leavevmode\hypertarget{ref-scottRouteChoiceBike2021}{}%
 Scott, D.M., Lu, W., Brown, M.J., 2021. Route choice of bike share
-users: Leveraging GPS data to derive choice sets. Journal of Transport
+users: Leveraging gps data to derive choice sets. Journal of Transport
 Geography 90, 102903.
 doi:\href{https://doi.org/10.1016/j.jtrangeo.2020.102903}{10.1016/j.jtrangeo.2020.102903}
 
 \leavevmode\hypertarget{ref-smith2015exploring}{}%
 Smith, C.S., Oh, J.-S., Lei, C., 2015. Exploring the equity dimensions
-of US bicycle sharing systems. Western Michigan University.
+of us bicycle sharing systems. Western Michigan University.
 Transportation Research Center for Livable~.
 
 \leavevmode\hypertarget{ref-toblerSmoothPycnophylacticInterpolation1979}{}%
-Tobler, W.R., 1979. Smooth {Pycnophylactic Interpolation} for
-{Geographical Regions}. Journal of the American Statistical Association
-74, 519--530.
+Tobler, W.R., 1979. Smooth Pycnophylactic Interpolation for Geographical
+Regions. Journal of the American Statistical Association 74, 519--530.
 doi:\href{https://doi.org/10.1080/01621459.1979.10481647}{10.1080/01621459.1979.10481647}
 
 \leavevmode\hypertarget{ref-R-gdistance}{}%
@@ -1530,12 +1500,12 @@ doi:\href{https://doi.org/10.1016/j.jtrangeo.2019.102475}{10.1016/j.jtrangeo.201
 
 \leavevmode\hypertarget{ref-wangNewBikeShare2019}{}%
 Wang, J., Lindsey, G., 2019b. Do new bike share stations increase member
-use: {A} quasi-experimental study. Transportation Research Part A:
-Policy and Practice 121, 1--11.
+use: A quasi-experimental study. Transportation Research Part A: Policy
+and Practice 121, 1--11.
 doi:\href{https://doi.org/10.1016/j.tra.2019.01.004}{10.1016/j.tra.2019.01.004}
 
 \leavevmode\hypertarget{ref-R-tidyverse}{}%
-Wickham, H., 2019. Tidyverse: Easily install and load the tidyverse.
+Wickham, H., 2021. Tidyverse: Easily install and load the tidyverse.
 
 \leavevmode\hypertarget{ref-R-cowplot}{}%
 Wilke, C.O., 2020. Cowplot: Streamlined plot theme and plot annotations
@@ -1543,8 +1513,8 @@ for ggplot2.
 
 \leavevmode\hypertarget{ref-wintersWhoAreSuperusers2019}{}%
 Winters, M., Hosford, K., Javaheri, S., 2019. Who are the
-{`super-users'} of public bike share? {An} analysis of public bike share
-members in {Vancouver}, {BC}. Preventive Medicine Reports 15, 100946.
+``super-users'' of public bike share? An analysis of public bike share
+members in Vancouver, BC. Preventive Medicine Reports 15, 100946.
 doi:\href{https://doi.org/10.1016/j.pmedr.2019.100946}{10.1016/j.pmedr.2019.100946}
 
 \leavevmode\hypertarget{ref-R-knitr}{}%
@@ -1552,19 +1522,18 @@ Xie, Y., 2021a. Knitr: A general-purpose package for dynamic report
 generation in r.
 
 \leavevmode\hypertarget{ref-R-tinytex}{}%
-Xie, Y., 2021b. Tinytex: Helper functions to install and maintain TeX
-live, and compile LaTeX documents.
+Xie, Y., 2021b. Tinytex: Helper functions to install and maintain tex
+live, and compile latex documents.
 
 \leavevmode\hypertarget{ref-R-kableExtra}{}%
-Zhu, H., 2021. kableExtra: Construct complex table with kable and pipe
+Zhu, H., 2021. KableExtra: Construct complex table with kable and pipe
 syntax.
 
 \leavevmode\hypertarget{ref-R-disk.frame}{}%
-ZJ, D., 2021. Disk.frame: Larger-than-RAM disk-based data manipulation
+ZJ, D., 2021. Disk.frame: Larger-than-ram disk-based data manipulation
 framework.
-
-\end{CSLReferences}
 
 
 \end{document}
+
 

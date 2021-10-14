@@ -1,0 +1,28 @@
+---
+title: "Response to Reviewers"
+author: ""
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: pdf_document
+---
+
+We would like to express our gratitude to the editors and anonymous reviewers for their time and attention to our submission.
+
+## Reviewer #1: 
+
+This paper is ready for publication. I don't have any more comments.
+
+\textcolor{blue}{Thank you for your generous feedback to improve this paper.}
+
+## Reviewer #3: 
+
+Thank you for revising in response to my prior comments. Due to an editorial error, I missed a round of feedback so will keep my comments brief and mainly reiterate some prior points.
+
+\textcolor{blue}{Thank you again for your suggestions to improve the paper.}
+
+Because travel is derived from a demand for activity participation, I still do not believe that you are quantifying accessibility in this paper. No one gets to a bike share station consumes the service of bike share and ends their trip. The bike share is a means to an end. You overstate your position on p. 6, l. 20 when you claim that the docking stations are an amenity because they offer a transportation service. Again – people consume travel to reach destinations where they can undertake activities. This fact must be noted in the study limitations.
+
+\textcolor{blue}{Words go here.}
+
+Many of the maps are still very difficult to interpret. I previously suggested plotting the difference in accessibility (for example for Figures 4-6) to make the differences easy to discern. Currently it’s very difficult to detect any changes in the maps at all. I also suggested experimenting with a discrete scale. This might also help to make the differences easier to discern without needing an explicit map of difference. All units in the map legends need to be spelled out (e.g., “accessibility (racks/person)”) and use plain English with any acronyms defined (e.g., for los_inflation and accessibility_inflation). The discordance between the label for Figure 7 “deflation” and legend “inflation” should be resolved. Scale bar and north arrow only need to be shown once on the small multiples maps.
+
+\textcolor{blue}{Words go here.}

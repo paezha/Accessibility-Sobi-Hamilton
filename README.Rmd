@@ -256,58 +256,48 @@ The BFCA method was developed to address issues with demand and supply inflation
 
 The first step in the FCA method is to allocate the population to be serviced by each docking station:
 
-\begin{equation}
-\label{eq:population-allocation}
+$$
 P_j = {\sum_{i = 1}^{n} P_i{w_{ij}}}
-\end{equation}
+$$
 
 As seen in the equation above, the population allocated to station $j$ is the weighted sum of the population in the region; a spatial weight $w_{ij}$ represents the friction that the population at $i$ faces when reaching station $j$, and is usually given by a distance-decay function, so that each station is assumed to service only a segment of the population within a limited geographical range. The level of service of station $j$ in bicycle racks per person is the supply at each station (i.e., the maximum number of bicycle racks) divided by the population within the established catchment area:
-\begin{equation}
-\label{eq:level-of-service}
+$$
 L_j = \frac {S_j}{P_j} = \frac {S_j}{{\sum_{i = 1}^{n} P_i{w_{ij}}}}
-\end{equation}
+$$
 
 In the second step, the accessibility of population unit $i$ is calculated as the weighted sum of the level of service of all stations that can be reached from there according to the spatial weights:
-\begin{equation}
-\label{eq:FCA-accessibility}
+$$
 A_i = {\sum_{j = 1}^{J} L_j{w_{ij}}} = {\sum_{j = 1}^{J} \frac {S_j{w_{ij}}}{\sum_{i = 1}^{n} P_i{w_{ij}}}}
-\end{equation}
+$$
 
 The balanced approach of Páez et al. [-@paezDemandLevelService2019] replaces the spatial weights with normalized versions as follows. In the first step, the population is weighted with:
-\begin{equation}
-\label{eq:spatial-weights}
+$$
 {w_{ij}^{i} = \frac {w_{ij}}{\sum_{j = 1}^{J} {w_{ij}}}}
-\end{equation}
+$$
 
 \noindent and in the second step, the level of service is weighted using:
-\begin{equation}
-\label{eq:spatial-weights-2}
+$$
 {w_{ij}^{j} = \frac {w_{ij}}{\sum_{i = 1}^{n} {w_{ij}}}}
-\end{equation}
-
+$$
 These weights satisfy the following properties:
-\begin{equation}
-\label{eq:weights}
+$$
 \sum_{j = 1}^{J} {w^i_{ij}} = 1
-\end{equation}
+$$
 
 \noindent and:
-\begin{equation}
-\label{eq:weights-2}
+$$
 \sum_{i = 1}^{n} {w^j_{ij}} = 1
-\end{equation}
+$$
 
 With these weights, accessibility can be calculated without risk of demand or supply inflation:
-\begin{equation}
-\label{eq:balanced-accessibility}
+$$
 A_i = {\sum_{j = 1}^{J} \frac {S_j{w^j_{ij}}}{\sum_{i = 1}^{n} P_i{w^i_{ij}}}}
-\end{equation}
+$$
 
 By allocating the population and level of service proportionally, this method preserves the values of the population and level of service since:
-\begin{equation}
-\label{eq:proportionality}
+$$
 \sum_{i=1}^n A_i = \sum_{j=1}^J L_j
-\end{equation}
+$$
 
 In fact, since the proportional allocation procedure means that any proportion of the population allocated to a station is never allocated to other stations, and conversely any level of service allocated to a population is never re-allocated elsewhere, this property is replicated for any level of aggregation. 
 

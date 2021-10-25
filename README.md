@@ -378,6 +378,12 @@ supply.
 The first step in the FCA method is to allocate the population to be
 serviced by each docking station:
 
+![
+P\_j = {\\sum\_{i = 1}^{n} P\_i{w\_{ij}}}
+](https://latex.codecogs.com/png.latex?%0AP_j%20%3D%20%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20P_i%7Bw_%7Bij%7D%7D%7D%0A "
+P_j = {\sum_{i = 1}^{n} P_i{w_{ij}}}
+")
+
 As seen in the equation above, the population allocated to station
 ![j](https://latex.codecogs.com/png.latex?j "j") is the weighted sum of
 the population in the region; a spatial weight
@@ -393,27 +399,75 @@ person is the supply at each station (i.e., the maximum number of
 bicycle racks) divided by the population within the established
 catchment area:
 
+![
+L\_j = \\frac {S\_j}{P\_j} = \\frac {S\_j}{{\\sum\_{i = 1}^{n} P\_i{w\_{ij}}}}
+](https://latex.codecogs.com/png.latex?%0AL_j%20%3D%20%5Cfrac%20%7BS_j%7D%7BP_j%7D%20%3D%20%5Cfrac%20%7BS_j%7D%7B%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20P_i%7Bw_%7Bij%7D%7D%7D%7D%0A "
+L_j = \frac {S_j}{P_j} = \frac {S_j}{{\sum_{i = 1}^{n} P_i{w_{ij}}}}
+")
+
 In the second step, the accessibility of population unit
 ![i](https://latex.codecogs.com/png.latex?i "i") is calculated as the
 weighted sum of the level of service of all stations that can be reached
 from there according to the spatial weights:
 
+![
+A\_i = {\\sum\_{j = 1}^{J} L\_j{w\_{ij}}} = {\\sum\_{j = 1}^{J} \\frac {S\_j{w\_{ij}}}{\\sum\_{i = 1}^{n} P\_i{w\_{ij}}}}
+](https://latex.codecogs.com/png.latex?%0AA_i%20%3D%20%7B%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20L_j%7Bw_%7Bij%7D%7D%7D%20%3D%20%7B%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20%5Cfrac%20%7BS_j%7Bw_%7Bij%7D%7D%7D%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20P_i%7Bw_%7Bij%7D%7D%7D%7D%0A "
+A_i = {\sum_{j = 1}^{J} L_j{w_{ij}}} = {\sum_{j = 1}^{J} \frac {S_j{w_{ij}}}{\sum_{i = 1}^{n} P_i{w_{ij}}}}
+")
+
 The balanced approach of Páez et al. (2019) replaces the spatial weights
 with normalized versions as follows. In the first step, the population
 is weighted with:
 
+![
+{w\_{ij}^{i} = \\frac {w\_{ij}}{\\sum\_{j = 1}^{J} {w\_{ij}}}}
+](https://latex.codecogs.com/png.latex?%0A%7Bw_%7Bij%7D%5E%7Bi%7D%20%3D%20%5Cfrac%20%7Bw_%7Bij%7D%7D%7B%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20%7Bw_%7Bij%7D%7D%7D%7D%0A "
+{w_{ij}^{i} = \frac {w_{ij}}{\sum_{j = 1}^{J} {w_{ij}}}}
+")
+
 and in the second step, the level of service is weighted using:
+
+![
+{w\_{ij}^{j} = \\frac {w\_{ij}}{\\sum\_{i = 1}^{n} {w\_{ij}}}}
+](https://latex.codecogs.com/png.latex?%0A%7Bw_%7Bij%7D%5E%7Bj%7D%20%3D%20%5Cfrac%20%7Bw_%7Bij%7D%7D%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20%7Bw_%7Bij%7D%7D%7D%7D%0A "
+{w_{ij}^{j} = \frac {w_{ij}}{\sum_{i = 1}^{n} {w_{ij}}}}
+")
 
 These weights satisfy the following properties:
 
+![
+\\sum\_{j = 1}^{J} {w^i\_{ij}} = 1
+](https://latex.codecogs.com/png.latex?%0A%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20%7Bw%5Ei_%7Bij%7D%7D%20%3D%201%0A "
+\sum_{j = 1}^{J} {w^i_{ij}} = 1
+")
+
 and:
+
+![
+\\sum\_{i = 1}^{n} {w^j\_{ij}} = 1
+](https://latex.codecogs.com/png.latex?%0A%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20%7Bw%5Ej_%7Bij%7D%7D%20%3D%201%0A "
+\sum_{i = 1}^{n} {w^j_{ij}} = 1
+")
 
 With these weights, accessibility can be calculated without risk of
 demand or supply inflation:
 
+![
+A\_i = {\\sum\_{j = 1}^{J} \\frac {S\_j{w^j\_{ij}}}{\\sum\_{i = 1}^{n} P\_i{w^i\_{ij}}}}
+](https://latex.codecogs.com/png.latex?%0AA_i%20%3D%20%7B%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20%5Cfrac%20%7BS_j%7Bw%5Ej_%7Bij%7D%7D%7D%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20P_i%7Bw%5Ei_%7Bij%7D%7D%7D%7D%0A "
+A_i = {\sum_{j = 1}^{J} \frac {S_j{w^j_{ij}}}{\sum_{i = 1}^{n} P_i{w^i_{ij}}}}
+")
+
 By allocating the population and level of service proportionally, this
 method preserves the values of the population and level of service
 since:
+
+![
+\\sum\_{i=1}^n A\_i = \\sum\_{j=1}^J L\_j
+](https://latex.codecogs.com/png.latex?%0A%5Csum_%7Bi%3D1%7D%5En%20A_i%20%3D%20%5Csum_%7Bj%3D1%7D%5EJ%20L_j%0A "
+\sum_{i=1}^n A_i = \sum_{j=1}^J L_j
+")
 
 In fact, since the proportional allocation procedure means that any
 proportion of the population allocated to a station is never allocated

@@ -40,32 +40,40 @@ header-includes:
 rm(list = ls())
 ```
 
-```{r install-data-package, include = FALSE}
+```{r load-packages-1, include=FALSE}
+library(glue)
+library(here)
+```
+
+```{r install-data-package, include = FALSE, renv.ignore=TRUE}
 # Run only once if needed to install data package `sobiEquity`
 if (!require("sobiEquity", character.only = TRUE)) {
-      devtools::install_github("https://github.com/paezha/Accessibility-Sobi-Hamilton", subdir = "sobiEquity")
+      install.packages(glue(here::here(),'/sobiEquity_0.1.0.tar.gz'), repos=NULL, type='source')
   }
 ```
 
-```{r load-packages, include=FALSE}
+```{r load-packages-2, include=FALSE}
 library(biscale)
 library(cowplot)
 library(data.table)
-library(disk.frame)
+#library(disk.frame)
 library(dplyr)
 library(gdistance)
 library(ggmap)
+library(ggplot2)
 library(ggspatial)
+library(glue)
 library(gridExtra)
+library(here)
 library(kableExtra)
 library(pycno)
-library(r5r) # the r5r package requires Java Development Kit version 11, which can be downloaded from https://www.oracle.com/java/technologies/javase-jdk11-downloads.htmllibrary(readr)
+#library(r5r) # the r5r package requires Java Development Kit version 11, which can be downloaded from https://www.oracle.com/java/technologies/javase-jdk11-downloads.htmllibrary(readr)
 library(raster)
-library(rgdal)
+#library(rgdal)
 library(sf)
 library(sobiEquity) # Data package
-library(tidyverse)
-library(tinytex)
+library(tidyr)
+#library(tinytex)
 library(units)
 ```
 
@@ -766,6 +774,113 @@ ggdraw() +
               theme(legend.position = "none"), 0.00, 0.0, 1, 0.5) + 
   draw_plot(acc_10_legend, 0.01, 0.4, 0.2, 0.2)
 ```
+
+<!-- 
+
+MAPSTODON MONDAY DEC. 5, 2022
+
+```{r figure-8-a, include=FALSE}
+#accessibility plot for current system with equity stations at 10 minutes walk
+accessibility_10min <- accessibility %>% 
+  dplyr::filter(threshold == "10 min",
+                system == "All stations")  %>%
+  mutate(system = "With equity stations",
+         accessibility = accessibility * 1000, # Convert to racks per 1,000 person
+         accessibility = cut(accessibility,
+                             breaks = c(-Inf, 0.04, 0.3, 2.00, Inf), 
+                             labels = c("<0.04", "0.04-0.3", "0.3-2.00", ">2.00")),
+         accessibility = factor(accessibility,
+                                levels = c( ">2.00", "0.3-2.00", "0.04-0.3", "<0.04"),
+                                ordered = TRUE))
+
+acc_10_all <- ggplot() +
+  geom_sf(data = population_50x50,
+          color = "lightgray") +
+  geom_tile(data = cbind(st_drop_geometry(accessibility_10min), 
+                         st_coordinates(accessibility_10min)),
+            aes(x = X, 
+                y = Y, 
+                fill = accessibility)) +
+  scale_fill_viridis_d(name = "Accessibility\n(racks/1,000 person)",
+                    option = "viridis",
+                    direction = 1) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  facet_grid(system ~ .)  +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())  +
+  annotation_north_arrow(location = "tr", which_north = "true", 
+        pad_x = unit(0.0, "in"), pad_y = unit(0.0, "in"),
+        style = north_arrow_fancy_orienteering)
+
+# Extract the legend
+acc_10_legend <- cowplot::get_legend(acc_10_all)
+```
+
+```{r figure-8-b, include=FALSE}
+#accessibility plot for current system without equity stations at 10 minutes walk
+accessibility_10min <- accessibility %>% 
+  dplyr::filter(threshold == "10 min",
+                system == "Conventional")  %>%
+  mutate(system = "Without equity stations",
+         accessibility = accessibility * 1000, # Convert to racks per 1,000 person
+         accessibility = cut(accessibility,
+                             breaks = c(-Inf, 0.04, 0.3, 2.00, Inf), 
+                             labels = c("<0.04", "0.04-0.3", "0.3-2.00", ">2.00")),
+         accessibility = factor(accessibility,
+                                levels = c( ">2.00", "0.3-2.00", "0.04-0.3", "<0.04"),
+                                ordered = TRUE))
+
+acc_10_conv <- ggplot() +
+  geom_sf(data = population_50x50,
+          color = "lightgray") +
+  geom_tile(data = cbind(st_drop_geometry(accessibility_10min), 
+                         st_coordinates(accessibility_10min)),
+            aes(x = X, 
+                y = Y, 
+                fill = accessibility)) +
+  scale_fill_viridis_d(name = "Accessibility\n(racks/1,000 person)",
+                    option = "viridis",
+                    direction = 1) +
+  geom_sf(data = sobi_service,
+          fill = NA) +
+  facet_grid(system ~ .)  +
+  geom_sf(data = community_downtown %>%
+            dplyr::filter(NAME == "Hamilton"),
+          fill = NA,
+          color = "dark green") +
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())  +
+  annotation_scale(location = "bl", width_hint = 0.4,
+                   pad_x = unit(0.4, "in"), pad_y = unit(0.2, "in"))
+```
+
+```{r figure-8, echo=FALSE, fig.align = 'center', out.width = "90%", fig.cap = "Accessibility at 10 minutes walk (maximum threshold) compared between current system with equity stations and the original system without equity stations."}
+ggdraw() + 
+  draw_plot(acc_10_conv + 
+              theme(legend.position = "none"), 
+            0.00, 0.5, 1, 0.5) + 
+  draw_plot(acc_10_all + 
+              theme(legend.position = "none"), 0.00, 0.0, 1, 0.5) + 
+  draw_plot(acc_10_legend, 0.01, 0.4, 0.2, 0.2)
+
+ggsave("acc_10_mapstodon.jpeg",
+       width = 8,
+       height = 7)
+```
+
+-->
+
 
 ### 5.1.4. Extreme Threshold
 

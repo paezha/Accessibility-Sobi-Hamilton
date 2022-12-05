@@ -24,7 +24,7 @@ Elise Desjardins (McMaster University)
 Christopher D. Higgins (University of Toronto Scarborough)  
 Antonio Páez (McMaster University)  
 
-Forthcoming in *Transportation Research Part D: Transport and Environment*
+Desjardins, E., Higgins, C.D., Paez, A. (2022) Examining spatial equity of bike share: A balanced floating catchment area approach, Transportation Research Part D (102) 103091 (doi.org/10.1016/j.trd.2021.103091)
 
 ## Abstract
 
@@ -42,36 +42,40 @@ Public bicycle share programs (PBSPs) can play a role in advancing transportatio
 - Ontario
 - Reproducible research  
 
-```{r echo=FALSE}
-rm(list = ls())
+```{r load-packages-1, include=FALSE}
+library(glue)
+library(here)
 ```
 
-```{r install-data-package, include = FALSE}
+```{r install-data-package, include = FALSE, renv.ignore=TRUE}
 # Run only once if needed to install data package `sobiEquity`
 if (!require("sobiEquity", character.only = TRUE)) {
-      devtools::install_github("https://github.com/paezha/Accessibility-Sobi-Hamilton", subdir = "sobiEquity")
+      install.packages(glue(here::here(),'/sobiEquity_0.1.0.tar.gz'), repos=NULL, type='source')
   }
 ```
 
-```{r load-packages, include=FALSE}
+```{r load-packages-2, include=FALSE}
 library(biscale)
 library(cowplot)
 library(data.table)
-library(disk.frame)
+#library(disk.frame)
 library(dplyr)
 library(gdistance)
 library(ggmap)
+library(ggplot2)
 library(ggspatial)
+library(glue)
 library(gridExtra)
+library(here)
 library(kableExtra)
 library(pycno)
-library(r5r) # the r5r package requires Java Development Kit version 11, which can be downloaded from https://www.oracle.com/java/technologies/javase-jdk11-downloads.htmllibrary(readr)
+#library(r5r) # the r5r package requires Java Development Kit version 11, which can be downloaded from https://www.oracle.com/java/technologies/javase-jdk11-downloads.htmllibrary(readr)
 library(raster)
-library(rgdal)
+#library(rgdal)
 library(sf)
 library(sobiEquity) # Data package
-library(tidyverse)
-library(tinytex)
+library(tidyr)
+#library(tinytex)
 library(units)
 ```
 

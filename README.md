@@ -10,8 +10,10 @@ Elise Desjardins (McMaster University)
 Christopher D. Higgins (University of Toronto Scarborough)  
 Antonio Páez (McMaster University)
 
-Forthcoming in *Transportation Research Part D: Transport and
-Environment*
+Desjardins, E., Higgins, C.D., Paez, A. (2022) Examining spatial equity
+of bike share: A balanced floating catchment area approach,
+Transportation Research Part D (102) 103091
+(doi.org/10.1016/j.trd.2021.103091)
 
 ## Abstract
 
@@ -33,15 +35,15 @@ for population in the bottom 20% of median total household income.
 
 ## Keywords
 
--   Public Bike Sharing Programs  
--   Transport equity  
--   Horizontal equity  
--   Vertical equity  
--   Accessibility  
--   Balanced floating catchment areas  
--   Hamilton  
--   Ontario
--   Reproducible research
+- Public Bike Sharing Programs  
+- Transport equity  
+- Horizontal equity  
+- Vertical equity  
+- Accessibility  
+- Balanced floating catchment areas  
+- Hamilton  
+- Ontario
+- Reproducible research
 
 # 1. Introduction
 
@@ -83,13 +85,12 @@ total household income, and provides policy recommendations to further
 improve equity.
 
 This paper is an example of open and reproducible research that uses
-only open software for transportation and statistical analysis (R. S.
-Bivand 2020; Lovelace 2021). All data were obtained from publicly
-available sources and organized in the form of a data package. Following
-best practices in spatial data science (Brunsdon and Comber 2020), an
-open data product (Arribas-Bel et al. 2021) along with the code needed
-to reproduce, modify or extend the analysis are available for
-download.[1]
+only open software for transportation and statistical analysis (Bivand
+2020; Lovelace 2021). All data were obtained from publicly available
+sources and organized in the form of a data package. Following best
+practices in spatial data science (Brunsdon and Comber 2020), an open
+data product (Arribas-Bel et al. 2021) along with the code needed to
+reproduce, modify or extend the analysis are available for download.[^1]
 
 # 2. Literature Review
 
@@ -260,7 +261,7 @@ estimate for individuals. Chen et al. (2019, 530) are in favour of using
 disaggregated data, which they did in their recent analysis of Tampa’s
 PBSP, because they note “the use of aggregated data might hinder our
 understanding of the equity impacts since individual disparities are
-absorbed after aggregation.”
+absorbed after aggregation”.
 
 ## 2.4 Previous Research
 
@@ -271,7 +272,7 @@ Vancouver, Montreal, and Ottawa-Gatineau) where areas that are less
 deprived have greater access. Hosford and Winters (2018, 47) acknowledge
 that “Hamilton stands out in that the lower income neighborhoods are
 located near the city center and wealthier neighborhoods are in the
-surrounding suburban areas.” Therefore, the core service area for the
+surrounding suburban areas”. Therefore, the core service area for the
 PBSP in Hamilton by default covers more of the disadvantaged areas in
 the city. However, there is also a great deal of variation in income in
 the core service area because of the local university and increasing
@@ -339,28 +340,9 @@ station. It would be reasonable to assume that people are willing to
 walk beyond this threshold to access other stations if the ones nearest
 them have no supply of bicycles.
 
-<div class="figure" style="text-align: center">
+<img src="README_files/figure-gfm/hamilton-and-sobi-service-area-1.png" alt="The core service area of Hamilton Bike Share is outlined in blue. Hamilton Census Metropolitan Area is shown in grey." width="90%" style="display: block; margin: auto;" />
 
-<img src="README_files/figure-gfm/hamilton-and-sobi-service-area-1.png" alt="The core service area of Hamilton Bike Share is outlined in blue. Hamilton Census Metropolitan Area is shown in grey." width="90%" />
-<p class="caption">
-The core service area of Hamilton Bike Share is outlined in blue.
-Hamilton Census Metropolitan Area is shown in grey.
-</p>
-
-</div>
-
-<div class="figure" style="text-align: center">
-
-<img src="README_files/figure-gfm/sobi-stations-in-hamilton-1.png" alt="The spatial distribution of bike share docking stations in Hamilton, Ontario. Conventional stations are in purple and equity (ERI) stations are in orange. The service area of Hamilton Bike Share is outlined in blue and the city's downtown core is outlined in dark green. Hamilton Census Metropolitan Area is shown in grey." width="100%" />
-<p class="caption">
-The spatial distribution of bike share docking stations in Hamilton,
-Ontario. Conventional stations are in purple and equity (ERI) stations
-are in orange. The service area of Hamilton Bike Share is outlined in
-blue and the city’s downtown core is outlined in dark green. Hamilton
-Census Metropolitan Area is shown in grey.
-</p>
-
-</div>
+<img src="README_files/figure-gfm/sobi-stations-in-hamilton-1.png" alt="The spatial distribution of bike share docking stations in Hamilton, Ontario. Conventional stations are in purple and equity (ERI) stations are in orange. The service area of Hamilton Bike Share is outlined in blue and the city's downtown core is outlined in dark green. Hamilton Census Metropolitan Area is shown in grey." width="100%" style="display: block; margin: auto;" />
 
 # 4. Methods and Data
 
@@ -378,11 +360,7 @@ supply.
 The first step in the FCA method is to allocate the population to be
 serviced by each docking station:
 
-![
-P\_j = {\\sum\_{i = 1}^{n} P\_i{w\_{ij}}}
-](https://latex.codecogs.com/png.latex?%0AP_j%20%3D%20%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20P_i%7Bw_%7Bij%7D%7D%7D%0A "
-P_j = {\sum_{i = 1}^{n} P_i{w_{ij}}}
-")
+![P_j = {\sum\_{i = 1}^{n} P_i{w\_{ij}}}](https://latex.codecogs.com/png.latex?P_j%20%3D%20%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20P_i%7Bw_%7Bij%7D%7D%7D "P_j = {\sum_{i = 1}^{n} P_i{w_{ij}}}")
 
 As seen in the equation above, the population allocated to station
 ![j](https://latex.codecogs.com/png.latex?j "j") is the weighted sum of
@@ -399,75 +377,43 @@ person is the supply at each station (i.e., the maximum number of
 bicycle racks) divided by the population within the established
 catchment area:
 
-![
-L\_j = \\frac {S\_j}{P\_j} = \\frac {S\_j}{{\\sum\_{i = 1}^{n} P\_i{w\_{ij}}}}
-](https://latex.codecogs.com/png.latex?%0AL_j%20%3D%20%5Cfrac%20%7BS_j%7D%7BP_j%7D%20%3D%20%5Cfrac%20%7BS_j%7D%7B%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20P_i%7Bw_%7Bij%7D%7D%7D%7D%0A "
-L_j = \frac {S_j}{P_j} = \frac {S_j}{{\sum_{i = 1}^{n} P_i{w_{ij}}}}
-")
+![L_j = \frac {S_j}{P_j} = \frac {S_j}{{\sum\_{i = 1}^{n} P_i{w\_{ij}}}}](https://latex.codecogs.com/png.latex?L_j%20%3D%20%5Cfrac%20%7BS_j%7D%7BP_j%7D%20%3D%20%5Cfrac%20%7BS_j%7D%7B%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20P_i%7Bw_%7Bij%7D%7D%7D%7D "L_j = \frac {S_j}{P_j} = \frac {S_j}{{\sum_{i = 1}^{n} P_i{w_{ij}}}}")
 
 In the second step, the accessibility of population unit
 ![i](https://latex.codecogs.com/png.latex?i "i") is calculated as the
 weighted sum of the level of service of all stations that can be reached
 from there according to the spatial weights:
 
-![
-A\_i = {\\sum\_{j = 1}^{J} L\_j{w\_{ij}}} = {\\sum\_{j = 1}^{J} \\frac {S\_j{w\_{ij}}}{\\sum\_{i = 1}^{n} P\_i{w\_{ij}}}}
-](https://latex.codecogs.com/png.latex?%0AA_i%20%3D%20%7B%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20L_j%7Bw_%7Bij%7D%7D%7D%20%3D%20%7B%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20%5Cfrac%20%7BS_j%7Bw_%7Bij%7D%7D%7D%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20P_i%7Bw_%7Bij%7D%7D%7D%7D%0A "
-A_i = {\sum_{j = 1}^{J} L_j{w_{ij}}} = {\sum_{j = 1}^{J} \frac {S_j{w_{ij}}}{\sum_{i = 1}^{n} P_i{w_{ij}}}}
-")
+![A_i = {\sum\_{j = 1}^{J} L_j{w\_{ij}}} = {\sum\_{j = 1}^{J} \frac {S_j{w\_{ij}}}{\sum\_{i = 1}^{n} P_i{w\_{ij}}}}](https://latex.codecogs.com/png.latex?A_i%20%3D%20%7B%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20L_j%7Bw_%7Bij%7D%7D%7D%20%3D%20%7B%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20%5Cfrac%20%7BS_j%7Bw_%7Bij%7D%7D%7D%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20P_i%7Bw_%7Bij%7D%7D%7D%7D "A_i = {\sum_{j = 1}^{J} L_j{w_{ij}}} = {\sum_{j = 1}^{J} \frac {S_j{w_{ij}}}{\sum_{i = 1}^{n} P_i{w_{ij}}}}")
 
 The balanced approach of Páez et al. (2019) replaces the spatial weights
 with normalized versions as follows. In the first step, the population
 is weighted with:
 
-![
-{w\_{ij}^{i} = \\frac {w\_{ij}}{\\sum\_{j = 1}^{J} {w\_{ij}}}}
-](https://latex.codecogs.com/png.latex?%0A%7Bw_%7Bij%7D%5E%7Bi%7D%20%3D%20%5Cfrac%20%7Bw_%7Bij%7D%7D%7B%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20%7Bw_%7Bij%7D%7D%7D%7D%0A "
-{w_{ij}^{i} = \frac {w_{ij}}{\sum_{j = 1}^{J} {w_{ij}}}}
-")
+![{w\_{ij}^{i} = \frac {w\_{ij}}{\sum\_{j = 1}^{J} {w\_{ij}}}}](https://latex.codecogs.com/png.latex?%7Bw_%7Bij%7D%5E%7Bi%7D%20%3D%20%5Cfrac%20%7Bw_%7Bij%7D%7D%7B%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20%7Bw_%7Bij%7D%7D%7D%7D "{w_{ij}^{i} = \frac {w_{ij}}{\sum_{j = 1}^{J} {w_{ij}}}}")
 
 and in the second step, the level of service is weighted using:
 
-![
-{w\_{ij}^{j} = \\frac {w\_{ij}}{\\sum\_{i = 1}^{n} {w\_{ij}}}}
-](https://latex.codecogs.com/png.latex?%0A%7Bw_%7Bij%7D%5E%7Bj%7D%20%3D%20%5Cfrac%20%7Bw_%7Bij%7D%7D%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20%7Bw_%7Bij%7D%7D%7D%7D%0A "
-{w_{ij}^{j} = \frac {w_{ij}}{\sum_{i = 1}^{n} {w_{ij}}}}
-")
+![{w\_{ij}^{j} = \frac {w\_{ij}}{\sum\_{i = 1}^{n} {w\_{ij}}}}](https://latex.codecogs.com/png.latex?%7Bw_%7Bij%7D%5E%7Bj%7D%20%3D%20%5Cfrac%20%7Bw_%7Bij%7D%7D%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20%7Bw_%7Bij%7D%7D%7D%7D "{w_{ij}^{j} = \frac {w_{ij}}{\sum_{i = 1}^{n} {w_{ij}}}}")
 
 These weights satisfy the following properties:
 
-![
-\\sum\_{j = 1}^{J} {w^i\_{ij}} = 1
-](https://latex.codecogs.com/png.latex?%0A%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20%7Bw%5Ei_%7Bij%7D%7D%20%3D%201%0A "
-\sum_{j = 1}^{J} {w^i_{ij}} = 1
-")
+![\sum\_{j = 1}^{J} {w^i\_{ij}} = 1](https://latex.codecogs.com/png.latex?%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20%7Bw%5Ei_%7Bij%7D%7D%20%3D%201 "\sum_{j = 1}^{J} {w^i_{ij}} = 1")
 
 and:
 
-![
-\\sum\_{i = 1}^{n} {w^j\_{ij}} = 1
-](https://latex.codecogs.com/png.latex?%0A%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20%7Bw%5Ej_%7Bij%7D%7D%20%3D%201%0A "
-\sum_{i = 1}^{n} {w^j_{ij}} = 1
-")
+![\sum\_{i = 1}^{n} {w^j\_{ij}} = 1](https://latex.codecogs.com/png.latex?%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20%7Bw%5Ej_%7Bij%7D%7D%20%3D%201 "\sum_{i = 1}^{n} {w^j_{ij}} = 1")
 
 With these weights, accessibility can be calculated without risk of
 demand or supply inflation:
 
-![
-A\_i = {\\sum\_{j = 1}^{J} \\frac {S\_j{w^j\_{ij}}}{\\sum\_{i = 1}^{n} P\_i{w^i\_{ij}}}}
-](https://latex.codecogs.com/png.latex?%0AA_i%20%3D%20%7B%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20%5Cfrac%20%7BS_j%7Bw%5Ej_%7Bij%7D%7D%7D%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20P_i%7Bw%5Ei_%7Bij%7D%7D%7D%7D%0A "
-A_i = {\sum_{j = 1}^{J} \frac {S_j{w^j_{ij}}}{\sum_{i = 1}^{n} P_i{w^i_{ij}}}}
-")
+![A_i = {\sum\_{j = 1}^{J} \frac {S_j{w^j\_{ij}}}{\sum\_{i = 1}^{n} P_i{w^i\_{ij}}}}](https://latex.codecogs.com/png.latex?A_i%20%3D%20%7B%5Csum_%7Bj%20%3D%201%7D%5E%7BJ%7D%20%5Cfrac%20%7BS_j%7Bw%5Ej_%7Bij%7D%7D%7D%7B%5Csum_%7Bi%20%3D%201%7D%5E%7Bn%7D%20P_i%7Bw%5Ei_%7Bij%7D%7D%7D%7D "A_i = {\sum_{j = 1}^{J} \frac {S_j{w^j_{ij}}}{\sum_{i = 1}^{n} P_i{w^i_{ij}}}}")
 
 By allocating the population and level of service proportionally, this
 method preserves the values of the population and level of service
 since:
 
-![
-\\sum\_{i=1}^n A\_i = \\sum\_{j=1}^J L\_j
-](https://latex.codecogs.com/png.latex?%0A%5Csum_%7Bi%3D1%7D%5En%20A_i%20%3D%20%5Csum_%7Bj%3D1%7D%5EJ%20L_j%0A "
-\sum_{i=1}^n A_i = \sum_{j=1}^J L_j
-")
+![\sum\_{i=1}^n A_i = \sum\_{j=1}^J L_j](https://latex.codecogs.com/png.latex?%5Csum_%7Bi%3D1%7D%5En%20A_i%20%3D%20%5Csum_%7Bj%3D1%7D%5EJ%20L_j "\sum_{i=1}^n A_i = \sum_{j=1}^J L_j")
 
 In fact, since the proportional allocation procedure means that any
 proportion of the population allocated to a station is never allocated
@@ -500,17 +446,7 @@ features from the PBSP core service area and used pycnophylactic
 interpolation to disaggregate and reallocate population within the
 remaining area \[see Figure \].
 
-<div class="figure" style="text-align: center">
-
-<img src="README_files/figure-gfm/interpolated-population-1.png" alt="Interpolated population in Hamilton Bike Share's core service area (outlined in blue) and within 30 minutes of walking to the core service area. Each population cell is 50-by-50 m in size. The downtown area is outlined in dark green." width="90%" />
-<p class="caption">
-Interpolated population in Hamilton Bike Share’s core service area
-(outlined in blue) and within 30 minutes of walking to the core service
-area. Each population cell is 50-by-50 m in size. The downtown area is
-outlined in dark green.
-</p>
-
-</div>
+<img src="README_files/figure-gfm/interpolated-population-1.png" alt="Interpolated population in Hamilton Bike Share's core service area (outlined in blue) and within 30 minutes of walking to the core service area. Each population cell is 50-by-50 m in size. The downtown area is outlined in dark green." width="90%" style="display: block; margin: auto;" />
 
 ## 4.3. Travel Time Matrix
 
@@ -533,7 +469,7 @@ operations (Pereira et al. 2021).
 ## 4.4. Data
 
 All data for this research were accessed from publicly available Census
-of Canada sources, from OpenStreetMaps, and from Open Hamilton[2], a
+of Canada sources, from OpenStreetMaps, and from Open Hamilton[^2], a
 public online repository of data curated by the City of Hamilton. Median
 total household income statistics were drawn from the 2016 Canadian
 Census.
@@ -580,19 +516,15 @@ more smoothing and fewer spikes.
 
 In the analysis we use the following distance decay function:
 
-![
-{w\_{ij} = \\begin{cases} 
-      1 & \\text{when } t\_{ij}\\leq \\gamma \\\\
-      0 & \\text{otherwise} 
-   \\end{cases}}
-](https://latex.codecogs.com/png.latex?%0A%7Bw_%7Bij%7D%20%3D%20%5Cbegin%7Bcases%7D%20%0A%20%20%20%20%20%201%20%26%20%5Ctext%7Bwhen%20%7D%20t_%7Bij%7D%5Cleq%20%5Cgamma%20%5C%5C%0A%20%20%20%20%20%200%20%26%20%5Ctext%7Botherwise%7D%20%0A%20%20%20%5Cend%7Bcases%7D%7D%0A "
-{w_{ij} = \begin{cases} 
+![{w\_{ij} = \begin{cases} 
+      1 & \text{when } t\_{ij}\leq \gamma \\\\
+      0 & \text{otherwise} 
+   \end{cases}}](https://latex.codecogs.com/png.latex?%7Bw_%7Bij%7D%20%3D%20%5Cbegin%7Bcases%7D%20%0A%20%20%20%20%20%201%20%26%20%5Ctext%7Bwhen%20%7D%20t_%7Bij%7D%5Cleq%20%5Cgamma%20%5C%5C%0A%20%20%20%20%20%200%20%26%20%5Ctext%7Botherwise%7D%20%0A%20%20%20%5Cend%7Bcases%7D%7D "{w_{ij} = \begin{cases} 
       1 & \text{when } t_{ij}\leq \gamma \\
       0 & \text{otherwise} 
-   \end{cases}}
-")
+   \end{cases}}")
 
-where ![\\gamma](https://latex.codecogs.com/png.latex?%5Cgamma "\gamma")
+where ![\gamma](https://latex.codecogs.com/png.latex?%5Cgamma "\gamma")
 is the relevant threshold. The weights are standardized as discussed
 above.
 
@@ -630,16 +562,7 @@ fairly uniform, with the exception of one very small area. The equity
 stations noticeably increase accessibility in the east end of the core
 service area by filling gaps in PBSP coverage.
 
-<div class="figure" style="text-align: center">
-
-<img src="README_files/figure-gfm/figure-7-1.png" alt="Accessibility at 5 minutes walk (average threshold) compared between current system with equity stations and the original system without equity stations." width="90%" />
-<p class="caption">
-Accessibility at 5 minutes walk (average threshold) compared between
-current system with equity stations and the original system without
-equity stations.
-</p>
-
-</div>
+<img src="README_files/figure-gfm/figure-7-1.png" alt="Accessibility at 5 minutes walk (average threshold) compared between current system with equity stations and the original system without equity stations." width="90%" style="display: block; margin: auto;" />
 
 ### 5.1.3. High Threshold
 
@@ -656,16 +579,7 @@ are more apparent at this threshold than at shorter walking distances,
 especially in the more disadvantaged neighbourhoods in the east end of
 the core service area where equity stations were added.
 
-<div class="figure" style="text-align: center">
-
-<img src="README_files/figure-gfm/figure-8-1.png" alt="Accessibility at 10 minutes walk (maximum threshold) compared between current system with equity stations and the original system without equity stations." width="90%" />
-<p class="caption">
-Accessibility at 10 minutes walk (maximum threshold) compared between
-current system with equity stations and the original system without
-equity stations.
-</p>
-
-</div>
+<img src="README_files/figure-gfm/figure-8-1.png" alt="Accessibility at 10 minutes walk (maximum threshold) compared between current system with equity stations and the original system without equity stations." width="90%" style="display: block; margin: auto;" />
 
 ### 5.1.4. Extreme Threshold
 
@@ -680,16 +594,7 @@ who live in the city’s downtown area. Accessibility in the east end,
 where equity stations were implemented, of the core service area remains
 lower than other areas.
 
-<div class="figure" style="text-align: center">
-
-<img src="README_files/figure-gfm/figure-9-1.png" alt="Accessibility at 15 minutes walk (extreme threshold) compared between current system with equity stations and the original system without equity stations." width="90%" />
-<p class="caption">
-Accessibility at 15 minutes walk (extreme threshold) compared between
-current system with equity stations and the original system without
-equity stations.
-</p>
-
-</div>
+<img src="README_files/figure-gfm/figure-9-1.png" alt="Accessibility at 15 minutes walk (extreme threshold) compared between current system with equity stations and the original system without equity stations." width="90%" style="display: block; margin: auto;" />
 
 ## 5.2. Comparative Analysis
 
@@ -710,25 +615,9 @@ area, likely due to the density of docking stations. Figure shows that
 accessibility is inflated by as much as 50% in many areas across the
 city.
 
-<div class="figure" style="text-align: center">
+<img src="README_files/figure-gfm/figure-10-1.png" alt="Deflation of level of service at 5 minutes walk (average threshold) in the current system with equity stations." width="90%" style="display: block; margin: auto;" />
 
-<img src="README_files/figure-gfm/figure-10-1.png" alt="Deflation of level of service at 5 minutes walk (average threshold) in the current system with equity stations." width="90%" />
-<p class="caption">
-Deflation of level of service at 5 minutes walk (average threshold) in
-the current system with equity stations.
-</p>
-
-</div>
-
-<div class="figure" style="text-align: center">
-
-<img src="README_files/figure-gfm/figure-11-1.png" alt="Inflation of accessibility at 5 minutes walk (average threshold) in the current system with equity stations." width="90%" />
-<p class="caption">
-Inflation of accessibility at 5 minutes walk (average threshold) in the
-current system with equity stations.
-</p>
-
-</div>
+<img src="README_files/figure-gfm/figure-11-1.png" alt="Inflation of accessibility at 5 minutes walk (average threshold) in the current system with equity stations." width="90%" style="display: block; margin: auto;" />
 
 ## 5.3. Accessibility by Median Total Household Income
 
@@ -747,49 +636,13 @@ interpret. Figures , , , and depict bivariate choropleth maps that
 combine the spatial distribution of accessibility and median total
 household income, using tertiles for the coloring scheme.
 
-<div class="figure">
-
 <img src="README_files/figure-gfm/figure-bi-map-threshold-3-1.png" alt="\label{fig-bivariate-map-threshold-3}Bivariate map of accessibility and income at the minimum threshold of three minutes with equity stations (top panel) and without equity stations (bottom panel)." width="1.2\linewidth" />
-<p class="caption">
-Bivariate map of accessibility and income at the minimum threshold of
-three minutes with equity stations (top panel) and without equity
-stations (bottom panel).
-</p>
-
-</div>
-
-<div class="figure">
 
 <img src="README_files/figure-gfm/figure-bi-map-threshold-5-1.png" alt="\label{fig-bivariate-map-threshold-5}Bivariate map of accessibility and income at the average threshold of five minutes with equity stations (top panel) and without equity stations (bottom panel)." width="1.2\linewidth" />
-<p class="caption">
-Bivariate map of accessibility and income at the average threshold of
-five minutes with equity stations (top panel) and without equity
-stations (bottom panel).
-</p>
-
-</div>
-
-<div class="figure">
 
 <img src="README_files/figure-gfm/figure-bi-map-threshold-10-1.png" alt="\label{fig-bivariate-map-threshold-10}Bivariate map of accessibility and income at the maximum threshold of ten minutes with equity stations (top panel) and without equity stations (bottom panel)." width="1.2\linewidth" />
-<p class="caption">
-Bivariate map of accessibility and income at the maximum threshold of
-ten minutes with equity stations (top panel) and without equity stations
-(bottom panel).
-</p>
-
-</div>
-
-<div class="figure">
 
 <img src="README_files/figure-gfm/figure-bi-map-threshold-15-1.png" alt="\label{fig-bivariate-map-threshold-15}Bivariate map of accessibility and income at the extreme threshold of fifteen with equity stations (top panel) and without equity stations (bottom panel)." width="1.2\linewidth" />
-<p class="caption">
-Bivariate map of accessibility and income at the extreme threshold of
-fifteen with equity stations (top panel) and without equity stations
-(bottom panel).
-</p>
-
-</div>
 
 Table presents accessibility levels by income strata. As expected, the
 extreme threshold of fifteen minutes is associated with the largest
@@ -1473,7 +1326,7 @@ to Hamilton Bike Share (HBS), with a focus on assessing the contribution
 of the program’s equity stations. The BFCA approach, combined with
 pycnophylactic interpolation, enabled us to measure accessibility on a
 micro scale which better reflects the scale at which walking takes place
-and avoids the “absorption of disparities,” as articulated by Chen et
+and avoids the “absorption of disparities”, as articulated by Chen et
 al. (2019) and elsewhere in the transportation literature (National
 Academies of Sciences 2004; Rowangould, Karner, and London 2016). Our
 method also considers potential demand and supply, as well as congestion
@@ -1681,13 +1534,14 @@ We wish to thank the anonymous reviewers who provided constructive
 feedback to improve the quality of our paper. This research was
 completed using open software, and we also wish to acknowledge the
 developers of the following `R` packages: `biscale` (Prener,
-Grossenbacher, and Zehr 2020), `cowplot` (Wilke 2020), `data.table`
-(Dowle and Srinivasan 2021), `disk.frame` (ZJ 2021), `gdistance` (van
-Etten 2020), `gridExtra` (Auguie 2017), `kableExtra` (Zhu 2021), `knitr`
-(Xie 2021a), `pycno` (Brunsdon 2014), `r5r` (Saraiva et al. 2021),
-`raster` (Hijmans 2021), `rgdal` (R. Bivand, Keitt, and Rowlingson
-2021), `rticles` (Allaire et al. 2021), `sf` (Pebesma 2021), `tidyverse`
-(Wickham 2021), `tinytex` (Xie 2021b), `units` (Pebesma et al. 2021).
+Grossenbacher, and Zehr 2022), `cowplot` (Wilke 2020), `data.table`
+(Dowle and Srinivasan 2022), `disk.frame` (**R-disk.frame?**),
+`gdistance` (van Etten 2022), `gridExtra` (Auguie 2017), `kableExtra`
+(Zhu 2021), `knitr` (Xie 2022), `pycno` (Brunsdon 2014), `r5r`
+(**R-r5r?**), `raster` (Hijmans 2022), `rgdal` (**R-rgdal?**), `rticles`
+(Allaire et al. 2022), `sf` (Pebesma 2022), `tidyverse`
+(**R-tidyverse?**), `tinytex` (**R-tinytex?**), `units` (Pebesma et al.
+2022).
 
 # References
 
@@ -1695,9 +1549,9 @@ Etten 2020), `gridExtra` (Auguie 2017), `kableExtra` (Zhu 2021), `knitr`
 
 <div id="ref-R-rticles" class="csl-entry">
 
-Allaire, JJ, Yihui Xie, R Foundation, Hadley Wickham, Journal of
-Statistical Software, Ramnath Vaidyanathan, Association for Computing
-Machinery, et al. 2021. *Rticles: Article Formats for r Markdown*.
+Allaire, JJ, Yihui Xie, Christophe Dervieux, R Foundation, Hadley
+Wickham, Journal of Statistical Software, Ramnath Vaidyanathan, et al.
+2022. *Rticles: Article Formats for r Markdown*.
 <https://github.com/rstudio/rticles>.
 
 </div>
@@ -1743,14 +1597,6 @@ of the New York City Bike Share System.” *Journal of Transport & Health*
 Bivand, Roger S. 2020. “Progress in the r Ecosystem for Representing and
 Handling Spatial Data.” *Journal of Geographical Systems*, 1–32.
 <https://doi.org/10.1007/s10109-020-00336-0>.
-
-</div>
-
-<div id="ref-R-rgdal" class="csl-entry">
-
-Bivand, Roger, Tim Keitt, and Barry Rowlingson. 2021. *Rgdal: Bindings
-for the Geospatial Data Abstraction Library*.
-<https://CRAN.R-project.org/package=rgdal>.
 
 </div>
 
@@ -1841,7 +1687,7 @@ class="csl-entry">
 
 Delamater, Paul L. 2013. “Spatial Accessibility in Suboptimally
 Configured Health Care Systems: A Modified Two-Step Floating Catchment
-Area (M2sfca) Metric.” *Health & Place* 24 (November): 30–43.
+Area (M2SFCA) Metric.” *Health & Place* 24 (November): 30–43.
 <https://doi.org/10.1016/j.healthplace.2013.07.012>.
 
 </div>
@@ -1857,7 +1703,7 @@ section on Alternative Travel futures, 19 (6): 1252–59.
 
 <div id="ref-R-data.table" class="csl-entry">
 
-Dowle, Matt, and Arun Srinivasan. 2021. *Data.table: Extension of
+Dowle, Matt, and Arun Srinivasan. 2022. *Data.table: Extension of
 ‘Data.frame‘*. <https://CRAN.R-project.org/package=data.table>.
 
 </div>
@@ -1956,7 +1802,7 @@ Economy and Space* 29 (7): 1175–94. <https://doi.org/10.1068/a291175>.
 
 <div id="ref-R-raster" class="csl-entry">
 
-Hijmans, Robert J. 2021. *Raster: Geographic Data Analysis and
+Hijmans, Robert J. 2022. *Raster: Geographic Data Analysis and
 Modeling*. <https://rspatial.org/raster>.
 
 </div>
@@ -2072,7 +1918,7 @@ Shortest Paths.” *Journal of Transport Geography* 71 (July): 172–81.
 <div id="ref-luoEnhancedTwostepFloating2009" class="csl-entry">
 
 Luo, Wei, and Yi Qi. 2009. “An Enhanced Two-Step Floating Catchment Area
-(E2sfca) Method for Measuring Spatial Accessibility to Primary Care
+(E2SFCA) Method for Measuring Spatial Accessibility to Primary Care
 Physicians.” *Health & Place* 15 (4): 1100–1107.
 <https://doi.org/10.1016/j.healthplace.2009.06.002>.
 
@@ -2149,8 +1995,9 @@ Analysis of Bikeshare Ridership: The Case Study of Baltimore City.”
 
 O’Kelly, M. E., and M. W. Horner. 2003. “Aggregate Accessibility to
 Population at the County Level: U.s. 1940-2000.” Journal Article.
-*Journal of Geographical Systems* 5 (1): 5–23.
-[C:/Papers/Journal of Geographical Systems/Journal of Geographical Systems (2003) 5 (1) 5-23.pdf](https://C:/Papers/Journal of Geographical Systems/Journal of Geographical Systems (2003) 5 (1) 5-23.pdf).
+*Journal of Geographical Systems* 5 (1): 5–23. [C:/Papers/Journal of
+Geographical Systems/Journal of Geographical Systems (2003) 5 (1)
+5-23.pdf](https://C:/Papers/Journal of Geographical Systems/Journal of Geographical Systems (2003) 5 (1) 5-23.pdf).
 
 </div>
 
@@ -2177,7 +2024,7 @@ Methods.” *PLoS ONE* 14 (6).
 Páez, Antonio, Darren M. Scott, and Catherine Morency. 2012. “Measuring
 Accessibility: Positive and Normative Implementations of Various
 Accessibility Indicators.” *Journal of Transport Geography*, Special
-section on Accessibility and Socio-Economic Activities: Methodological
+Section on Accessibility and Socio-Economic Activities: Methodological
 and Empirical Aspects, 25 (November): 141–53.
 <https://doi.org/10.1016/j.jtrangeo.2012.03.016>.
 
@@ -2185,14 +2032,14 @@ and Empirical Aspects, 25 (November): 141–53.
 
 <div id="ref-R-sf" class="csl-entry">
 
-Pebesma, Edzer. 2021. *Sf: Simple Features for r*.
+Pebesma, Edzer. 2022. *Sf: Simple Features for r*.
 <https://CRAN.R-project.org/package=sf>.
 
 </div>
 
 <div id="ref-R-units" class="csl-entry">
 
-Pebesma, Edzer, Thomas Mailund, Tomasz Kalinowski, and Iñaki Ucar. 2021.
+Pebesma, Edzer, Thomas Mailund, Tomasz Kalinowski, and Iñaki Ucar. 2022.
 *Units: Measurement Units for r Vectors*.
 <https://github.com/r-quantities/units/>.
 
@@ -2209,9 +2056,9 @@ Routing on Multimodal Transport Networks with r<sup>5</sup> in r.”
 
 <div id="ref-R-biscale" class="csl-entry">
 
-Prener, Christopher, Timo Grossenbacher, and Angelo Zehr. 2020.
+Prener, Christopher, Timo Grossenbacher, and Angelo Zehr. 2022.
 *Biscale: Tools and Palettes for Bivariate Thematic Mapping*.
-<https://github.com/slu-openGIS/biscale>.
+<https://chris-prener.github.io/biscale/>.
 
 </div>
 
@@ -2280,14 +2127,6 @@ Environmental Justice Communities for Transportation Analysis.”
 
 </div>
 
-<div id="ref-R-r5r" class="csl-entry">
-
-Saraiva, Marcus, Rafael H. M. Pereira, Daniel Herszenhut, Carlos Kaue
-Vieira Braga, and Matthew Wigginton Conway. 2021. *R5r: Rapid Realistic
-Routing with R5*. <https://github.com/ipeaGIT/r5r>.
-
-</div>
-
 <div id="ref-scottWhatFactorsInfluence2019" class="csl-entry">
 
 Scott, Darren M., and Celenna Ciuro. 2019. “What Factors Influence Bike
@@ -2325,8 +2164,8 @@ Geographical Regions.” *Journal of the American Statistical Association*
 
 <div id="ref-R-gdistance" class="csl-entry">
 
-van Etten, Jacob. 2020. *Gdistance: Distances and Routes on Geographical
-Grids*. <https://agrobioinfoservices.github.io/gdistance/>.
+van Etten, Jacob. 2022. *Gdistance: Distances and Routes on Geographical
+Grids*. <https://AgrDataSci.github.io/gdistance/>.
 
 </div>
 
@@ -2366,13 +2205,6 @@ Share Ridership: Evidence from Citi Bike System in New York City.”
 
 </div>
 
-<div id="ref-R-tidyverse" class="csl-entry">
-
-Wickham, Hadley. 2021. *Tidyverse: Easily Install and Load the
-Tidyverse*. <https://CRAN.R-project.org/package=tidyverse>.
-
-</div>
-
 <div id="ref-R-cowplot" class="csl-entry">
 
 Wilke, Claus O. 2020. *Cowplot: Streamlined Plot Theme and Plot
@@ -2391,15 +2223,8 @@ Members in Vancouver, BC.” *Preventive Medicine Reports* 15 (September):
 
 <div id="ref-R-knitr" class="csl-entry">
 
-Xie, Yihui. 2021a. *Knitr: A General-Purpose Package for Dynamic Report
+Xie, Yihui. 2022. *Knitr: A General-Purpose Package for Dynamic Report
 Generation in r*. <https://yihui.org/knitr/>.
-
-</div>
-
-<div id="ref-R-tinytex" class="csl-entry">
-
-———. 2021b. *Tinytex: Helper Functions to Install and Maintain TeX Live,
-and Compile LaTeX Documents*. <https://github.com/yihui/tinytex>.
 
 </div>
 
@@ -2410,15 +2235,8 @@ Syntax*. <https://CRAN.R-project.org/package=kableExtra>.
 
 </div>
 
-<div id="ref-R-disk.frame" class="csl-entry">
-
-ZJ, Dai. 2021. *Disk.frame: Larger-Than-RAM Disk-Based Data Manipulation
-Framework*. <https://diskframe.com>.
-
 </div>
 
-</div>
+[^1]: <https://github.com/paezha/Accessibility-Sobi-Hamilton>
 
-[1] <https://github.com/paezha/Accessibility-Sobi-Hamilton>
-
-[2] <https://open.hamilton.ca/>
+[^2]: <https://open.hamilton.ca/>
